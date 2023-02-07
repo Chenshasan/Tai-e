@@ -40,6 +40,7 @@ import pascal.taie.analysis.pta.plugin.Plugin;
 import pascal.taie.analysis.pta.plugin.ReferenceHandler;
 import pascal.taie.analysis.pta.plugin.ResultProcessor;
 import pascal.taie.analysis.pta.plugin.ThreadHandler;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
 import pascal.taie.analysis.pta.plugin.exception.ExceptionAnalysis;
 import pascal.taie.analysis.pta.plugin.invokedynamic.InvokeDynamicAnalysis;
 import pascal.taie.analysis.pta.plugin.invokedynamic.LambdaAnalysis;
@@ -147,6 +148,9 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
         }
         if (options.getString("taint-config") != null) {
             plugin.addPlugin(new TaintAnalysis());
+        }
+        if (options.getString("crypto-config") != null) {
+            plugin.addPlugin(new CryptoAPIMisuseAnalysis());
         }
         plugin.addPlugin(new ResultProcessor());
         // add plugins specified in options
