@@ -1,5 +1,3 @@
-package org.cryptoapi.bench.untrustedprng;
-
 import javax.crypto.spec.PBEParameterSpec;
 import java.util.Random;
 

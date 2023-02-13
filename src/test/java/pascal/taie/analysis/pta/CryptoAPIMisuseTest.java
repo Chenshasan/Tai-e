@@ -17,6 +17,6 @@ public class CryptoAPIMisuseTest {
     @Test
     public void testPatternMatcher() {
         Tests.testPTA(DIR+"/"+PATTERN, "BrokenCryptoBBCase1",
-                "taint-config:src/test/resources/pta/taint/taint-config.yml");
+                "crypto-config:src/test/resources/pta/cryptomisuse/patternmatcher/crypto-config.yml");
     }
 }

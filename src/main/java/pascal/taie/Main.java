@@ -25,6 +25,8 @@ package pascal.taie;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.AnalysisManager;
+import pascal.taie.analysis.graph.callgraph.CallGraph;
+import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.config.AnalysisConfig;
 import pascal.taie.config.AnalysisPlanner;
 import pascal.taie.config.ConfigManager;
@@ -58,6 +60,8 @@ public class Main {
             }
             buildWorld(options, plan.analyses());
             executePlan(plan);
+            PointerAnalysisResult result = World.get().getResult("pta");
+            CallGraph callGraph= result.getCallGraph();
         }, "Tai-e");
     }
 
@@ -137,7 +141,7 @@ public class Main {
                                 .mapToInt(c -> c.getDeclaredMethods().size())
                                 .sum());
             } catch (InstantiationException | IllegalAccessException |
-                    NoSuchMethodException | InvocationTargetException e) {
+                     NoSuchMethodException | InvocationTargetException e) {
                 System.err.println("Failed to build world due to " + e);
                 System.exit(1);
             }

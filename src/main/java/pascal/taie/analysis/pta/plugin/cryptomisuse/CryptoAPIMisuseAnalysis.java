@@ -1,18 +1,23 @@
 package pascal.taie.analysis.pta.plugin.cryptomisuse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import pascal.taie.World;
 import pascal.taie.analysis.graph.callgraph.Edge;
+import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.core.cs.context.Context;
 import pascal.taie.analysis.pta.core.cs.element.*;
 import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.Plugin;
+import pascal.taie.analysis.pta.plugin.taint.TaintFlow;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.InvokeExp;
 import pascal.taie.ir.exp.InvokeInstanceExp;
-import pascal.taie.ir.exp.StringLiteral;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.AssignStmt;
 import pascal.taie.ir.stmt.Invoke;
+import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.Type;
 import pascal.taie.language.type.TypeSystem;
@@ -21,9 +26,11 @@ import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Pair;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 public class CryptoAPIMisuseAnalysis implements Plugin {
 
+    private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseAnalysis.class);
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
     private final MultiMap<JMethod, Type> sources = Maps.newMultiMap();
     private final MultiMap<Var, Pair<Var, Type>> cryptoPropagates = Maps.newMultiMap();
@@ -65,12 +72,13 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 AssignStmt assignStmt = (AssignStmt) stmt;
                 if (assignStmt.getDef().isPresent()
                         && assignStmt.getDef().get() instanceof Var
-                        && ((Var)assignStmt.getDef().get()).
+                        && ((Var) assignStmt.getDef().get()).
                         getType().getName().equals("java.lang.String")) {
                     Obj cryptoObj =
                             manager.makeCryptoObj(assignStmt,
                                     typeSystem.getType("java.lang.String"));
                     Var lhs = (Var) assignStmt.getLValue();
+                   // logger.info("new Var: " + lhs.getName() + " in method " + jMethod.getName() + " with String object");
                     solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext, cryptoObj);
                 }
             }
@@ -131,6 +139,24 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     @Override
     public void onFinish() {
+        ClassHierarchy classHierarchy= World.get().getClassHierarchy();
+        PointerAnalysisResult result = solver.getResult();
+        config.getCryptoAPIs().forEach(cryptoAPI -> {
+            int i = cryptoAPI.index();
+            result.getCallGraph()
+                    .getCallersOf(cryptoAPI.method())
+                    .forEach(sinkCall -> {
+                        Var arg = sinkCall.getInvokeExp().getArg(i);
+                        result.getPointsToSet(arg)
+                                .stream()
+                                .filter(manager::isCryptoObj)
+                                .forEach(cryptoObj -> {
+                                    System.out.println(arg + "in statement "
+                                            + sinkCall.getInvokeExp()
+                                            + "point to" + cryptoObj);
+                                });
+                    });
+        });
         Set<CryptoReport> cryptoReports = cryptoRuleJudge.judgeRules();
         solver.getResult().storeResult(getClass().getName(), cryptoReports);
     }

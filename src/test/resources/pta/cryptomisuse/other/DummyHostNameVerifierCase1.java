@@ -1,5 +1,3 @@
-package org.cryptoapi.bench.dummyhostnameverifier;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 

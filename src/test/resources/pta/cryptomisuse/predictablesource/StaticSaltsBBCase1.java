@@ -1,5 +1,3 @@
-package org.cryptoapi.bench.staticsalts;
-
 import javax.crypto.spec.PBEParameterSpec;
 
 public class StaticSaltsBBCase1 {

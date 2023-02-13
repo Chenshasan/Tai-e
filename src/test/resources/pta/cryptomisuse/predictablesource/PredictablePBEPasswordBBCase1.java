@@ -1,5 +1,3 @@
-package org.cryptoapi.bench.predictablepbepassword;
-
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import java.security.SecureRandom;

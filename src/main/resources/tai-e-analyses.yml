@@ -25,6 +25,7 @@
     reflection-log: null # path to reflection log, required when reflection option is log
     taint-config: null # path to config file of taint analysis,
     # when this file is given, taint analysis will be enabled
+    crypto-config: null
     plugins: [ ] # | [ pluginClass, ... ]
     time-limit: -1 # set time limit (in seconds) for pointer analysis,
     # -1 means no time limit

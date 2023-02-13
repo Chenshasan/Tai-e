@@ -1,5 +1,3 @@
-package org.cryptoapi.bench.impropersslsocketfactory;
-
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;

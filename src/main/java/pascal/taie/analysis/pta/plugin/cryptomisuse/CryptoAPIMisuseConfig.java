@@ -133,9 +133,9 @@ public class CryptoAPIMisuseConfig {
                 throws IOException {
             ObjectCodec oc = p.getCodec();
             JsonNode node = oc.readTree(p);
-            Set<CryptoSource> sources = deserializeSources(node.get("CryptoSources"));
-            Set<CryptoAPI> CryptoAPIs = deserializeCryptoAPIs(node.get("CryptoAPIs"));
-            Set<CryptoObjPropagate> propagates = deserializePropagates(node.get("CryptoObjPropagate"));
+            Set<CryptoSource> sources = deserializeSources(node.get("cryptoSources"));
+            Set<CryptoAPI> CryptoAPIs = deserializeCryptoAPIs(node.get("cryptoAPIs"));
+            Set<CryptoObjPropagate> propagates = deserializePropagates(node.get("cryptoObjPropagate"));
             return new CryptoAPIMisuseConfig(sources, CryptoAPIs, propagates);
         }
 
