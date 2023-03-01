@@ -116,6 +116,7 @@ public class AnalysisManager {
             Class<?> clazz = Class.forName(config.getAnalysisClass());
             Constructor<?> ctor = clazz.getConstructor(AnalysisConfig.class);
             analysis = (Analysis) ctor.newInstance(config);
+            // Run the analysis
         } catch (ClassNotFoundException e) {
             throw new AnalysisException("Analysis class " +
                     config.getAnalysisClass() + " is not found", e);

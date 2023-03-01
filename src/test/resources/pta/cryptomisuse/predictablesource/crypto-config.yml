@@ -1,0 +1,4 @@
+cryptoSources:
+
+numberSizeRules:
+  - { method: "<StaticSaltsBBCase1: void testCount(int)>", index: 0, min: 1300, max: 2000 }

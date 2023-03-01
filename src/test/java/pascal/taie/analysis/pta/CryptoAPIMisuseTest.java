@@ -19,4 +19,16 @@ public class CryptoAPIMisuseTest {
         Tests.testPTA(DIR+"/"+PATTERN, "BrokenCryptoBBCase1",
                 "crypto-config:src/test/resources/pta/cryptomisuse/patternmatcher/crypto-config.yml");
     }
+
+    @Test
+    public void testPredictableSource() {
+        Tests.testPTA(DIR+"/"+OTHER, "ImproperSocketManualHostBBCase1",
+                "crypto-config:src/test/resources/pta/cryptomisuse/other/crypto-config.yml");
+    }
+
+    @Test
+    public void testNumberSize() {
+        Tests.testPTA(DIR+"/"+PREDICTABLE, "StaticSaltsBBCase1",
+                "crypto-config:src/test/resources/pta/cryptomisuse/predictablesource/crypto-config.yml");
+    }
 }

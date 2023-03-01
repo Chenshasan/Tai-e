@@ -1,7 +1,8 @@
 cryptoSources:
+  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result}
 
-patternMatchRules:
-  - { method: "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>", index: 0, pattern: ".*/ECB/PKCS5Padding" }
+predictableSourceRules:
+  - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
 
 cryptoObjPropagate:
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }

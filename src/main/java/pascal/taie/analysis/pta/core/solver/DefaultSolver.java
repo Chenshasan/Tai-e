@@ -22,6 +22,7 @@
 
 package pascal.taie.analysis.pta.core.solver;
 
+import fj.Primitive;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.World;

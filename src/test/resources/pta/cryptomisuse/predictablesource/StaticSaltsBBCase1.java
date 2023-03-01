@@ -11,5 +11,9 @@ public class StaticSaltsBBCase1 {
         byte[] salt = {(byte) 0xa2};
         int count = 1020;
         pbeParamSpec = new PBEParameterSpec(salt, count);
+        testCount(count);
+    }
+
+    public static void testCount(int count){
     }
 }

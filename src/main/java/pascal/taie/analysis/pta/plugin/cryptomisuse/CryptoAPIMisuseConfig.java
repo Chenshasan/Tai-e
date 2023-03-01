@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
 import pascal.taie.config.ConfigException;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
@@ -23,30 +26,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
-public class CryptoAPIMisuseConfig {
+public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
+                                    Set<CryptoObjPropagate> propagates,
+                                    Set<PatternMatchRule> patternMatchRules,
+                                    Set<PredictableSourceRule> predictableSourceRules,
+                                    Set<NumberSizeRule> numberSizeRules) {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseConfig.class);
-
-    /**
-     * Set of sources.
-     */
-    private final Set<CryptoSource> sources;
-
-    /**
-     * Set of CryptoAPIs.
-     */
-    private final Set<CryptoAPI> cryptoAPIS;
-
-    /**
-     * Set of taint propagates;
-     */
-    private final Set<CryptoObjPropagate> propagates;
-
-    private CryptoAPIMisuseConfig(Set<CryptoSource> sources, Set<CryptoAPI> cryptoAPIS,
-                        Set<CryptoObjPropagate> propagates) {
-        this.sources = sources;
-        this.cryptoAPIS = cryptoAPIS;
-        this.propagates = propagates;
-    }
 
     /**
      * Reads a taint analysis configuration from file
@@ -80,13 +65,6 @@ public class CryptoAPIMisuseConfig {
     }
 
     /**
-     * @return CryptoAPIs in the configuration.
-     */
-    Set<CryptoAPI> getCryptoAPIs() {
-        return cryptoAPIS;
-    }
-
-    /**
      * @return taint propagates in the configuration.
      */
     Set<CryptoObjPropagate> getPropagates() {
@@ -100,11 +78,6 @@ public class CryptoAPIMisuseConfig {
             sb.append("\nsources:\n");
             sources.forEach(source ->
                     sb.append("  ").append(source).append("\n"));
-        }
-        if (!cryptoAPIS.isEmpty()) {
-            sb.append("\nCryptoAPIs:\n");
-            cryptoAPIS.forEach(cryptoAPI ->
-                    sb.append("  ").append(cryptoAPI).append("\n"));
         }
         if (!propagates.isEmpty()) {
             sb.append("\npropagates:\n");
@@ -133,10 +106,22 @@ public class CryptoAPIMisuseConfig {
                 throws IOException {
             ObjectCodec oc = p.getCodec();
             JsonNode node = oc.readTree(p);
-            Set<CryptoSource> sources = deserializeSources(node.get("cryptoSources"));
-            Set<CryptoAPI> CryptoAPIs = deserializeCryptoAPIs(node.get("cryptoAPIs"));
-            Set<CryptoObjPropagate> propagates = deserializePropagates(node.get("cryptoObjPropagate"));
-            return new CryptoAPIMisuseConfig(sources, CryptoAPIs, propagates);
+            Set<CryptoSource> sources =
+                    deserializeSources(node.get("cryptoSources"));
+            Set<CryptoObjPropagate> propagates =
+                    deserializePropagates(node.get("cryptoObjPropagate"));
+            Set<PatternMatchRule> patternMatchRules =
+                    deserializePatternMatchRules(node.get("patternMatchRules"));
+            Set<PredictableSourceRule> predictableSourceRules =
+                    deserializePredictableSourceRules(node.get("predictableSourceRules"));
+            Set<NumberSizeRule> numberSizeRules =
+                    deserializeNumberSizeRules(node.get("numberSizeRules"));
+            return new CryptoAPIMisuseConfig(
+                    sources,
+                    propagates,
+                    patternMatchRules,
+                    predictableSourceRules,
+                    numberSizeRules);
         }
 
         /**
@@ -157,7 +142,9 @@ public class CryptoAPIMisuseConfig {
                         // the class hierarchy, just ignore it.
                         Type type = typeSystem.getType(
                                 elem.get("type").asText());
-                        sources.add(new CryptoSource(method, type));
+                        int index = IndexUtils.toInt(
+                                elem.get("index").asText());
+                        sources.add(new CryptoSource(method, type, index));
                     } else {
                         logger.warn("Cannot find source method '{}'", methodSig);
                     }
@@ -171,14 +158,14 @@ public class CryptoAPIMisuseConfig {
 
         /**
          * Deserializes a {@link JsonNode} (assume it is an {@link ArrayNode})
-         * to a set of {@link CryptoAPI}.
+         * to a set of {@link PatternMatchRule}.
          *
          * @param node the node to be deserialized
-         * @return set of deserialized {@link CryptoAPI}
+         * @return set of deserialized {@link PatternMatchRule}
          */
-        private Set<CryptoAPI> deserializeCryptoAPIs(JsonNode node) {
+        private Set<PatternMatchRule> deserializePatternMatchRules(JsonNode node) {
             if (node instanceof ArrayNode arrayNode) {
-                Set<CryptoAPI> CryptoAPIs = Sets.newSet(arrayNode.size());
+                Set<PatternMatchRule> patternMatchRules = Sets.newSet(arrayNode.size());
                 for (JsonNode elem : arrayNode) {
                     String methodSig = elem.get("method").asText();
                     JMethod method = hierarchy.getMethod(methodSig);
@@ -186,12 +173,59 @@ public class CryptoAPIMisuseConfig {
                         // if the method (given in config file) is absent in
                         // the class hierarchy, just ignore it.
                         int index = elem.get("index").asInt();
-                        CryptoAPIs.add(new CryptoAPI(method, index));
+                        String pattern = elem.get("pattern").asText();
+                        patternMatchRules.add(new PatternMatchRule(method, index, pattern));
                     } else {
                         logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
                     }
                 }
-                return Collections.unmodifiableSet(CryptoAPIs);
+                return Collections.unmodifiableSet(patternMatchRules);
+            } else {
+                // if node is not an instance of ArrayNode, just return an empty set.
+                return Set.of();
+            }
+        }
+
+        private Set<PredictableSourceRule> deserializePredictableSourceRules(JsonNode node) {
+            if (node instanceof ArrayNode arrayNode) {
+                Set<PredictableSourceRule> predictableSourceRules = Sets.newSet(arrayNode.size());
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    JMethod method = hierarchy.getMethod(methodSig);
+                    if (method != null) {
+                        // if the method (given in config file) is absent in
+                        // the class hierarchy, just ignore it.
+                        int index = IndexUtils.toInt(elem.get("index").asText());
+                        predictableSourceRules.add(new PredictableSourceRule(method, index));
+                    } else {
+                        logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
+                    }
+                }
+                return Collections.unmodifiableSet(predictableSourceRules);
+            } else {
+                // if node is not an instance of ArrayNode, just return an empty set.
+                return Set.of();
+            }
+        }
+
+        private Set<NumberSizeRule> deserializeNumberSizeRules(JsonNode node) {
+            if (node instanceof ArrayNode arrayNode) {
+                Set<NumberSizeRule> numberSizeRules = Sets.newSet(arrayNode.size());
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    JMethod method = hierarchy.getMethod(methodSig);
+                    if (method != null) {
+                        // if the method (given in config file) is absent in
+                        // the class hierarchy, just ignore it.
+                        int min = elem.get("min").asInt();
+                        int max = elem.get("max").asInt();
+                        int index = IndexUtils.toInt(elem.get("index").asText());
+                        numberSizeRules.add(new NumberSizeRule(method, index, min, max));
+                    } else {
+                        logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
+                    }
+                }
+                return Collections.unmodifiableSet(numberSizeRules);
             } else {
                 // if node is not an instance of ArrayNode, just return an empty set.
                 return Set.of();

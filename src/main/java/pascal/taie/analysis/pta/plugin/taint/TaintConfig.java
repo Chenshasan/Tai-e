@@ -49,6 +49,7 @@ import java.util.List;
 /**
  * Configuration for taint analysis.
  */
+
 record TaintConfig(List<CallSource> callSources,
                    List<ParamSource> paramSources,
                    List<Sink> sinks,

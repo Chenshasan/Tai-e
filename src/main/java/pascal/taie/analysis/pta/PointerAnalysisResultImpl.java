@@ -137,6 +137,7 @@ public class PointerAnalysisResultImpl extends AbstractResultHolder
     }
 
     @Override
+
     public Collection<CSVar> getCSVars() {
         return csManager.getCSVars();
     }

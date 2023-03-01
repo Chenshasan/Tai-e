@@ -17,7 +17,7 @@ public class CryptoObjManager {
         this.heapModel = heapModel;
     }
 
-    Obj makeCryptoObj(Stmt source, Type type) {
+    Obj makeCryptoObj(CryptoObjInformation source, Type type) {
         return heapModel.getMockObj(CRYPTO_DESC, source, type);
     }
 
@@ -29,9 +29,9 @@ public class CryptoObjManager {
                 ((MockObj) obj).getDescription().equals(CRYPTO_DESC);
     }
 
-    Stmt getAllocation(Obj obj) {
+    Object getAllocation(Obj obj) {
         if (isCryptoObj(obj)) {
-            return (Stmt)obj.getAllocation();
+            return obj.getAllocation();
         }
         throw new AnalysisException(obj + " is not a taint object");
     }
