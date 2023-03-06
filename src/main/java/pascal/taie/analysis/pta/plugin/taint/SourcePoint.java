@@ -27,7 +27,7 @@ import pascal.taie.language.classes.JMethod;
 /**
  * Represents a program location where the taint object is generated.
  */
-interface SourcePoint extends Comparable<SourcePoint> {
+public interface SourcePoint extends Comparable<SourcePoint> {
 
     static int compare(CallSourcePoint csp, ParamSourcePoint psp) {
         JMethod rspMethod = csp.sourceCall().getContainer();
