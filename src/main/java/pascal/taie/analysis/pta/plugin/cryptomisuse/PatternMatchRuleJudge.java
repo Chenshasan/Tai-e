@@ -26,10 +26,10 @@ public class PatternMatchRuleJudge implements RuleJudge {
                 filter(manager::isCryptoObj).
                 forEach(cryptoObj -> {
                     if (cryptoObj.getAllocation() instanceof
-                            CryptoObjInformation cryptoObjInformation) {
-                        String value = (String) cryptoObjInformation.constantValue();
-                        match.set(match.get() &&
-                                (Pattern.matches(patternMatchRule.pattern(), value)));
+                            CryptoObjInformation coi) {
+                        String value = (String) coi.constantValue();
+                        match.set(match.get() && (Pattern.matches(
+                                patternMatchRule.pattern(), value)));
                     }
                 });
         System.out.println("the result of " + callSite + " is " + match.get());

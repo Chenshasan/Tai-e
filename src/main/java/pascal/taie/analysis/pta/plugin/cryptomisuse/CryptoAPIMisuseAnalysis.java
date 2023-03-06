@@ -10,13 +10,16 @@ import pascal.taie.analysis.pta.core.cs.element.*;
 import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.Plugin;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.FromSource;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.ToSource;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
 import pascal.taie.ir.stmt.AssignLiteral;
-import pascal.taie.ir.stmt.AssignStmt;
 import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.language.classes.ClassHierarchy;
@@ -37,8 +40,23 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseAnalysis.class);
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
     private final MultiMap<JMethod, CryptoSource> sources = Maps.newMultiMap();
-    private final MultiMap<Var, Pair<Var, Type>> cryptoPropagates = Maps.newMultiMap();
+    private final MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates = Maps.newMultiMap();
+
+    private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
+
+    private final Map<FromSource, CompositeRule> fromSourceToRule = Maps.newMap();
+
+    private final MultiMap<Var, CompositeRule> fromVarToRule = Maps.newMultiMap();
+    private final MultiMap<JMethod, FromSource> compositeFromSources = Maps.newMultiMap();
+
+    private final Map<ToSource, CompositeRule> toSourceToRule = Maps.newMap();
+
+    private final MultiMap<JMethod, ToSource> compositeToSources = Maps.newMultiMap();
+
+    private final MultiMap<JMethod, CryptoObjPropagate> compositePropagates = Maps.newMultiMap();
+
+    private final Set<CompositeRule> compositeRules = Sets.newSet();
 
     private final String PREDICTABLE_DESC = "PredictableSourceObj";
 
@@ -75,8 +93,19 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 ruleToJudge.put(pa, new PatternMatchRuleJudge(pa, manager)));
         config.predictableSourceRules().forEach(pr ->
                 ruleToJudge.put(pr, new PredictableSourceRuleJudge(pr, manager)));
-        config.numberSizeRules().forEach(n->
+        config.numberSizeRules().forEach(n ->
                 ruleToJudge.put(n, new NumberSizeRuleJudge(n, manager)));
+        config.compositeRules().forEach(cr -> {
+            compositeRules.add(cr);
+            fromSourceToRule.put(cr.getFromSource(), cr);
+            compositeFromSources.put(cr.getFromSource().method(), cr.getFromSource());
+            cr.getToSources().forEach(toSource -> {
+                toSourceToRule.put(toSource, cr);
+                compositeToSources.put(toSource.method(), toSource);
+            });
+            cr.getTransfers().forEach(propagates ->
+                    compositePropagates.put(propagates.method(), propagates));
+        });
     }
 
     @Override
@@ -88,12 +117,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
                     CryptoObjInformation coi =
                             new CryptoObjInformation(stmt, stringLiteral.getString());
-                    Obj cryptoObj =
-                            manager.makeCryptoObj(
-                                    coi,
-                                    typeSystem.getType("java.lang.String")
-                            );
-                    // logger.info("new Var: " + lhs.getName() + " in method " + jMethod.getName() + " with String object");
+                    Obj cryptoObj = manager.makeCryptoObj(coi,
+                            typeSystem.getType("java.lang.String"));
                     solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                             cryptoObj);
                 }
@@ -101,12 +126,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
                     CryptoObjInformation coi =
                             new CryptoObjInformation(stmt, intLiteral.getValue());
-                    Obj cryptoObj =
-                            manager.makeCryptoObj(
-                                    coi,
-                                    PrimitiveType.INT
-                            );
-                    // logger.info("new Var: " + lhs.getName() + " in method " + jMethod.getName() + " with String object");
+                    Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
                     solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                             cryptoObj);
                 }
@@ -116,12 +136,30 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     @Override
     public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
-        cryptoPropagates.get(csVar.getVar()).forEach(p -> {
+        Var var = csVar.getVar();
+        cryptoVarPropagates.get(var).forEach(p -> {
             Var to = p.first();
             Type type = p.second();
-            propagateCryptoObj(pts, csVar.getContext(), to, type);
+            propagateCryptoObj(pts, csVar.getContext(), to, type, false);
         });
-    } 
+        compositeVarPropagates.get(var).forEach(p -> {
+            Var to = p.first();
+            Type type = p.second();
+            propagateCryptoObj(pts, csVar.getContext(), to, type, true);
+        });
+        pts.objects()
+                .map(CSObj::getObject)
+                .filter(manager::isCompositeCryptoObj)
+                .map(manager::getAllocationOfRule)
+                .forEach(compositeRule -> {
+                    Map<Var, Stmt> ToVarToStmt = compositeRule.getToVarToStmt();
+                    if (ToVarToStmt.containsKey(var)) {
+                        ToSource toSource = compositeRule.getToSourceToToVar().get(var);
+                        compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
+                        System.out.println("add judge stmt: "+ToVarToStmt.get(var)+"of to var: "+ var );
+                    }
+                });
+    }
 
     @Override
     public void onNewCallEdge(Edge<CSCallSite, CSMethod> edge) {
@@ -134,23 +172,60 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 CryptoObjInformation coi =
                         new CryptoObjInformation(callSite, PREDICTABLE_DESC);
                 Type type = source.type();
-                Obj taint = manager.makeCryptoObj(coi, type);
+                Obj cryptoObj = manager.makeCryptoObj(coi, type);
                 solver.addVarPointsTo(edge.getCallSite().getContext(), var,
-                        emptyContext, taint);
+                        emptyContext, cryptoObj);
             });
         }
 
-        propagates.get(callee).forEach(transfer -> {
-            Var from = getVar(callSite, transfer.from());
-            Var to = getVar(callSite, transfer.to());
+        if (compositeFromSources.containsKey(callee)) {
+            compositeFromSources.get(callee).forEach(compositeSource -> {
+                Var var = IndexUtils.getVar(callSite, compositeSource.index());
+                CompositeRule compositeRule = fromSourceToRule.get(compositeSource).clone();
+                compositeRule.setFromVar(var);
+                fromVarToRule.put(var, compositeRule);
+                Type type = compositeSource.type();
+                Obj compositeObj = manager.makeCompositeCryptoObj(compositeRule, type);
+                solver.addVarPointsTo(edge.getCallSite().getContext(), var,
+                        emptyContext, compositeObj);
+                System.out.println("generate from var when call method: " + callee + " on stmt: " + callSite);
+            });
+        }
+
+        if (compositeToSources.containsKey(callee)) {
+            compositeToSources.get(callee).forEach(toSource -> {
+                Var var = IndexUtils.getVar(callSite, toSource.index());
+                CompositeRule compositeRule = toSourceToRule.get(toSource);
+                compositeRule.getToVarToStmt().put(var, callSite);
+                compositeRule.getToSourceToToVar().put(var, toSource);
+                compositeRule.getJudgeStmts().put(callSite, toSource);
+                System.out.println("generate to var when call method: " + callee + " on stmt: " + callSite);
+            });
+        }
+
+        propagateOnCallEdge(edge, callSite, callee, propagates,
+                cryptoVarPropagates, false);
+        propagateOnCallEdge(edge, callSite, callee, compositePropagates,
+                compositeVarPropagates, true);
+    }
+
+    private void propagateOnCallEdge(Edge<CSCallSite, CSMethod> edge,
+                                     Invoke callSite,
+                                     JMethod callee,
+                                     MultiMap<JMethod, CryptoObjPropagate> cryptoPropagates,
+                                     MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates,
+                                     boolean isComposite) {
+        cryptoPropagates.get(callee).forEach(propagate -> {
+            Var from = getVar(callSite, propagate.from());
+            Var to = getVar(callSite, propagate.to());
             // when transfer to result variable, and the call site
             // does not have result variable, then "to" is null.
             if (to != null) {
-                Type type = transfer.type();
-                cryptoPropagates.put(from, new Pair<>(to, type));
+                Type type = propagate.type();
+                cryptoVarPropagates.put(from, new Pair<>(to, type));
                 Context ctx = edge.getCallSite().getContext();
                 CSVar csFrom = csManager.getCSVar(ctx, from);
-                propagateCryptoObj(solver.getPointsToSetOf(csFrom), ctx, to, type);
+                propagateCryptoObj(solver.getPointsToSetOf(csFrom), ctx, to, type, isComposite);
             }
         });
     }
@@ -164,15 +239,26 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         };
     }
 
-    private void propagateCryptoObj(PointsToSet pts, Context ctx, Var to, Type type) {
+    private void propagateCryptoObj(PointsToSet pts, Context ctx,
+                                    Var to, Type type, boolean isComposite) {
         PointsToSet newCryptoObjs = solver.makePointsToSet();
-        pts.objects()
-                .map(CSObj::getObject)
-                .filter(manager::isCryptoObj)
-                .map(manager::getAllocation)
-                .map(source -> manager.makeCryptoObj((CryptoObjInformation) source, type))
-                .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
-                .forEach(newCryptoObjs::addObject);
+        if (isComposite) {
+            pts.objects()
+                    .map(CSObj::getObject)
+                    .filter(manager::isCompositeCryptoObj)
+                    .map(manager::getAllocationOfRule)
+                    .map(source -> manager.makeCompositeCryptoObj(source, type))
+                    .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
+                    .forEach(newCryptoObjs::addObject);
+        } else {
+            pts.objects()
+                    .map(CSObj::getObject)
+                    .filter(manager::isCryptoObj)
+                    .map(manager::getAllocationOfCOI)
+                    .map(source -> manager.makeCryptoObj(source, type))
+                    .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
+                    .forEach(newCryptoObjs::addObject);
+        }
         if (!newCryptoObjs.isEmpty()) {
             solver.addVarPointsTo(ctx, to, newCryptoObjs);
         }
@@ -182,6 +268,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     public void onFinish() {
         ClassHierarchy classHierarchy = World.get().getClassHierarchy();
         PointerAnalysisResult result = solver.getResult();
+        fromVarToRule.forEach((var, compositeRule) -> {
+            CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
+        });
         ruleToJudge.keySet().forEach(rule -> {
             result.getCallGraph().getCallersOf(rule.getMethod()).
                     forEach(
@@ -189,22 +278,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                                     get(rule).
                                     judge(result, callSite));
         });
-//        config.getCryptoAPIs().forEach(cryptoAPI -> {
-//            int i = cryptoAPI.index();
-//            result.getCallGraph()
-//                    .getCallersOf(cryptoAPI.method())
-//                    .forEach(sinkCall -> {
-//                        Var arg = sinkCall.getInvokeExp().getArg(i);
-//                        result.getPointsToSet(arg)
-//                                .stream()
-//                                .filter(manager::isCryptoObj)
-//                                .forEach(cryptoObj -> {
-//                                    System.out.println(arg + "in statement "
-//                                            + sinkCall.getInvokeExp()
-//                                            + "point to" + cryptoObj);
-//                                });
-//                    });
-//        });
+
         Set<CryptoReport> cryptoReports = cryptoRuleJudge.judgeRules();
         solver.getResult().storeResult(getClass().getName(), cryptoReports);
     }

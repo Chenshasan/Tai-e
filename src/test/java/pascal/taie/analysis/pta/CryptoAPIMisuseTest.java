@@ -31,4 +31,9 @@ public class CryptoAPIMisuseTest {
         Tests.testPTA(DIR+"/"+PREDICTABLE, "StaticSaltsBBCase1",
                 "crypto-config:src/test/resources/pta/cryptomisuse/predictablesource/crypto-config.yml");
     }
+    @Test
+    public void testCompositeRule() {
+        Tests.testPTA(DIR+"/"+ASSYM, "InsecureAsymmetricCipherBBCase1",
+                "crypto-config:src/test/resources/pta/cryptomisuse/insecureassymcrypto/crypto-config.yml");
+    }
 }

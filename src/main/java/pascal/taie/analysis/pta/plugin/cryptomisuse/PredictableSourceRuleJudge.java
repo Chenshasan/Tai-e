@@ -29,8 +29,8 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                 filter(manager::isCryptoObj).
                 forEach(cryptoObj -> {
                     if (cryptoObj.getAllocation() instanceof
-                            CryptoObjInformation cryptoObjInformation) {
-                        String desc = (String) cryptoObjInformation.constantValue();
+                            CryptoObjInformation coi) {
+                        String desc = (String) coi.constantValue();
                         if (desc.equals(PREDICTABLE_DESC)) {
                             match.set(false);
                         }

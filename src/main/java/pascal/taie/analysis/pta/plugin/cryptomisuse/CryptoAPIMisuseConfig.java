@@ -11,9 +11,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.FromSource;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.ToSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.config.ConfigException;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
@@ -30,7 +34,8 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                                     Set<CryptoObjPropagate> propagates,
                                     Set<PatternMatchRule> patternMatchRules,
                                     Set<PredictableSourceRule> predictableSourceRules,
-                                    Set<NumberSizeRule> numberSizeRules) {
+                                    Set<NumberSizeRule> numberSizeRules,
+                                    Set<CompositeRule> compositeRules) {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseConfig.class);
 
     /**
@@ -116,12 +121,15 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     deserializePredictableSourceRules(node.get("predictableSourceRules"));
             Set<NumberSizeRule> numberSizeRules =
                     deserializeNumberSizeRules(node.get("numberSizeRules"));
+            Set<CompositeRule> compositeRules =
+                    deserializeCompositeRules(node.get("compositeRules"));
             return new CryptoAPIMisuseConfig(
                     sources,
                     propagates,
                     patternMatchRules,
                     predictableSourceRules,
-                    numberSizeRules);
+                    numberSizeRules,
+                    compositeRules);
         }
 
         /**
@@ -262,6 +270,77 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                 // if node is not an instance of ArrayNode, just return an empty set.
                 return Set.of();
             }
+        }
+
+        private Set<CompositeRule> deserializeCompositeRules(JsonNode node) {
+
+            if (node instanceof ArrayNode arrayNode) {
+                Set<CompositeRule> compositeRules = Sets.newSet(arrayNode.size());
+                for (JsonNode compositeNode : node) {
+                    compositeNode=compositeNode.get("compositeRule");
+                    FromSource fromSource =
+                            deserializeFromSource(compositeNode.get("fromSource"));
+                    Set<ToSource> toSources =
+                            deserializeToSources(compositeNode.get("toSources"));
+                    Set<CryptoObjPropagate> propagates =
+                            deserializePropagates(compositeNode.get("propagates"));
+                    compositeRules.add(new CompositeRule(fromSource, toSources, propagates));
+                }
+                return compositeRules;
+            }
+            return Set.of();
+        }
+
+        private FromSource deserializeFromSource(JsonNode node) {
+            String fromMethodSig = node.get("method").asText();
+            JMethod fromMethod = hierarchy.getMethod(fromMethodSig);
+            if (fromMethod != null) {
+                int fromIndex = IndexUtils.toInt(node.get("index").asText());
+                Type type = typeSystem.getType(
+                        node.get("type").asText());
+                System.out.println("add from source of method: " + fromMethodSig + "with source obj type of" + type);
+                return new FromSource(fromMethod, fromIndex, type);
+            } else {
+                logger.warn("Cannot find from-source method '{}'", fromMethodSig);
+                return null;
+            }
+        }
+
+        private Set<ToSource> deserializeToSources(JsonNode node) {
+            Set<ToSource> toSources = Set.of();
+            if (node instanceof ArrayNode arrayNode) {
+                toSources = Sets.newSet(arrayNode.size());
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    JMethod method = hierarchy.getMethod(methodSig);
+                    int toIndex = IndexUtils.toInt(elem.get("index").asText());
+                    if (method == null) {
+                        logger.warn("Cannot find to source method '{}'", methodSig);
+                    }
+                    String ruleType = elem.get("ruleType").asText();
+                    int index = elem.get("ruleIndex").asInt();
+                    Rule rule = null;
+                    switch (ruleType) {
+                        case "PatternMatch":
+                            String pattern = elem.get("pattern").asText();
+                            rule = new PatternMatchRule(method, index, pattern);
+                            break;
+                        case "NumberSize":
+                            int min = elem.get("min").asInt();
+                            int max = elem.get("max").asInt();
+                            rule = new NumberSizeRule(method, index, min, max);
+                            break;
+                        case "PredictableSource":
+                            rule = new PredictableSourceRule(method, index);
+                            break;
+                        default:
+                            logger.warn("Cannot find the legal rule type");
+                    }
+                    System.out.println("add to source of method: " + methodSig + "with rule type of " + ruleType);
+                    toSources.add(new ToSource(method, toIndex, rule));
+                }
+            }
+            return toSources;
         }
     }
 }

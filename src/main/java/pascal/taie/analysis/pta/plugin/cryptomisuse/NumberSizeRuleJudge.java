@@ -26,9 +26,10 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 filter(manager::isCryptoObj).
                 forEach(cryptoObj -> {
                     if (cryptoObj.getAllocation() instanceof
-                            CryptoObjInformation cryptoObjInformation) {
-                        int value = (int) cryptoObjInformation.constantValue();
-                        if (value > numberSizeRule.max() || value < numberSizeRule.min()) {
+                            CryptoObjInformation coi) {
+                        int value = (int) coi.constantValue();
+                        if (value > numberSizeRule.max() ||
+                                value < numberSizeRule.min()) {
                             match.set(false);
                         }
                     }
