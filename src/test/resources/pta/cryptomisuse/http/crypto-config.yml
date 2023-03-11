@@ -1,0 +1,20 @@
+patternMatchRules:
+  - { method: "<java.net.URL: void <init>(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<java.net.URL: void <init>(java.lang.String,java.lang.String,java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<java.net.URL: void <init>(java.lang.String,java.lang.String,int,java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<okhttp3.Request$Builder: okhttp3.Request$Builder url(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<retrofit2.Retrofit$Builder: retrofit2.Retrofit$Builder baseUrl(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+
+cryptoObjPropagate:
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
+  - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.Object: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }

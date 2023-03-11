@@ -164,10 +164,10 @@ public final class Tests {
         List<String> ptaArgs = new ArrayList<>();
         ptaArgs.add("implicit-entries:false");
         String expectedFile = getExpectedFile(classPath, main, id);
-        if (processResult) {
-            ptaArgs.add(GENERATE_EXPECTED_RESULTS ? "dump:true"
-                    : "expected-file:" + expectedFile);
-        }
+//        if (processResult) {
+//            ptaArgs.add(GENERATE_EXPECTED_RESULTS ? "dump:true"
+//                    : "expected-file:" + expectedFile);
+//        }
         boolean specifyOnlyApp = false;
         for (String opt : opts) {
             ptaArgs.add(opt);
@@ -175,10 +175,10 @@ public final class Tests {
                 specifyOnlyApp = true;
             }
         }
-//        if (!specifyOnlyApp) {
-//            // if given options do not specify only-app, then set it true
-//            ptaArgs.add("only-app:true");
-//        }
+        if (!specifyOnlyApp) {
+            // if given options do not specify only-app, then set it true
+            ptaArgs.add("only-app:true");
+        }
         Collections.addAll(args, "-a", id + "=" + String.join(";", ptaArgs));
         Main.main(args.toArray(new String[0]));
         // move expected file

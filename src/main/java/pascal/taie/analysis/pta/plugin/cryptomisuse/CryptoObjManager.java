@@ -1,5 +1,6 @@
 package pascal.taie.analysis.pta.plugin.cryptomisuse;
 
+import pascal.taie.analysis.pta.core.heap.Descriptor;
 import pascal.taie.analysis.pta.core.heap.HeapModel;
 import pascal.taie.analysis.pta.core.heap.MockObj;
 import pascal.taie.analysis.pta.core.heap.Obj;
@@ -8,9 +9,9 @@ import pascal.taie.language.type.Type;
 import pascal.taie.util.AnalysisException;
 
 public class CryptoObjManager {
-    private static final String CRYPTO_DESC = "CryptoObj";
+    private static final Descriptor CRYPTO_DESC = () -> "CryptoObj";
 
-    private static final String COMPOSITE_CRYPTO_DESC = "CompositeCryptoObj";
+    private static final Descriptor COMPOSITE_CRYPTO_DESC = () -> "CompositeCryptoObj";
 
     private final HeapModel heapModel;
 
@@ -22,7 +23,7 @@ public class CryptoObjManager {
         return heapModel.getMockObj(CRYPTO_DESC, source, type);
     }
 
-    Obj makeCompositeCryptoObj(CompositeRule compositeRule,Type type){
+    Obj makeCompositeCryptoObj(CompositeRule compositeRule, Type type) {
         return heapModel.getMockObj(COMPOSITE_CRYPTO_DESC, compositeRule, type);
     }
 
@@ -31,29 +32,29 @@ public class CryptoObjManager {
      */
     boolean isCryptoObj(Obj obj) {
         return obj instanceof MockObj &&
-                ((MockObj) obj).getDescription().equals(CRYPTO_DESC);
+                ((MockObj) obj).getDescriptor().equals(CRYPTO_DESC);
     }
 
-    boolean isCompositeCryptoObj(Obj obj){
+    boolean isCompositeCryptoObj(Obj obj) {
         return obj instanceof MockObj &&
-                ((MockObj) obj).getDescription().equals(COMPOSITE_CRYPTO_DESC);
+                ((MockObj) obj).getDescriptor().equals(COMPOSITE_CRYPTO_DESC);
     }
 
-    boolean isCryptoInvolvedObj(Obj obj){
+    boolean isCryptoInvolvedObj(Obj obj) {
         return isCryptoObj(obj) || isCompositeCryptoObj(obj);
     }
 
 
     CryptoObjInformation getAllocationOfCOI(Obj obj) {
         if (isCryptoObj(obj)) {
-            return (CryptoObjInformation)obj.getAllocation();
+            return (CryptoObjInformation) obj.getAllocation();
         }
         throw new AnalysisException(obj + " is not a crypto object");
     }
 
-    CompositeRule getAllocationOfRule(Obj obj){
+    CompositeRule getAllocationOfRule(Obj obj) {
         if (isCompositeCryptoObj(obj)) {
-            return (CompositeRule)obj.getAllocation();
+            return (CompositeRule) obj.getAllocation();
         }
         throw new AnalysisException(obj + " is not a composite crypto object");
     }

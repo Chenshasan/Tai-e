@@ -1,0 +1,17 @@
+patternMatchRules:
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+
+cryptoObjPropagate:
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
+  - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }

@@ -31,8 +31,7 @@ public class CompositeRuleJudge implements RuleJudge {
             } else if (toSource.rule() instanceof PredictableSourceRule ps) {
                 ruleJudge = new PredictableSourceRuleJudge(ps, manager);
             } else {
-                System.out.println("composite rule of var:" +
-                        compositeRule.getFromVar() + "is not appropriate");
+                //System.out.println("composite rule of var:" +compositeRule.getFromVar() + "is not appropriate");
             }
             assert ruleJudge != null;
             RuleJudgeList.put(stmt, ruleJudge);

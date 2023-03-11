@@ -147,6 +147,10 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             Type type = p.second();
             propagateCryptoObj(pts, csVar.getContext(), to, type, true);
         });
+        addJudgeStmtFromPts(var, pts);
+    }
+
+    private void addJudgeStmtFromPts(Var var, PointsToSet pts) {
         pts.objects()
                 .map(CSObj::getObject)
                 .filter(manager::isCompositeCryptoObj)
@@ -156,7 +160,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     if (ToVarToStmt.containsKey(var)) {
                         ToSource toSource = compositeRule.getToSourceToToVar().get(var);
                         compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
-                        System.out.println("add judge stmt: "+ToVarToStmt.get(var)+"of to var: "+ var );
+                        System.out.println("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
                     }
                 });
     }
@@ -200,6 +204,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 compositeRule.getToSourceToToVar().put(var, toSource);
                 compositeRule.getJudgeStmts().put(callSite, toSource);
                 System.out.println("generate to var when call method: " + callee + " on stmt: " + callSite);
+                Context ctx = edge.getCallSite().getContext();
+                CSVar csVar = csManager.getCSVar(ctx, var);
+                addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar));
             });
         }
 
@@ -270,6 +277,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         PointerAnalysisResult result = solver.getResult();
         fromVarToRule.forEach((var, compositeRule) -> {
             CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
+            compositeRule.getToVarToStmt().forEach((toVar, stmt) -> {
+                judge.judge(result, (Invoke) stmt);
+            });
         });
         ruleToJudge.keySet().forEach(rule -> {
             result.getCallGraph().getCallersOf(rule.getMethod()).

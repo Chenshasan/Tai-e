@@ -5,6 +5,6 @@ compositeRules:
         index: result
         type: "java.security.KeyPairGenerator"
       toSources:
-        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: base, ruleType: "PatternMatch", ruleIndex: 0, pattern: "RSA" }
+        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "RSA" }
         - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 1024, max: 2048 }
 

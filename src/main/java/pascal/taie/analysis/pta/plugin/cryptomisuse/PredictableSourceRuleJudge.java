@@ -30,10 +30,8 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                 forEach(cryptoObj -> {
                     if (cryptoObj.getAllocation() instanceof
                             CryptoObjInformation coi) {
-                        String desc = (String) coi.constantValue();
-                        if (desc.equals(PREDICTABLE_DESC)) {
-                            match.set(false);
-                        }
+                        //String desc = (String) coi.constantValue();
+                        match.set(false);
                     }
                 });
         System.out.println("-----------------------predictable source result is " + match);
