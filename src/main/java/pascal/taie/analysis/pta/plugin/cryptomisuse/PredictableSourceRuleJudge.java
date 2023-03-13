@@ -1,5 +1,7 @@
 package pascal.taie.analysis.pta.plugin.cryptomisuse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
 import pascal.taie.ir.exp.Var;
@@ -14,6 +16,8 @@ public class PredictableSourceRuleJudge implements RuleJudge {
     PredictableSourceRule predictableSourceRule;
 
     CryptoObjManager manager;
+
+    Logger logger = LogManager.getLogger(PredictableSourceRuleJudge.class);
 
     PredictableSourceRuleJudge(PredictableSourceRule predictableSourceRule,
                                CryptoObjManager manager) {
@@ -31,10 +35,16 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                     if (cryptoObj.getAllocation() instanceof
                             CryptoObjInformation coi) {
                         //String desc = (String) coi.constantValue();
+                        if (match.get()) {
+                            logger.info("the result of " + callSite
+                                    + " of var: " + var
+                                    + " is false"
+                                    + " with crypto obj in"
+                                    + ((CryptoObjInformation) cryptoObj.getAllocation()).allocation());
+                        }
                         match.set(false);
                     }
                 });
-        System.out.println("-----------------------predictable source result is " + match);
         return match.get();
     }
 }

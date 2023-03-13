@@ -14,6 +14,10 @@ public class EcbInSymmCryptoABSCase1 {
         crypto = new CryptoECB1(cryptoAlgo);
         crypto.method1("");
     }
+
+    public static void main(String args[]) throws Exception{
+        EcbInSymmCryptoABSCase1 absCase1=new EcbInSymmCryptoABSCase1();
+    }
 }
 
 class CryptoECB1 {

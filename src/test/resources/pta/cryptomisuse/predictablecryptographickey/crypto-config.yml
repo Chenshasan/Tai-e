@@ -1,0 +1,2 @@
+predictableSourceRules:
+  - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }

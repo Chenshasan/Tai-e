@@ -17,9 +17,15 @@ public class CryptoAPIMisuseTest {
 
     static final String MAC = "brokenmac";
 
+    static final String ECBCRYPTO = "ecbcrypto";
+
     static final String HTTP = "http";
 
     static final String PATTERN = "patternmatcher";
+
+    static final String SALT = "staticsalts";
+
+    static final String GRAPHIC = "predictablecryptographickey";
 
 
     static final String OTHER = "other";
@@ -72,7 +78,17 @@ public class CryptoAPIMisuseTest {
         testDirectory(HTTP);
     }
 
-    private void testDirectory(String dirName){
+    @Test
+    public void testSalt() {
+        testDirectory(SALT);
+    }
+
+    @Test
+    public void testEcbCrypto() {
+        testDirectory(ECBCRYPTO);
+    }
+
+    private void testDirectory(String dirName) {
         File file = new File("src/test/resources/pta/cryptomisuse/" + dirName);
         if (file.isDirectory()) {
             Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(file1 -> {
@@ -87,5 +103,17 @@ public class CryptoAPIMisuseTest {
                 }
             });
         }
+    }
+
+    @Test
+    public void testPredictableCharArray() {
+        Tests.testPTA(DIR + "/" + SALT, "StaticSaltsABICase2",
+                "propagate-types:[reference,int,byte,char];" + "crypto-config:src/test/resources/pta/cryptomisuse/" + SALT + "/crypto-config.yml");
+    }
+
+    @Test
+    public void testPredictableCryptographicKey() {
+        Tests.testPTA(DIR + "/" + GRAPHIC, "PredictableCryptographicKeyABICase2",
+                "crypto-config:src/test/resources/pta/cryptomisuse/" + GRAPHIC + "/crypto-config.yml");
     }
 }

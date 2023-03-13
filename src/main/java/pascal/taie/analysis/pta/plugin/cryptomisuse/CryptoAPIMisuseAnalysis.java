@@ -19,9 +19,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
-import pascal.taie.ir.stmt.AssignLiteral;
-import pascal.taie.ir.stmt.Invoke;
-import pascal.taie.ir.stmt.Stmt;
+import pascal.taie.ir.stmt.*;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.PrimitiveType;
@@ -55,6 +53,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private final MultiMap<JMethod, ToSource> compositeToSources = Maps.newMultiMap();
 
     private final MultiMap<JMethod, CryptoObjPropagate> compositePropagates = Maps.newMultiMap();
+
+    private final MultiMap<Var, Var> elementToBase = Maps.newMultiMap();
 
     private final Set<CompositeRule> compositeRules = Sets.newSet();
 
@@ -111,14 +111,14 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     @Override
     public void onNewCSMethod(CSMethod csMethod) {
         JMethod jMethod = csMethod.getMethod();
+        Context ctx = csMethod.getContext();
         jMethod.getIR().getStmts().forEach(stmt -> {
             if (stmt instanceof AssignLiteral assignStmt) {
                 Var lhs = assignStmt.getLValue();
                 if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
                     CryptoObjInformation coi =
                             new CryptoObjInformation(stmt, stringLiteral.getString());
-                    Obj cryptoObj = manager.makeCryptoObj(coi,
-                            typeSystem.getType("java.lang.String"));
+                    Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
                     solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                             cryptoObj);
                 }
@@ -129,6 +129,19 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
                     solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                             cryptoObj);
+                }
+            }
+
+            if (stmt instanceof StoreArray storeArray) {
+                Var base = storeArray.getLValue().getBase();
+                Var rhs = storeArray.getRValue();
+                elementToBase.put(rhs, base);
+                if (rhs.isConst()) {
+                    CryptoObjInformation coi =
+                            new CryptoObjInformation(stmt, PREDICTABLE_DESC);
+                    Obj cryptoObj = manager.makeCryptoObj(coi, base.getType());
+                    solver.addVarPointsTo(ctx, base, emptyContext, cryptoObj);
+                    System.out.println("the store array stmt " + storeArray + "is unsafe with type " + base.getType());
                 }
             }
         });
@@ -142,27 +155,23 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             Type type = p.second();
             propagateCryptoObj(pts, csVar.getContext(), to, type, false);
         });
+
         compositeVarPropagates.get(var).forEach(p -> {
             Var to = p.first();
             Type type = p.second();
             propagateCryptoObj(pts, csVar.getContext(), to, type, true);
         });
-        addJudgeStmtFromPts(var, pts);
-    }
 
-    private void addJudgeStmtFromPts(Var var, PointsToSet pts) {
-        pts.objects()
-                .map(CSObj::getObject)
-                .filter(manager::isCompositeCryptoObj)
-                .map(manager::getAllocationOfRule)
-                .forEach(compositeRule -> {
-                    Map<Var, Stmt> ToVarToStmt = compositeRule.getToVarToStmt();
-                    if (ToVarToStmt.containsKey(var)) {
-                        ToSource toSource = compositeRule.getToSourceToToVar().get(var);
-                        compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
-                        System.out.println("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
-                    }
-                });
+        elementToBase.get(var).forEach(base -> {
+            pts.objects()
+                    .map(CSObj::getObject)
+                    .filter(manager::isCryptoObj)
+                    .map(manager::getAllocationOfCOI)
+                    .map(source -> manager.makeCryptoObj(source, base.getType()))
+                    .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
+                    .forEach(csObj -> solver.addVarPointsTo(csVar.getContext(), base, csObj));
+        });
+        addJudgeStmtFromPts(var, pts);
     }
 
     @Override
@@ -216,6 +225,20 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 compositeVarPropagates, true);
     }
 
+    private void addJudgeStmtFromPts(Var var, PointsToSet pts) {
+        pts.objects()
+                .map(CSObj::getObject)
+                .filter(manager::isCompositeCryptoObj)
+                .map(manager::getAllocationOfRule)
+                .forEach(compositeRule -> {
+                    Map<Var, Stmt> ToVarToStmt = compositeRule.getToVarToStmt();
+                    if (ToVarToStmt.containsKey(var)) {
+                        ToSource toSource = compositeRule.getToSourceToToVar().get(var);
+                        compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
+                        System.out.println("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
+                    }
+                });
+    }
     private void propagateOnCallEdge(Edge<CSCallSite, CSMethod> edge,
                                      Invoke callSite,
                                      JMethod callee,
@@ -275,12 +298,14 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     public void onFinish() {
         ClassHierarchy classHierarchy = World.get().getClassHierarchy();
         PointerAnalysisResult result = solver.getResult();
+
         fromVarToRule.forEach((var, compositeRule) -> {
             CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
             compositeRule.getToVarToStmt().forEach((toVar, stmt) -> {
                 judge.judge(result, (Invoke) stmt);
             });
         });
+
         ruleToJudge.keySet().forEach(rule -> {
             result.getCallGraph().getCallersOf(rule.getMethod()).
                     forEach(
