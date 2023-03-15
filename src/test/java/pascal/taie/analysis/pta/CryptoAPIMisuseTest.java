@@ -36,69 +36,88 @@ public class CryptoAPIMisuseTest {
 
     @Test
     public void testPatternMatcher() {
-        Tests.testPTA(DIR + "/" + PATTERN, "BrokenCryptoBBCase1",
+        Tests.testPTA(DIR + "/" + PATTERN,
+                "BrokenCryptoBBCase1",
                 "crypto-config:src/test/resources/pta/cryptomisuse/patternmatcher/crypto-config.yml");
     }
 
     @Test
     public void testPredictableSource() {
-        Tests.testPTA(DIR + "/" + OTHER, "ImproperSocketManualHostBBCase1",
+        Tests.testPTA(DIR + "/" + OTHER,
+                "ImproperSocketManualHostBBCase1",
                 "crypto-config:src/test/resources/pta/cryptomisuse/other/crypto-config.yml");
     }
 
     @Test
     public void testNumberSize() {
-        Tests.testPTA(DIR + "/" + PREDICTABLE, "StaticSaltsBBCase1",
+        Tests.testPTA(DIR + "/" + PREDICTABLE,
+                "StaticSaltsBBCase1",
                 "crypto-config:src/test/resources/pta/cryptomisuse/predictablesource/crypto-config.yml");
     }
 
     @Test
     public void testCompositeRule() {
-        Tests.testPTA(DIR + "/" + ASSYM, "InsecureAsymmetricCipherBBCase1",
-                "propagate-types:[reference,int];" + "crypto-config:src/test/resources/pta/cryptomisuse/insecureassymcrypto/crypto-config.yml");
+        Tests.testPTA(DIR + "/" + ASSYM,
+                "InsecureAsymmetricCipherBBCase1",
+                "propagate-types:[reference,int];"
+                        + "crypto-config:src/test/resources/pta/cryptomisuse/insecureassymcrypto/crypto-config.yml");
     }
 
     @Test
     public void testBrokenCrypto() {
-        testDirectory(CRYPTO);
+        testDirectory(CRYPTO, false);
     }
 
     @Test
     public void testBrokenHash() {
-        testDirectory(HASH);
+        testDirectory(HASH, false);
     }
 
     @Test
     public void testBrokenMac() {
-        testDirectory(MAC);
+        testDirectory(MAC, false);
     }
 
     @Test
     public void testBrokenHttp() {
-        testDirectory(HTTP);
+        testDirectory(HTTP, false);
     }
 
     @Test
     public void testSalt() {
-        testDirectory(SALT);
+        testDirectory(SALT, true);
     }
 
     @Test
     public void testEcbCrypto() {
-        testDirectory(ECBCRYPTO);
+        testDirectory(ECBCRYPTO, false);
     }
 
-    private void testDirectory(String dirName) {
+    @Test
+    public void testGraphicKey() {
+        testDirectory(GRAPHIC, true);
+    }
+
+    private void testDirectory(String dirName, boolean withConst) {
         File file = new File("src/test/resources/pta/cryptomisuse/" + dirName);
         if (file.isDirectory()) {
             Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(file1 -> {
                 if (file1.getName().contains(".java")) {
-                    String name = file1.getName().substring(file1.getName().lastIndexOf("/") + 1);
+                    String name = file1.getName().substring(
+                            file1.getName().lastIndexOf("/") + 1);
                     name = name.substring(0, name.lastIndexOf("."));
                     System.out.println(name);
                     if (!name.contains("ABMC") || name.contains("ABMCCase")) {
-                        Tests.testPTA(DIR + "/" + dirName, name,
-                                "crypto-config:src/test/resources/pta/cryptomisuse/" + dirName + "/crypto-config.yml");
+                        if (withConst) {
+                            Tests.testPTA(DIR + "/" + dirName, name,
+                                    "propagate-types:[reference,int,byte,char];"
+                                            + "crypto-config:src/test/resources/pta/cryptomisuse/"
+                                            + dirName + "/crypto-config.yml");
+                        } else {
+                            Tests.testPTA(DIR + "/" + dirName, name,
+                                    "crypto-config:src/test/resources/pta/cryptomisuse/"
+                                            + dirName + "/crypto-config.yml");
+                        }
                     }
                 }
             });
@@ -108,12 +127,15 @@ public class CryptoAPIMisuseTest {
     @Test
     public void testPredictableCharArray() {
         Tests.testPTA(DIR + "/" + SALT, "StaticSaltsABICase2",
-                "propagate-types:[reference,int,byte,char];" + "crypto-config:src/test/resources/pta/cryptomisuse/" + SALT + "/crypto-config.yml");
+                "propagate-types:[reference,int,byte,char];"
+                        + "crypto-config:src/test/resources/pta/cryptomisuse/"
+                        + SALT + "/crypto-config.yml");
     }
 
     @Test
     public void testPredictableCryptographicKey() {
-        Tests.testPTA(DIR + "/" + GRAPHIC, "PredictableCryptographicKeyABICase2",
-                "crypto-config:src/test/resources/pta/cryptomisuse/" + GRAPHIC + "/crypto-config.yml");
+        Tests.testPTA(DIR + "/" + GRAPHIC, "PredictableCryptographicKeyBBCase1",
+                "crypto-config:src/test/resources/pta/cryptomisuse/"
+                        + GRAPHIC + "/crypto-config.yml");
     }
 }

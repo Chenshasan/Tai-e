@@ -1,4 +1,3 @@
-
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
