@@ -1,0 +1,11 @@
+cryptoSources:
+  - { method: "<java.util.Random: java.util.stream.IntStream ints()>", type: "java.util.stream.IntStream", index: result }
+
+predictableSourceRules:
+  - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
+
+cryptoObjPropagate:
+  - { method: "<java.util.Arrays: byte[] copyOf(byte[],int)>", from: 0, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: byte[] getBytes(java.lang.String)>", from: base, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: java.lang.String valueOf(java.lang.Object)>", from: 0, to: result, type: "java.lang.String" }

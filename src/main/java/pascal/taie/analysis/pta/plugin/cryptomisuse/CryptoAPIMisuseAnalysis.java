@@ -43,7 +43,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
 
-    private final Map<FromSource, CompositeRule> fromSourceToRule = Maps.newMap();
+    private final MultiMap<FromSource, CompositeRule> fromSourceToRule = Maps.newMultiMap();
 
     private final MultiMap<Var, CompositeRule> fromVarToRule = Maps.newMultiMap();
     private final MultiMap<JMethod, FromSource> compositeFromSources = Maps.newMultiMap();
@@ -194,13 +194,15 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         if (compositeFromSources.containsKey(callee)) {
             compositeFromSources.get(callee).forEach(compositeSource -> {
                 Var var = IndexUtils.getVar(callSite, compositeSource.index());
-                CompositeRule compositeRule = fromSourceToRule.get(compositeSource).clone();
-                compositeRule.setFromVar(var);
-                fromVarToRule.put(var, compositeRule);
-                Type type = compositeSource.type();
-                Obj compositeObj = manager.makeCompositeCryptoObj(compositeRule, type);
-                solver.addVarPointsTo(edge.getCallSite().getContext(), var,
-                        emptyContext, compositeObj);
+                fromSourceToRule.get(compositeSource).forEach(compositeRule -> {
+                    CompositeRule cloneCompositeRule = compositeRule.clone();
+                    cloneCompositeRule.setFromVar(var);
+                    fromVarToRule.put(var, cloneCompositeRule);
+                    Type type = compositeSource.type();
+                    Obj compositeObj = manager.makeCompositeCryptoObj(cloneCompositeRule, type);
+                    solver.addVarPointsTo(edge.getCallSite().getContext(), var,
+                            emptyContext, compositeObj);
+                });
                 System.out.println("generate from var when call method: " + callee + " on stmt: " + callSite);
             });
         }
@@ -239,6 +241,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     }
                 });
     }
+
     private void propagateOnCallEdge(Edge<CSCallSite, CSMethod> edge,
                                      Invoke callSite,
                                      JMethod callee,

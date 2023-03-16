@@ -3,3 +3,4 @@ predictableSourceRules:
 
 cryptoObjPropagate:
   - { method: "<java.util.Arrays: byte[] copyOf(byte[],int)>", from: 0, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }

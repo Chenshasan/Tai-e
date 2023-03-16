@@ -1,0 +1,12 @@
+cryptoSources:
+
+numberSizeRules:
+  - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 1, min: 1000, max: 5000 }
+
+cryptoObjPropagate:
+  - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
+  - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
+  - { method: "<java.lang.Integer: int parseInt(java.lang.String)>", from: 0, to: result, type: "int" }
+  - { method: "<java.lang.Object: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }

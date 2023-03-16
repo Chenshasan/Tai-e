@@ -7,30 +7,31 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
-public class PredictableCryptographicKeyABSCase1 {
+public class CredentialInStringABSCase1 {
     Crypto crypto;
 
-    public PredictableCryptographicKeyABSCase1() throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
-        String passKey = PredictableCryptographicKeyABSCase1.getKey("pass.key");
+    public CredentialInStringABSCase1() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        String passKey = CredentialInStringABSCase1.getKey("pass.key");
 
         if (passKey == null) {
-            byte defaultKey[] = {20, 10, 30, 5, 5, 6, 8, 7};
+            SecureRandom random = new SecureRandom();
+            String defaultKey = String.valueOf(random.ints());
             crypto = new Crypto(defaultKey);
-        } else {
-            crypto = new Crypto(passKey.getBytes("UTF-8"));
         }
+        crypto = new Crypto(passKey);
     }
 
     public static void main(String args[]) throws Exception {
-        PredictableCryptographicKeyABSCase1 absCase1 = new PredictableCryptographicKeyABSCase1();
-        absCase1.encryptPass("test","pass.key");
+        CredentialInStringABSCase1 absCase1 = new CredentialInStringABSCase1();
+        absCase1.encryptPass("test", "pass.key");
     }
 
     byte[] encryptPass(String pass, String src) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
-        String keyStr = PredictableCryptographicKeyABSCase1.getKey(src);
-        return crypto.method1(pass, keyStr.getBytes("UTF-8"));
+        String keyStr = CredentialInStringABSCase1.getKey(src);
+        return crypto.method1(pass, keyStr);
     }
 
     public static String getKey(String s) {
@@ -42,18 +43,18 @@ class Crypto {
     Cipher cipher;
     String algoSpec = "AES/CBC/PKCS5Padding";
     String algo = "AES";
-    byte[] defaultKey;
+    String defaultKey;
 
-    public Crypto(byte[] defkey) throws NoSuchPaddingException, NoSuchAlgorithmException {
+    public Crypto(String defkey) throws NoSuchPaddingException, NoSuchAlgorithmException {
         cipher = Cipher.getInstance(algoSpec);
         defaultKey = defkey;
     }
 
-    public byte[] method1(String txt, byte[] key) throws UnsupportedEncodingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        if (key == null) {
+    public byte[] method1(String txt, String key) throws UnsupportedEncodingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        if (key.isEmpty()) {
             key = defaultKey;
         }
-        byte[] keyBytes = key;
+        byte[] keyBytes = key.getBytes("UTF-8");
         byte[] txtBytes = txt.getBytes();
         keyBytes = Arrays.copyOf(keyBytes, 16);
 

@@ -1,5 +1,5 @@
 cryptoSources:
-  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result}
+  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result }
 
 predictableSourceRules:
   - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }

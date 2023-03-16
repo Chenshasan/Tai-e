@@ -27,7 +27,9 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 forEach(cryptoObj -> {
                     if (cryptoObj.getAllocation() instanceof
                             CryptoObjInformation coi) {
-                        int value = (int) coi.constantValue();
+                        int value = coi.constantValue() instanceof String ?
+                                Integer.parseInt((String) coi.constantValue())
+                                : (int) coi.constantValue();
                         if (value > numberSizeRule.max() ||
                                 value < numberSizeRule.min()) {
                             match.set(false);
