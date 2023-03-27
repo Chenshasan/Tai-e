@@ -1,14 +1,11 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule;
 
 import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoObjPropagate;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
-import pascal.taie.util.collection.Sets;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

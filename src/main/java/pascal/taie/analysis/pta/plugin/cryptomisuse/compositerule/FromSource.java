@@ -1,4 +1,4 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule;
 
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.Type;

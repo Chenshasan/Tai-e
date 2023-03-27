@@ -339,7 +339,7 @@ public final class Tests {
             throw new RuntimeException(e);
         }
 
-        var tuple = initializeSpringBootArchives1(microserviceArchives);
+        var tuple = initializeSpringBootArchivesOfCrypto(microserviceArchives);
         // iterator tuples indexly
         List<String> appClasses = DirectoryTraverser.listClasses(tuple.first());
         new MicroserviceHolder(microserviceArchives.get(0), tuple.first(), tuple.third(), appClasses);
@@ -419,6 +419,112 @@ public final class Tests {
         MicroserviceHolder.reportAllStatistics();
     }
 
+    public static void testPTAInLibraryProgramOfCrypto(Benchmark benchmark, boolean withDependency) {
+        if (!Path.of(benchmark.dir).toFile().isDirectory()) {
+            logger.error("Directory not exists: {}", benchmark.dir);
+            return;
+        }
+
+        List<String> microserviceArchives1;
+        List<String> microserviceArchives2;
+        List<String> microserviceArchives = new ArrayList<>();
+        try {
+            microserviceArchives1 = Files.list(Path.of(benchmark.dir))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
+            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
+            microserviceArchives.addAll(microserviceArchives1);
+            microserviceArchives.addAll(microserviceArchives2);
+            logger.info("{} Microservices detected: {}", microserviceArchives.size(), microserviceArchives);
+        } catch (IOException e) {
+            logger.error("", e);
+            throw new RuntimeException(e);
+        }
+
+        var tuple = initializeSpringBootArchivesOfCrypto(microserviceArchives);
+        // iterator tuples indexly
+        List<String> dependencyPaths = new ArrayList<>();
+
+        // de-duplication the dependency jar and add it into dependencyPaths
+        List<Tuple<String, List<String>, List<String>>> tuples = new ArrayList<>();
+        tuples.add(tuple);
+        tuples.stream()
+                .map(Tuple::third)
+                .flatMap(Collection::stream)
+                .map(File::new)
+                .collect(Collectors.toMap(File::getName, Function.identity(), (o1, o2) -> o1))
+                .values()
+                .stream()
+                .map(File::getAbsolutePath)
+                // fix Soot issue:
+                // Trying to create interface invoke expression for non-interface type: org.bouncycastle.asn1.ASN1Encodable
+                .filter(o -> !o.contains("bcprov-jdk"))
+                // fix Soot issue:
+                // This operation requires resolving level HIERARCHY but net.sf.cglib.proxy.MethodInterceptor is at resolving level DANGLING
+                // If you are extending Soot, try to add the following call before calling soot.Main.main(..):
+                // Scene.v().addBasicClass(net.sf.cglib.proxy.MethodInterceptor,HIERARCHY);
+                .filter(o -> !o.contains("seata-all"))
+                //// fix Soot issue:
+                //// Failed to apply jb to <org.elasticsearch.search.aggregations.metrics.AbstractHyperLogLog: void <clinit>()>
+                //.filter(o -> !o.contains("elasticsearch-7.10.1.jar"))
+                .forEach(dependencyPaths::add);
+
+        Collection<String> appPathsInDependency = AppClassInferringUtils.inferAppJarPaths(
+                tuples.stream().map(Tuple::second).flatMap(Collection::stream).toList(),
+                dependencyPaths);
+        dependencyPaths.removeAll(appPathsInDependency);
+
+        String appClassPath = Stream.concat(tuples.stream().map(Tuple::first), appPathsInDependency.stream())
+                .collect(Collectors.joining(File.pathSeparator));
+
+        boolean onlyApp = false;
+        String cs = "ci";
+
+        List<String> args = new ArrayList<>();
+        Collections.addAll(args, "-java", "8");
+        Collections.addAll(args, "-ap");
+        Collections.addAll(args, "--pre-build-ir");
+        Collections.addAll(args, "--output-dir", "output/" + benchmark.name);
+        if (withDependency) {
+            Collections.addAll(args, "-cp", String.join(File.pathSeparator, dependencyPaths));
+        }
+        Collections.addAll(args, "-acp", appClassPath);
+        // Collections.addAll(args, "--input-classes", String.join(",", appClasses));
+        Collections.addAll(args,
+                // "-a", "ir-dumper",
+                "-a", """
+                        pta=
+                        implicit-entries:false;
+                        dump:false;
+                        only-app:%s;
+                        handle-invokedynamic:true;
+                        merge-string-builders:true;
+                        reflection:null;
+                        cs:%s;
+                        propagate-types:[reference,byte,char];
+                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
+                        plugins:[pascal.taie.analysis.pta.plugin.cryptomisuse.reachableplugin.CryptoReachablePlugin,
+                                 pascal.taie.analysis.pta.plugin.Profiler];
+                        """.formatted(onlyApp, cs),
+                "-a", """
+                        cg=
+                        algorithm:pta;
+                        dump-methods:true;
+                        dump-call-edges:true;
+                        """
+        );
+
+        Main.main(args.toArray(new String[0]));
+    }
+
     /**
      * @param dir  the directory containing the test case
      * @param main main class of the test case
@@ -431,7 +537,7 @@ public final class Tests {
     }
 
     private static Tuple<String, List<String>, List<String>>
-    initializeSpringBootArchives1(List<String> archivePaths) {
+    initializeSpringBootArchivesOfCrypto(List<String> archivePaths) {
         Tuple<String, List<String>, List<String>> result;
 
         List<Path> tempDirectories = Lists.newArrayListWithCapacity(archivePaths.size());

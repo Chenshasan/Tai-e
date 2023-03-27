@@ -4,7 +4,7 @@ import pascal.taie.analysis.pta.core.heap.Descriptor;
 import pascal.taie.analysis.pta.core.heap.HeapModel;
 import pascal.taie.analysis.pta.core.heap.MockObj;
 import pascal.taie.analysis.pta.core.heap.Obj;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.language.type.Type;
 import pascal.taie.util.AnalysisException;
 

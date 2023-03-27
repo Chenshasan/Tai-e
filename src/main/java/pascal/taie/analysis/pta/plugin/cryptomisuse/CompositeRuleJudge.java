@@ -3,7 +3,7 @@ package pascal.taie.analysis.pta.plugin.cryptomisuse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
