@@ -21,6 +21,8 @@ import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
 import pascal.taie.ir.stmt.*;
 import pascal.taie.language.classes.ClassHierarchy;
+import pascal.taie.language.classes.ClassMember;
+import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.language.type.Type;
@@ -30,12 +32,18 @@ import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Pair;
 import pascal.taie.util.collection.Sets;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseAnalysis.class);
+
+    private static Set<String> appClassesInString = Sets.newSet();
+
+    private static Set<JClass> appClasses = Sets.newSet();
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
     private final MultiMap<JMethod, CryptoSource> sources = Maps.newMultiMap();
     private final MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates = Maps.newMultiMap();
@@ -75,6 +83,14 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private CryptoAPIMisuseConfig config;
 
 
+    public static void addAppClass(Set<String> appClass) {
+        appClassesInString = appClass;
+    }
+
+    public static Set<JClass> getAppClasses(){
+        return appClasses;
+    }
+
     @Override
     public void setSolver(Solver solver) {
         manager = new CryptoObjManager(solver.getHeapModel());
@@ -109,42 +125,76 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     }
 
     @Override
+    public void onStart() {
+        ClassHierarchy hierarchy = solver.getHierarchy();
+        appClasses.addAll(appClassesInString.stream().
+                map(hierarchy::getClass).collect(Collectors.toSet()));
+        JClass objectClass = hierarchy.getClass("java.lang.Object");
+        Collection<JClass> concernedClass = Sets.newSet();
+        concernedClass.addAll(sources.keySet().stream().
+                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
+        concernedClass.addAll(propagates.keySet().stream().
+                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
+        concernedClass.addAll(ruleToJudge.keySet().stream().
+                map(rule -> rule.getMethod().getDeclaringClass()).collect(Collectors.toSet()));
+        concernedClass.addAll(appClasses);
+        //concernedClass.forEach(jClass -> System.out.println("-------------" + jClass));
+        hierarchy.getAllSubclassesOf(objectClass).forEach(
+                jClass -> {
+                    if (!((jClass.getName().contains("java.util"))
+                            || concernedClass.contains(jClass))) {
+                        jClass.getDeclaredMethods().forEach(jMethod -> {
+                            solver.addIgnoredMethod(jMethod);
+                        });
+                    } else {
+                        logger.info(jClass);
+                    }
+                }
+        );
+    }
+
+    @Override
     public void onNewCSMethod(CSMethod csMethod) {
         JMethod jMethod = csMethod.getMethod();
+        //logger.info(jMethod.getDeclaringClass().getName());
         Context ctx = csMethod.getContext();
-        jMethod.getIR().getStmts().forEach(stmt -> {
-            if (stmt instanceof AssignLiteral assignStmt) {
-                Var lhs = assignStmt.getLValue();
-                if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
-                    CryptoObjInformation coi =
-                            new CryptoObjInformation(stmt, stringLiteral.getString());
-                    Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
-                    solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
-                            cryptoObj);
+        if (jMethod.getDeclaringClass().isApplication()) {
+            jMethod.getIR().getStmts().forEach(stmt -> {
+                if (stmt instanceof AssignLiteral assignStmt) {
+                    Var lhs = assignStmt.getLValue();
+                    if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
+                        CryptoObjInformation coi =
+                                new CryptoObjInformation(stmt, stringLiteral.getString());
+                        Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
+                        logger.info("Create String Object in Method" + jMethod);
+                        solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                cryptoObj);
+                    }
+
+                    if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
+                        CryptoObjInformation coi =
+                                new CryptoObjInformation(stmt, intLiteral.getValue());
+                        Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
+                        logger.info("Create Integer Object in Method" + jMethod);
+                        solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                cryptoObj);
+                    }
                 }
 
-                if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
-                    CryptoObjInformation coi =
-                            new CryptoObjInformation(stmt, intLiteral.getValue());
-                    Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
-                    solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
-                            cryptoObj);
+                if (stmt instanceof StoreArray storeArray) {
+                    Var base = storeArray.getLValue().getBase();
+                    Var rhs = storeArray.getRValue();
+                    elementToBase.put(rhs, base);
+                    if (rhs.isConst()) {
+                        CryptoObjInformation coi =
+                                new CryptoObjInformation(stmt, PREDICTABLE_DESC);
+                        Obj cryptoObj = manager.makeCryptoObj(coi, base.getType());
+                        solver.addVarPointsTo(ctx, base, emptyContext, cryptoObj);
+                        logger.debug("the store array stmt " + storeArray + "is unsafe with type " + base.getType());
+                    }
                 }
-            }
-
-            if (stmt instanceof StoreArray storeArray) {
-                Var base = storeArray.getLValue().getBase();
-                Var rhs = storeArray.getRValue();
-                elementToBase.put(rhs, base);
-                if (rhs.isConst()) {
-                    CryptoObjInformation coi =
-                            new CryptoObjInformation(stmt, PREDICTABLE_DESC);
-                    Obj cryptoObj = manager.makeCryptoObj(coi, base.getType());
-                    solver.addVarPointsTo(ctx, base, emptyContext, cryptoObj);
-                    System.out.println("the store array stmt " + storeArray + "is unsafe with type " + base.getType());
-                }
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -203,7 +253,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     solver.addVarPointsTo(edge.getCallSite().getContext(), var,
                             emptyContext, compositeObj);
                 });
-                System.out.println("generate from var when call method: " + callee + " on stmt: " + callSite);
+                logger.debug("generate from var when call method: " + callee + " on stmt: " + callSite);
             });
         }
 
@@ -214,7 +264,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 compositeRule.getToVarToStmt().put(var, callSite);
                 compositeRule.getToSourceToToVar().put(var, toSource);
                 compositeRule.getJudgeStmts().put(callSite, toSource);
-                System.out.println("generate to var when call method: " + callee + " on stmt: " + callSite);
+                logger.debug("generate to var when call method: " + callee + " on stmt: " + callSite);
                 Context ctx = edge.getCallSite().getContext();
                 CSVar csVar = csManager.getCSVar(ctx, var);
                 addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar));
@@ -237,7 +287,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     if (ToVarToStmt.containsKey(var)) {
                         ToSource toSource = compositeRule.getToSourceToToVar().get(var);
                         compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
-                        System.out.println("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
+                        logger.debug("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
                     }
                 });
     }
@@ -309,12 +359,10 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             });
         });
 
-        ruleToJudge.keySet().forEach(rule -> {
-            result.getCallGraph().getCallersOf(rule.getMethod()).
-                    forEach(
-                            callSite -> ruleToJudge.
-                                    get(rule).
-                                    judge(result, callSite));
+        ruleToJudge.forEach((rule, ruleJudge) -> {
+            result.getCallGraph()
+                    .getCallersOf(rule.getMethod())
+                    .forEach(callSite -> ruleJudge.judge(result, callSite));
         });
 
         Set<CryptoReport> cryptoReports = cryptoRuleJudge.judgeRules();

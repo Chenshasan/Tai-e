@@ -7,3 +7,4 @@ output/
 
 # MacOS hidden file
 .DS_Store
+/crypto-benchmarks/

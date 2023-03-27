@@ -24,10 +24,7 @@ package pascal.taie.analysis.pta.plugin;
 
 import pascal.taie.analysis.graph.callgraph.Edge;
 import pascal.taie.analysis.pta.core.cs.context.Context;
-import pascal.taie.analysis.pta.core.cs.element.CSCallSite;
-import pascal.taie.analysis.pta.core.cs.element.CSMethod;
-import pascal.taie.analysis.pta.core.cs.element.CSObj;
-import pascal.taie.analysis.pta.core.cs.element.CSVar;
+import pascal.taie.analysis.pta.core.cs.element.*;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.stmt.Invoke;
@@ -70,6 +67,9 @@ public interface Plugin {
      * @param pts   set of new objects
      */
     default void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
+    }
+
+    default void onNewPointsToSet(VirtualPointer virtualPointer, PointsToSet pts) {
     }
 
     /**

@@ -22,6 +22,8 @@
 
 package pascal.taie.analysis;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -31,6 +33,14 @@ import pascal.taie.analysis.graph.cfg.CFGBuilder;
 import pascal.taie.analysis.misc.IRDumper;
 import pascal.taie.analysis.misc.ResultProcessor;
 import pascal.taie.analysis.pta.PointerAnalysis;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
+import pascal.taie.analysis.pta.plugin.spring.MicroserviceHolder;
+import pascal.taie.analysis.pta.rpc.Benchmark;
+import pascal.taie.util.AppClassInferringUtils;
+import pascal.taie.util.DirectoryTraverser;
+import pascal.taie.util.ZipUtils;
+import pascal.taie.util.collection.Sets;
+import pascal.taie.util.collection.Tuple;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,11 +48,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Static utility methods for testing.
@@ -175,10 +184,10 @@ public final class Tests {
                 specifyOnlyApp = true;
             }
         }
-        if (!specifyOnlyApp) {
-            // if given options do not specify only-app, then set it true
-            ptaArgs.add("only-app:true");
-        }
+//        if (!specifyOnlyApp) {
+//            // if given options do not specify only-app, then set it true
+//            ptaArgs.add("only-app:true");
+//        }
         Collections.addAll(args, "-a", id + "=" + String.join(";", ptaArgs));
         Main.main(args.toArray(new String[0]));
         // move expected file
@@ -193,6 +202,223 @@ public final class Tests {
         }
     }
 
+    public static void testPTABySpringBootArchives(Benchmark benchmark, boolean withDependency) {
+        MicroserviceHolder.clear();
+
+        if (!Path.of(benchmark.dir).toFile().isDirectory()) {
+            logger.error("Directory not exists: {}", benchmark.dir);
+            return;
+        }
+
+        List<String> microserviceArchives;
+        try {
+            microserviceArchives = Files.list(Path.of(benchmark.dir))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
+            logger.info("{} Microservices detected: {}", microserviceArchives.size(), microserviceArchives);
+        } catch (IOException e) {
+            logger.error("", e);
+            throw new RuntimeException(e);
+        }
+
+        var tuples = initializeSpringBootArchives(microserviceArchives);
+        // iterator tuples indexly
+        for (int i = 0; i < tuples.size(); i++) {
+            var tuple = tuples.get(i);
+            List<String> appClasses = AppClassInferringUtils.getAllAppClasses(tuple.second(), tuple.third());
+            new MicroserviceHolder(microserviceArchives.get(i), tuple.first(), tuple.third(), appClasses);
+        }
+
+        List<String> dependencyPaths = new ArrayList<>();
+
+        // de-duplication the dependency jar and add it into dependencyPaths
+        tuples.stream()
+                .map(Tuple::third)
+                .flatMap(Collection::stream)
+                .map(File::new)
+                .collect(Collectors.toMap(File::getName, Function.identity(), (o1, o2) -> o1))
+                .values()
+                .stream()
+                .map(File::getAbsolutePath)
+                // fix Soot issue:
+                // Trying to create interface invoke expression for non-interface type: org.bouncycastle.asn1.ASN1Encodable
+                .filter(o -> !o.contains("bcprov-jdk"))
+                // fix Soot issue:
+                // This operation requires resolving level HIERARCHY but net.sf.cglib.proxy.MethodInterceptor is at resolving level DANGLING
+                // If you are extending Soot, try to add the following call before calling soot.Main.main(..):
+                // Scene.v().addBasicClass(net.sf.cglib.proxy.MethodInterceptor,HIERARCHY);
+                .filter(o -> !o.contains("seata-all"))
+                //// fix Soot issue:
+                //// Failed to apply jb to <org.elasticsearch.search.aggregations.metrics.AbstractHyperLogLog: void <clinit>()>
+                //.filter(o -> !o.contains("elasticsearch-7.10.1.jar"))
+                .forEach(dependencyPaths::add);
+
+        Collection<String> appPathsInDependency = AppClassInferringUtils.inferAppJarPaths(
+                tuples.stream().map(Tuple::second).flatMap(Collection::stream).toList(),
+                dependencyPaths);
+        dependencyPaths.removeAll(appPathsInDependency);
+
+        String appClassPath = Stream.concat(tuples.stream().map(Tuple::first), appPathsInDependency.stream())
+                .collect(Collectors.joining(File.pathSeparator));
+
+        boolean onlyApp = false;
+        String cs = "ci";
+
+        List<String> args = new ArrayList<>();
+        Collections.addAll(args, "-java", "8");
+        Collections.addAll(args, "-ap");
+        Collections.addAll(args, "--pre-build-ir");
+        Collections.addAll(args, "--output-dir", "output/" + benchmark.name);
+        if (withDependency) {
+            Collections.addAll(args, "-cp", String.join(File.pathSeparator, dependencyPaths));
+        }
+        Collections.addAll(args, "-acp", appClassPath);
+        // Collections.addAll(args, "--input-classes", String.join(",", appClasses));
+        Collections.addAll(args,
+                // "-a", "ir-dumper",
+                "-a", """
+                        pta=
+                        implicit-entries:false;
+                        dump:false;
+                        only-app:%s;
+                        only-app-reflection:false;
+                        handle-invokedynamic:true;
+                        merge-string-constants:true;
+                        reflection:null;
+                        cs:%s;
+                        plugins:[pascal.taie.analysis.pta.plugin.spring.SpringAnalysis,
+                                 pascal.taie.analysis.pta.plugin.Profiler];
+                        """.formatted(onlyApp, cs),
+                "-a", """
+                        cg=
+                        algorithm:pta;
+                        dump-methods:true;
+                        dump-call-edges:true;
+                        """
+        );
+
+        Main.main(args.toArray(new String[0]));
+        MicroserviceHolder.reportAllStatistics();
+    }
+
+    public static void testPTABySpringBootArchivesOfCrypto(Benchmark benchmark, boolean withDependency) {
+        MicroserviceHolder.clear();
+
+        if (!Path.of(benchmark.dir).toFile().isDirectory()) {
+            logger.error("Directory not exists: {}", benchmark.dir);
+            return;
+        }
+
+        List<String> microserviceArchives1;
+        List<String> microserviceArchives2;
+        List<String> microserviceArchives = new ArrayList<>();
+        try {
+            microserviceArchives1 = Files.list(Path.of(benchmark.dir))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
+            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
+            microserviceArchives.addAll(microserviceArchives1);
+            microserviceArchives.addAll(microserviceArchives2);
+//            microserviceArchives.forEach(s -> {
+//                System.out.println(s);
+//            });
+            logger.info("{} Microservices detected: {}", microserviceArchives.size(), microserviceArchives);
+        } catch (IOException e) {
+            logger.error("", e);
+            throw new RuntimeException(e);
+        }
+
+        var tuple = initializeSpringBootArchives1(microserviceArchives);
+        // iterator tuples indexly
+        List<String> appClasses = DirectoryTraverser.listClasses(tuple.first());
+        new MicroserviceHolder(microserviceArchives.get(0), tuple.first(), tuple.third(), appClasses);
+
+        List<String> dependencyPaths = new ArrayList<>();
+
+        // de-duplication the dependency jar and add it into dependencyPaths
+        List<Tuple<String, List<String>, List<String>>> tuples = new ArrayList<>();
+        tuples.add(tuple);
+        tuples.stream()
+                .map(Tuple::third)
+                .flatMap(Collection::stream)
+                .map(File::new)
+                .collect(Collectors.toMap(File::getName, Function.identity(), (o1, o2) -> o1))
+                .values()
+                .stream()
+                .map(File::getAbsolutePath)
+                // fix Soot issue:
+                // Trying to create interface invoke expression for non-interface type: org.bouncycastle.asn1.ASN1Encodable
+                .filter(o -> !o.contains("bcprov-jdk"))
+                // fix Soot issue:
+                // This operation requires resolving level HIERARCHY but net.sf.cglib.proxy.MethodInterceptor is at resolving level DANGLING
+                // If you are extending Soot, try to add the following call before calling soot.Main.main(..):
+                // Scene.v().addBasicClass(net.sf.cglib.proxy.MethodInterceptor,HIERARCHY);
+                .filter(o -> !o.contains("seata-all"))
+                //// fix Soot issue:
+                //// Failed to apply jb to <org.elasticsearch.search.aggregations.metrics.AbstractHyperLogLog: void <clinit>()>
+                //.filter(o -> !o.contains("elasticsearch-7.10.1.jar"))
+                .forEach(dependencyPaths::add);
+
+        Collection<String> appPathsInDependency = AppClassInferringUtils.inferAppJarPaths(
+                tuples.stream().map(Tuple::second).flatMap(Collection::stream).toList(),
+                dependencyPaths);
+        dependencyPaths.removeAll(appPathsInDependency);
+
+        String appClassPath = Stream.concat(tuples.stream().map(Tuple::first), appPathsInDependency.stream())
+                .collect(Collectors.joining(File.pathSeparator));
+
+        boolean onlyApp = false;
+        String cs = "ci";
+
+        List<String> args = new ArrayList<>();
+        Collections.addAll(args, "-java", "8");
+        Collections.addAll(args, "-ap");
+        Collections.addAll(args, "--pre-build-ir");
+        Collections.addAll(args, "--output-dir", "output/" + benchmark.name);
+        if (withDependency) {
+            Collections.addAll(args, "-cp", String.join(File.pathSeparator, dependencyPaths));
+        }
+        Collections.addAll(args, "-acp", appClassPath);
+        // Collections.addAll(args, "--input-classes", String.join(",", appClasses));
+        Collections.addAll(args,
+                // "-a", "ir-dumper",
+                "-a", """
+                        pta=
+                        implicit-entries:false;
+                        dump:false;
+                        only-app:%s;
+                        handle-invokedynamic:true;
+                        merge-string-builders:true;
+                        reflection:null;
+                        cs:%s;
+                        propagate-types:[reference,byte,char];
+                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
+                        plugins:[pascal.taie.analysis.pta.plugin.spring.SpringAnalysis,
+                                 pascal.taie.analysis.pta.plugin.Profiler];
+                        """.formatted(onlyApp, cs),
+                "-a", """
+                        cg=
+                        algorithm:pta;
+                        dump-methods:true;
+                        dump-call-edges:true;
+                        """
+        );
+
+        Main.main(args.toArray(new String[0]));
+        MicroserviceHolder.reportAllStatistics();
+    }
+
     /**
      * @param dir  the directory containing the test case
      * @param main main class of the test case
@@ -202,5 +428,82 @@ public final class Tests {
     private static String getExpectedFile(String dir, String main, String id) {
         String fileName = String.format("%s-%s-expected.txt", main, id);
         return Paths.get(dir, fileName).toString();
+    }
+
+    private static Tuple<String, List<String>, List<String>>
+    initializeSpringBootArchives1(List<String> archivePaths) {
+        Tuple<String, List<String>, List<String>> result;
+
+        List<Path> tempDirectories = Lists.newArrayListWithCapacity(archivePaths.size());
+        String classPath = "";
+        List<String> classes = new ArrayList<>();
+        List<String> dependencyJarPaths = new ArrayList<>();
+        for (String archivePath : archivePaths) {
+            System.out.println(archivePath);
+            try {
+                // uncompress archive file at temp directory
+                // get classpath, classes
+                if (archivePath.contains("original-classes.jar")) {
+                    Path tempDirectory = Files.createTempDirectory(
+                            Path.of(archivePath).toFile().getName()
+                                    .replace(".jar", "-")
+                                    .replace(".war", "-")
+                    );
+                    ZipUtils.uncompressZipFile(archivePath, tempDirectory.toString());
+                    tempDirectories.add(tempDirectory);
+                    classPath = tempDirectory.toString();
+                    System.out.println(classPath);
+                    classes = DirectoryTraverser.listClasses(classPath);
+                    CryptoAPIMisuseAnalysis.addAppClass(Sets.newSet(classes));
+                } else {
+                    dependencyJarPaths.add(archivePath);
+                }
+            } catch (IOException e) {
+                logger.error("", e);
+                throw new RuntimeException(e);
+            }
+        }
+        // delete temp directories
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+                tempDirectories.stream().map(Path::toFile).forEach(FileUtils::deleteQuietly)));
+        result = new Tuple<>(classPath, classes, dependencyJarPaths);
+        return result;
+    }
+
+    private static List<Tuple<String, List<String>, List<String>>>
+    initializeSpringBootArchives(List<String> archivePaths) {
+        List<Tuple<String, List<String>, List<String>>> result = new ArrayList<>();
+
+        List<Path> tempDirectories = Lists.newArrayListWithCapacity(archivePaths.size());
+        for (String archivePath : archivePaths) {
+            try {
+                // uncompress archive file at temp directory
+                Path tempDirectory = Files.createTempDirectory(
+                        Path.of(archivePath).toFile().getName()
+                                .replace(".jar", "-")
+                                .replace(".war", "-")
+                );
+                ZipUtils.uncompressZipFile(archivePath, tempDirectory.toString());
+                tempDirectories.add(tempDirectory);
+                // get classpath, classes, and dependencyJarPaths
+                Path inf = tempDirectory.resolve("BOOT-INF");
+                if (!inf.toFile().exists()) {
+                    inf = tempDirectory.resolve("WEB-INF");
+                }
+                String classPath = inf.resolve("classes").toString();
+                List<String> classes = DirectoryTraverser.listClasses(classPath);
+                Path dependencyDir = inf.resolve("lib");
+                List<String> dependencyJarPaths = Files.list(dependencyDir).map(Path::toString).toList();
+                result.add(new Tuple<>(classPath, classes, dependencyJarPaths));
+            } catch (IOException e) {
+                logger.error("", e);
+                throw new RuntimeException(e);
+            }
+        }
+        // delete temp directories
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+                tempDirectories.stream().map(Path::toFile).forEach(FileUtils::deleteQuietly)));
+
+        return result;
     }
 }

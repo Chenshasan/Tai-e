@@ -69,13 +69,13 @@ public class EntryPointHandler implements Plugin {
         }
     }
 
-    private static class MainEntryPointParamProvider implements ParamProvider {
+    public static class MainEntryPointParamProvider implements ParamProvider {
 
         private final JMethod method;
 
         private final Solver solver;
 
-        MainEntryPointParamProvider(JMethod method, Solver solver) {
+        public MainEntryPointParamProvider(JMethod method, Solver solver) {
             this.method = method;
             this.solver = solver;
         }

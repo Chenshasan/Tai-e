@@ -129,8 +129,8 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
                 new EntryPointHandler(),
                 new ClassInitializer(),
                 new ThreadHandler(),
-                new NativeModeller(),
-                new ExceptionAnalysis()
+                new NativeModeller()
+//                new ExceptionAnalysis()
         );
         if (World.get().getOptions().getJavaVersion() < 9) {
             // current reference handler doesn't support Java 9+

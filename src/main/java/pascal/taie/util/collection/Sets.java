@@ -47,6 +47,9 @@ public final class Sets {
             return newSet();
         }
     }
+    public static <E> Set<E> newSet(Collection<E> c) {
+        return new HashSet<>(c);
+    }
 
     public static <E> Set<E> newSmallSet() {
         return new ArraySet<>();

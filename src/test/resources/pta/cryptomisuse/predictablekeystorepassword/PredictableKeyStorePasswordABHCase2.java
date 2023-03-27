@@ -11,7 +11,7 @@ import java.util.Map;
 public class PredictableKeyStorePasswordABHCase2 {
     URL cacerts;
     public static void main(String args[]) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        PredictableKeyStorePasswordBBCase1 pksp = new PredictableKeyStorePasswordBBCase1();
+        PredictableKeyStorePasswordABHCase2 pksp = new PredictableKeyStorePasswordABHCase2();
         pksp.go();
     }
 

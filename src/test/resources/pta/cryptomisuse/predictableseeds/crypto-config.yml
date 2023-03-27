@@ -6,6 +6,8 @@ cryptoObjPropagate:
   - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
   - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
   - { method: "<java.lang.Byte: byte parseByte(java.lang.String)>", from: 0, to: result, type: "byte" }
+  - { method: "<java.lang.Byte: void <init>(byte)>", from: 0, to: base, type: "java.lang.Byte" }
+  - { method: "<java.lang.Byte: byte byteValue()>", from: base, to: result, type: "byte" }
   - { method: "<java.lang.Object: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
   - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }
   - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }

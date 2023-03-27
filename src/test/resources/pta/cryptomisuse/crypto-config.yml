@@ -1,0 +1,32 @@
+patternMatchRules:
+  - { method: "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>", index: 0, pattern: "(.)*DES(.)*|(.)*DESede(.)*|AES|AES/ECB(.)*|(.)*DESedeWrap(.)*|(.)*RC2(.)*|(.)*RC4(.)*|(.)*RC5(.)*|(.)*Blowfish(.)*|(.)*IDEA(.)*|PBEWithMD5AndDES|PBEWithMD5AndTripleDES|PBEWithSHA1AndDESede|PBEWithSHA1AndRC2_40" }
+  - { method: "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "(.)*DES(.)*|(.)*DESede(.)*|AES|AES/ECB(.)*|(.)*DESedeWrap(.)*|(.)*RC2(.)*|(.)*RC4(.)*|(.)*RC5(.)*|(.)*Blowfish(.)*|(.)*IDEA(.)*|PBEWithMD5AndDES|PBEWithMD5AndTripleDES|PBEWithSHA1AndDESede|PBEWithSHA1AndRC2_40" }
+  - { method: "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "(.)*DES(.)*|(.)*DESede(.)*|AES|AES/ECB(.)*|(.)*DESedeWrap(.)*|(.)*RC2(.)*|(.)*RC4(.)*|(.)*RC5(.)*|(.)*Blowfish(.)*|(.)*IDEA(.)*|PBEWithMD5AndDES|PBEWithMD5AndTripleDES|PBEWithSHA1AndDESede|PBEWithSHA1AndRC2_40" }
+  - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
+  - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
+  - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
+
+predictableSourceRules:
+  - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
+  - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],int,int,java.lang.String)>", index: 0 }
+  - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>", index: 0 }
+  - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>", index: 0 }
+
+cryptoSources:
+  - { method: "<java.util.Base64$Decoder: byte[] decode(java.lang.String)>", type: "byte[]", index: result }
+
+cryptoObjPropagate:
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
+  - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
+  - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.StringBuffer append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuffer" }
+  - { method: "<java.lang.StringBuffer: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>", from: 0, to: base, type: "java.lang.StringBuilder" }
+  - { method: "<java.lang.StringBuilder: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.util.Arrays: byte[] copyOf(byte[],int)>", from: 0, to: result, type: "byte[]" }
+  - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }
+  - { method: "<java.util.Arrays: byte[] copyOfRange(byte[],int,int)>", from: 0, to: result, type: "byte[]" }

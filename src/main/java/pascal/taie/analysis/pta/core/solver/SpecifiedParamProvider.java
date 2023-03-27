@@ -26,6 +26,7 @@ import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.util.collection.Sets;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -83,6 +84,14 @@ public class SpecifiedParamProvider implements ParamProvider {
                 thisObjs = Sets.newHybridSet();
             }
             thisObjs.add(thisObj);
+            return this;
+        }
+
+        public Builder addThisObj(Collection<Obj> objs) {
+            if (thisObjs == null) {
+                thisObjs = Sets.newHybridSet();
+            }
+            thisObjs.addAll(objs);
             return this;
         }
 

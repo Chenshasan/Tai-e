@@ -1,5 +1,6 @@
 predictableSourceRules:
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
+  - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],int,int,java.lang.String)>", index: 0 }
 
 cryptoObjPropagate:
   - { method: "<java.util.Arrays: byte[] copyOf(byte[],int)>", from: 0, to: result, type: "byte[]" }

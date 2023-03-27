@@ -1,5 +1,6 @@
 predictableSourceRules:
   - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>", index: 0 }
+  - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>", index: 0 }
 
 cryptoObjPropagate:
   - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }

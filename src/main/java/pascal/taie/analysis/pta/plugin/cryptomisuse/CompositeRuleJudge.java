@@ -1,5 +1,7 @@
 package pascal.taie.analysis.pta.plugin.cryptomisuse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositeRule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CompositeRuleJudge implements RuleJudge {
 
     private final MultiMap<Stmt, RuleJudge> RuleJudgeList = Maps.newMultiMap();
+
+    Logger logger = LogManager.getLogger(CompositeRuleJudge.class);
 
     public void addRuleJudge(Stmt stmt, RuleJudge ruleJudge) {
         this.RuleJudgeList.put(stmt, ruleJudge);
@@ -42,8 +46,19 @@ public class CompositeRuleJudge implements RuleJudge {
     public boolean judge(PointerAnalysisResult result, Invoke callSite) {
         AtomicBoolean judgeResult = new AtomicBoolean(true);
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
-            judgeResult.set(judgeResult.get() && ruleJudge.judge(result, callSite));
+            if (ruleJudge instanceof PatternMatchRuleJudge) {
+                judgeResult.set(judgeResult.get() && !ruleJudge.judge(result, callSite));
+            } else {
+                judgeResult.set(judgeResult.get() && ruleJudge.judge(result, callSite));
+            }
         });
+        report(judgeResult.get());
         return judgeResult.get();
+    }
+
+    public void report(boolean b) {
+        logger.info("Rule judge type: Composite Rule Judge"
+                + "final result: " + b
+                + "\n");
     }
 }

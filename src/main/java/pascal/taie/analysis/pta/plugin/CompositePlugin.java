@@ -24,10 +24,7 @@ package pascal.taie.analysis.pta.plugin;
 
 import pascal.taie.analysis.graph.callgraph.Edge;
 import pascal.taie.analysis.pta.core.cs.context.Context;
-import pascal.taie.analysis.pta.core.cs.element.CSCallSite;
-import pascal.taie.analysis.pta.core.cs.element.CSMethod;
-import pascal.taie.analysis.pta.core.cs.element.CSObj;
-import pascal.taie.analysis.pta.core.cs.element.CSVar;
+import pascal.taie.analysis.pta.core.cs.element.*;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.stmt.Invoke;
@@ -58,6 +55,8 @@ public class CompositePlugin implements Plugin {
 
     private final List<Plugin> onUnresolvedCallPlugins = new ArrayList<>();
 
+    private final List<Plugin> onNewPointsToSetOfVirtualPointerPlugins = new ArrayList<>();
+
     public void addPlugin(Plugin... plugins) {
         for (Plugin plugin : plugins) {
             allPlugins.add(plugin);
@@ -68,6 +67,8 @@ public class CompositePlugin implements Plugin {
             addPlugin(plugin, onNewCSMethodPlugins, "onNewCSMethod", CSMethod.class);
             addPlugin(plugin, onUnresolvedCallPlugins,
                     "onUnresolvedCall", CSObj.class, Context.class, Invoke.class);
+            addPlugin(plugin, onNewPointsToSetOfVirtualPointerPlugins,
+                    "onNewPointsToSet", VirtualPointer.class, PointsToSet.class);
         }
     }
 
@@ -103,6 +104,11 @@ public class CompositePlugin implements Plugin {
     @Override
     public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
         onNewPointsToSetPlugins.forEach(p -> p.onNewPointsToSet(csVar, pts));
+    }
+
+    @Override
+    public void onNewPointsToSet(VirtualPointer virtualPointer, PointsToSet pts) {
+        onNewPointsToSetOfVirtualPointerPlugins.forEach(p -> p.onNewPointsToSet(virtualPointer, pts));
     }
 
     @Override

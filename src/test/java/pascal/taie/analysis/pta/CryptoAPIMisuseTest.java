@@ -174,7 +174,7 @@ public class CryptoAPIMisuseTest {
 
     @Test
     public void testPredictableCharArray() {
-        Tests.testPTA(DIR + "/" + SALT, "StaticSaltsABICase2",
+        Tests.testPTA(DIR + "/" + SALT, "StaticSaltsABHCase1",
                 "propagate-types:[reference,int,byte,char];"
                         + "crypto-config:src/test/resources/pta/cryptomisuse/"
                         + SALT + "/crypto-config.yml");
@@ -189,7 +189,7 @@ public class CryptoAPIMisuseTest {
 
     @Test
     public void testIVCase() {
-        Tests.testPTA(DIR + "/" + IV, "StaticInitializationVectorABICase2",
+        Tests.testPTA(DIR + "/" + IV, "StaticInitializationVectorABHCase2",
                 "propagate-types:[reference,int,byte,char];"
                         + "crypto-config:src/test/resources/pta/cryptomisuse/"
                         + IV + "/crypto-config.yml");
@@ -205,7 +205,7 @@ public class CryptoAPIMisuseTest {
 
     @Test
     public void testKeyStoreCase() {
-        Tests.testPTA(DIR + "/" + KEYSTORE, "PredictableKeyStorePasswordBBCase1",
+        Tests.testPTA(DIR + "/" + KEYSTORE, "PredictableKeyStorePasswordABHCase2",
                 "propagate-types:[reference,int,byte,char];"
                         + "crypto-config:src/test/resources/pta/cryptomisuse/"
                         + KEYSTORE + "/crypto-config.yml");
