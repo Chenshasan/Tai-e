@@ -87,13 +87,18 @@ public class MicroserviceHolderTest {
     }
 
     @Test
-    public void SpringQuick() {
+    public void springQuick() {
         Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SPRINGQUICK, true);
     }
 
     @Test
-    public void SpringSTUDENT() {
+    public void springSTUDENT() {
         Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SPRINGSTUDENT, true);
+    }
+
+    @Test
+    public void telegramServer() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.TELEGRAM, true);
     }
 
 

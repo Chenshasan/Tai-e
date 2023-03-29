@@ -10,6 +10,8 @@ public enum Benchmark {
     FASTBOOT("fast-boot-weixin", CRYPTO_BENCHMARKS_DIR + "/fast-boot-weixin"),
     SPRINGQUICK("spring-boot-quick", CRYPTO_BENCHMARKS_DIR + "/spring-boot-quick"),
 
+    TELEGRAM("telegram-serverk", CRYPTO_BENCHMARKS_DIR + "/telegram-server"),
+
     SPRINGSTUDENT("spring-boot-student", CRYPTO_BENCHMARKS_DIR + "/spring-boot-student"),
     XMALL("xmall", CRYPTO_BENCHMARKS_DIR + "/xmall"),
     YUDAO("yudao", CRYPTO_BENCHMARKS_DIR + "/yudao"),
