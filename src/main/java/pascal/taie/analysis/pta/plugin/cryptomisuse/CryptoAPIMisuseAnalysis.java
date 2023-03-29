@@ -84,7 +84,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         appClassesInString = appClass;
     }
 
-    public static Set<JClass> getAppClasses(){
+    public static Set<JClass> getAppClasses() {
         return appClasses;
     }
 
@@ -161,18 +161,18 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     Var lhs = assignStmt.getLValue();
                     if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, stringLiteral.getString());
+                                new CryptoObjInformation(stmt, jMethod,stringLiteral.getString());
                         Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
-                        logger.info("Create String Object in Method" + jMethod);
+                        logger.debug("Create String Object in Method" + jMethod);
                         solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                                 cryptoObj);
                     }
 
                     if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, intLiteral.getValue());
+                                new CryptoObjInformation(stmt, jMethod,intLiteral.getValue());
                         Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
-                        logger.info("Create Integer Object in Method" + jMethod);
+                        logger.debug("Create Integer Object in Method" + jMethod);
                         solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                                 cryptoObj);
                     }
@@ -184,7 +184,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     elementToBase.put(rhs, base);
                     if (rhs.isConst()) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, PREDICTABLE_DESC);
+                                new CryptoObjInformation(stmt, jMethod,PREDICTABLE_DESC);
                         Obj cryptoObj = manager.makeCryptoObj(coi, base.getType());
                         solver.addVarPointsTo(ctx, base, emptyContext, cryptoObj);
                         logger.debug("the store array stmt " + storeArray + "is unsafe with type " + base.getType());
@@ -230,7 +230,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             sources.get(callee).forEach(source -> {
                 Var var = IndexUtils.getVar(callSite, source.index());
                 CryptoObjInformation coi =
-                        new CryptoObjInformation(callSite, PREDICTABLE_DESC);
+                        new CryptoObjInformation(callSite, callSite.getContainer(), PREDICTABLE_DESC);
                 Type type = source.type();
                 Obj cryptoObj = manager.makeCryptoObj(coi, type);
                 solver.addVarPointsTo(edge.getCallSite().getContext(), var,

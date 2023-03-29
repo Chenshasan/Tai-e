@@ -9,6 +9,7 @@ import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.ir.exp.Var;
+import pascal.taie.ir.stmt.AssignLiteral;
 import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.ir.stmt.Stmt;
 
@@ -28,8 +29,8 @@ public class PatternMatchRuleJudge implements RuleJudge {
     public boolean judge(PointerAnalysisResult result, Invoke callSite) {
         AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, patternMatchRule.index());
-        if(CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())){
+        if (CryptoAPIMisuseAnalysis.getAppClasses().
+                contains(callSite.getContainer().getDeclaringClass())) {
             result.getPointsToSet(var).stream().
                     filter(manager::isCryptoObj).
                     forEach(cryptoObj -> {
@@ -37,9 +38,13 @@ public class PatternMatchRuleJudge implements RuleJudge {
                                 CryptoObjInformation coi) {
                             String value = (String) coi.constantValue();
                             logger.debug("coi constant value is " + value);
-                            report(coi, var, callSite);
+                            boolean usedToBeTrue = match.get();
                             match.set(match.get() && !(Pattern.matches(
                                     patternMatchRule.pattern(), value)));
+                            // used to be ture and now it is false
+                            if (usedToBeTrue && !match.get()) {
+                                report(coi, var, callSite);
+                            }
                         }
                     });
             logger.debug("the result of " + callSite + " is " + match.get());
@@ -56,6 +61,7 @@ public class PatternMatchRuleJudge implements RuleJudge {
                 + "Class: " + callSite.getContainer().getDeclaringClass() + "\n"
                 + "Method: " + callSite.getContainer() + "\n"
                 + "Call site: " + callSite + "\n"
-                + "Source stmt: " + stmt + "\n");
+                + "Source stmt: " + stmt + "\n"
+                + "Source method " + coi.sourceMethod() + "\n");
     }
 }

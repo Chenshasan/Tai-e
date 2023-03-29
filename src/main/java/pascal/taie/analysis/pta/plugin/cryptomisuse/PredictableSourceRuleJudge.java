@@ -29,8 +29,8 @@ public class PredictableSourceRuleJudge implements RuleJudge {
     public boolean judge(PointerAnalysisResult result, Invoke callSite) {
         AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, predictableSourceRule.index());
-        if(CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())){
+        if (CryptoAPIMisuseAnalysis.getAppClasses().
+                contains(callSite.getContainer().getDeclaringClass())) {
             result.getPointsToSet(var).
                     stream().
                     filter(manager::isCryptoObj).
@@ -39,7 +39,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                                 CryptoObjInformation coi) {
                             //String desc = (String) coi.constantValue();
                             if (match.get()) {
-                                report(coi, var,callSite);
+                                report(coi, var, callSite);
                                 logger.debug("the result of " + callSite
                                         + " of var: " + var
                                         + " is false"
@@ -57,10 +57,10 @@ public class PredictableSourceRuleJudge implements RuleJudge {
         logger.info("Rule judge type: Predictable Source "
                 + "Message: The value of the API is not well randomized "
                 + "Var: " + var + "\n"
-                + "Class: " + callSite.getContainer().getDeclaringClass() +"\n"
-                + "Method: " + callSite.getContainer() +"\n"
+                + "Class: " + callSite.getContainer().getDeclaringClass() + "\n"
+                + "Method: " + callSite.getContainer() + "\n"
                 + "Call site: " + callSite + "\n"
-                + "Source stmt: " + coi.allocation()
-                + "\n");
+                + "Source stmt: " + coi.allocation() + "\n"
+                + "Source method " + coi.sourceMethod() + "\n");
     }
 }

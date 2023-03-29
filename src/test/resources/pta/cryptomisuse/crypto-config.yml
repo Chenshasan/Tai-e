@@ -5,15 +5,28 @@ patternMatchRules:
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<java.net.URL: void <init>(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<java.net.URL: void <init>(java.lang.String,java.lang.String,java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<java.net.URL: void <init>(java.lang.String,java.lang.String,int,java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<okhttp3.Request$Builder: okhttp3.Request$Builder url(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
+  - { method: "<retrofit2.Retrofit$Builder: retrofit2.Retrofit$Builder baseUrl(java.lang.String)>", index: 0, pattern: "http:(.)*|http$" }
 
 predictableSourceRules:
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],int,int,java.lang.String)>", index: 0 }
   - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>", index: 0 }
   - { method: "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>", index: 0 }
+  - { method: "<java.security.KeyStore: void load(java.io.InputStream,char[])>", index: 1 }
+  - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 0 }
 
 cryptoSources:
   - { method: "<java.util.Base64$Decoder: byte[] decode(java.lang.String)>", type: "byte[]", index: result }
+
+numberSizeRules:
+  - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 1, min: 1000, max: 5000 }
 
 cryptoObjPropagate:
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
@@ -30,3 +43,9 @@ cryptoObjPropagate:
   - { method: "<java.util.Arrays: byte[] copyOf(byte[],int)>", from: 0, to: result, type: "byte[]" }
   - { method: "<java.lang.String: byte[] getBytes()>", from: base, to: result, type: "byte[]" }
   - { method: "<java.util.Arrays: byte[] copyOfRange(byte[],int,int)>", from: 0, to: result, type: "byte[]" }
+  - { method: "<java.lang.Integer: int parseInt(java.lang.String)>", from: 0, to: result, type: "int" }
+  - { method: "<java.lang.Object: java.lang.String toString()>", from: base, to: result, type: "java.lang.String" }
+  - { method: "<java.lang.Byte: byte parseByte(java.lang.String)>", from: 0, to: result, type: "byte" }
+  - { method: "<java.lang.Byte: void <init>(byte)>", from: 0, to: base, type: "java.lang.Byte" }
+  - { method: "<java.lang.Byte: byte byteValue()>", from: base, to: result, type: "byte" }
+  - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }

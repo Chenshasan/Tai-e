@@ -27,8 +27,8 @@ public class NumberSizeRuleJudge implements RuleJudge {
     public boolean judge(PointerAnalysisResult result, Invoke callSite) {
         AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, numberSizeRule.index());
-        if(CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())){
+        if (CryptoAPIMisuseAnalysis.getAppClasses().
+                contains(callSite.getContainer().getDeclaringClass())) {
             result.getPointsToSet(var).stream().
                     filter(manager::isCryptoObj).
                     forEach(cryptoObj -> {
@@ -40,7 +40,7 @@ public class NumberSizeRuleJudge implements RuleJudge {
                             if (value >= numberSizeRule.max() ||
                                     value < numberSizeRule.min()) {
                                 match.set(false);
-                                report(coi, var,callSite);
+                                report(coi, var, callSite);
                             }
                         }
                     });
@@ -54,11 +54,11 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 + "Message: The number size is not allowed for the API"
                 + "Constant value: " + coi.constantValue()
                 + "Var: " + var + "\n"
-                + "Class: " + callSite.getContainer().getDeclaringClass() +"\n"
-                + "Method: " + callSite.getContainer() +"\n"
+                + "Class: " + callSite.getContainer().getDeclaringClass() + "\n"
+                + "Method: " + callSite.getContainer() + "\n"
                 + "Call site: " + callSite + "\n"
-                + "Source stmt: " + coi.allocation()
-                + "\n");
+                + "Source stmt: " + coi.allocation() + "\n"
+                + "Source method " + coi.sourceMethod() + "\n");
     }
 
 }

@@ -36,17 +36,19 @@ public class CryptoReachablePlugin implements Plugin {
     public void onStart() {
         for (JClass jClass : CryptoAPIMisuseAnalysis.getAppClasses()) {
             for (JMethod method : jClass.getDeclaredMethods()) {
-                SpecifiedParamProvider.Builder builder = new SpecifiedParamProvider.Builder(method)
-                        .setDelegate(new CryptoReachableParamProvider(method, classHierarchy, solver));
-                builder.addThisObj(heapModel.getMockObj(
-                        CRYPTO_REACHABLE_DESC, null, jClass.getType()));
-                SpecifiedParamProvider paramProvider = builder.build();
-                logger.info("""
-                    [Spring Analysis] Adding entry point
+                if(method.isPublic() && !method.isAbstract() && !method.isNative()){
+                    SpecifiedParamProvider.Builder builder = new SpecifiedParamProvider.Builder(method)
+                            .setDelegate(new CryptoReachableParamProvider(method, classHierarchy, solver));
+                    builder.addThisObj(heapModel.getMockObj(
+                            CRYPTO_REACHABLE_DESC, jClass.getType(), jClass.getType()));
+                    SpecifiedParamProvider paramProvider = builder.build();
+                    logger.info("""
+                    [Crypto Reachable Analysis] Adding entry point
                     \tmethod: {}
                     \tparamProvider: {}
                     """, method, paramProvider);
-                solver.addEntryPoint(new EntryPoint(method, paramProvider));
+                    solver.addEntryPoint(new EntryPoint(method, paramProvider));
+                }
             }
         }
     }

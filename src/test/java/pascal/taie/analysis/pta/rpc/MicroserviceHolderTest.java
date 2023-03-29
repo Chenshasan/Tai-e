@@ -16,74 +16,57 @@ import java.util.*;
 
 
 public class MicroserviceHolderTest {
-
-    /* Micro-benchmarks */
-
-    //@Test
-    //public void ioc() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.IOC, false);
-    //}
-    //
-    //@Test
-    //public void dubboIoc() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.DUBBO_IOC, false);
-    //}
-    //
-    //@Test
-    //public void dubboConsumerAndProviderIoc() {
-    //    Tests.testPTABySpringBootArchives(BenchmarkConfigs.CONSUMER_PROVIDER_IOC, false);
-    //}
-    //
-    //@Test
-    //public void dubboWeb() {
-    //    Tests.testPTABySpringBootArchives(BenchmarkConfigs.CONSUMER_PROVIDER_WEB_XML, false);
-    //}
-    //
-    //@Test
-    //public void feignIoc() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.FEIGN_IOC, false);
-    //}
-    //
-    //@Test
-    //public void feignWeb() {
-    //    Tests.testPTABySpringBootArchives(BenchmarkConfigs.FEIGN_CONSUMER_PROVIDER_WEB, false);
-    //}
-    //
-    //@Test
-    //public void mq() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.MQ, true);
-    //}
-    //
-    //@Test
-    //public void mqConsumerAndProvider() {
-    //    Tests.testPTABySpringBootArchives(BenchmarkConfigs.MQ_CONSUMER_PROVIDER, true);
-    //}
-    //
-    //@Test
-    //public void restTwoServices() {
-    //    Tests.testPTABySpringBootArchives(BenchmarkConfigs.REST_TWO_SERVICES, true);
-    //}
-
-    /* Spring Booot Monolithic Application */
-    //@Test
-    //public void halo() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.HALO, true);
-    //}
-    //
-    //@Test
-    //public void pybbs() {
-    //    Tests.testPTABySpringBootJar(BenchmarkConfigs.PYBBS, true);
-    //}
-
     /* Microservice application based on SpringBoot + Dubbo */
     @Test
     public void aliyun() {
-        Tests.testPTABySpringBootArchives(Benchmark.ALIYUN, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.ALIYUN, true);
+    }
+
+    @Test
+    public void biglybtCore() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.BICORE, true);
+    }
+
+    @Test
+    public void bt() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.BT, true);
+    }
+
+    @Test
+    public void dubbo() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.DUBBO, true);
     }
 
     @Test
     public void fastBoot() {
         Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.FASTBOOT, true);
+    }
+    @Test
+    public void gameServer() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.GAMESERVER, true);
+    }
+    @Test
+    public void haBridge() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.HABRIDGE, true);
+    }
+    @Test
+    public void hsweb() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.HSWEB, true);
+    }
+
+    @Test
+    public void ijpay() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.IJPAY, true);
+    }
+
+    @Test
+    public void instagram4j() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.INSTAGRAM, true);
+    }
+
+    @Test
+    public void j360() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.J360, true);
     }
 
     @Test
@@ -92,68 +75,57 @@ public class MicroserviceHolderTest {
     }
 
     @Test
-    public void springSTUDENT() {
+    public void springStudent() {
         Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SPRINGSTUDENT, true);
     }
 
     @Test
-    public void telegramServer() {
-        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.TELEGRAM, true);
-    }
-
-
-    @Test
-    public void gruul() {
-        Tests.testPTABySpringBootArchives(Benchmark.GRUUL, true);
+    public void nettyGameServer() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.NETTYGAMESERVER, true);
     }
 
     @Test
-    public void xmall() {
-        Tests.testPTABySpringBootArchives(Benchmark.XMALL, true);
-    }
-
-    /* Microservice application based on SpringBoot + Feign */
-
-    @Test
-    public void mogu() {
-        Tests.testPTABySpringBootArchives(Benchmark.MOGU, true);
+    public void mpush() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.MPUSH, true);
     }
 
     @Test
-    public void basemall() {
-        Tests.testPTABySpringBootArchives(Benchmark.BASEMALL, true);
+    public void myBlog() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.MYBLOG, true);
     }
 
     @Test
-    public void youlai() {
-        Tests.testPTABySpringBootArchives(Benchmark.YOULAI, true);
+    public void saturnApi() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SATURNAPI, true);
     }
 
     @Test
-    public void novel() {
-        Tests.testPTABySpringBootArchives(Benchmark.NOVEL, true);
+    public void saturnCore() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SATURNCORE, true);
     }
 
     @Test
-    public void roncoo() {
-        Tests.testPTABySpringBootArchives(Benchmark.RONCOO, true);
+    public void protools() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.PROTOOLS, true);
     }
 
     @Test
-    public void sduoj() {
-        Tests.testPTABySpringBootArchives(Benchmark.SDUOJ, true);
-//        Tests.testMicroserviceBenchmarkViaYaml("sduoj");
+    public void smart() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SMART, true);
     }
 
     @Test
-    public void mall4cloud() {
-        Tests.testPTABySpringBootArchives(Benchmark.MALL4CLOUD, true);
+    public void zheng() {
+        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.ZHENG, true);
     }
 
-    @Test
-    public void trainTicket() {
-        Tests.testPTABySpringBootArchives(Benchmark.TRAIN_TICKET, true);
-    }
+//    @Test
+//    public void gruul() {
+//        Tests.testPTABySpringBootArchives(Benchmark.GRUUL, true);
+//    }
+
+
+
 
     /**
      * uncompress Spring archives and construct app-info.yml
