@@ -299,6 +299,16 @@ public class Options implements Serializable {
         return jreDir;
     }
 
+    @JsonProperty
+    @Option(names = {"--extract-all"},
+            description = "Extract all classes of lib/app container, " +
+            "these classes will be added to --input-classes")
+    private boolean extractAllClasses;
+
+    public boolean getExtractAllClasses() {
+        return extractAllClasses;
+    }
+
     /**
      * Parses arguments and return the parsed and post-processed Options.
      */
