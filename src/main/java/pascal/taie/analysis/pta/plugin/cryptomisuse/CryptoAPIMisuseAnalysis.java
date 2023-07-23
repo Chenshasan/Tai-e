@@ -1,5 +1,6 @@
 package pascal.taie.analysis.pta.plugin.cryptomisuse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.World;
@@ -13,6 +14,7 @@ import pascal.taie.analysis.pta.plugin.Plugin;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
@@ -29,9 +31,8 @@ import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Pair;
 import pascal.taie.util.collection.Sets;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CryptoAPIMisuseAnalysis implements Plugin {
@@ -39,6 +40,13 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseAnalysis.class);
 
     private static Set<String> appClassesInString = Sets.newSet();
+
+    public static File outputFile() {
+        return outputFile;
+    }
+
+    private static File outputFile = new File("CryptoAnalysis.json");
+
 
     private static Set<JClass> appClasses = Sets.newSet();
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
@@ -95,6 +103,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 solver.getOptions().getString("crypto-config"),
                 solver.getHierarchy(),
                 solver.getTypeSystem());
+        if (solver.getOptions().getString("crypto-output") != null) {
+            outputFile = new File(solver.getOptions().getString("crypto-output"));
+        }
         typeSystem = solver.getTypeSystem();
         csManager = solver.getCSManager();
         emptyContext = solver.getContextSelector().getEmptyContext();
@@ -108,6 +119,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 ruleToJudge.put(pr, new PredictableSourceRuleJudge(pr, manager)));
         config.numberSizeRules().forEach(n ->
                 ruleToJudge.put(n, new NumberSizeRuleJudge(n, manager)));
+        config.forbiddenMethodRules().forEach(f ->
+                ruleToJudge.put(f, new ForbiddenMethodRuleJudge(f, manager)));
         config.compositeRules().forEach(cr -> {
             compositeRules.add(cr);
             fromSourceToRule.put(cr.getFromSource(), cr);
@@ -155,13 +168,16 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         JMethod jMethod = csMethod.getMethod();
         //logger.info(jMethod.getDeclaringClass().getName());
         Context ctx = csMethod.getContext();
+        if(jMethod.getSignature().equals("<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>")){
+            logger.info("run to this");
+        }
         if (jMethod.getDeclaringClass().isApplication()) {
             jMethod.getIR().getStmts().forEach(stmt -> {
                 if (stmt instanceof AssignLiteral assignStmt) {
                     Var lhs = assignStmt.getLValue();
                     if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, jMethod,stringLiteral.getString());
+                                new CryptoObjInformation(stmt, jMethod, stringLiteral.getString());
                         Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
                         logger.debug("Create String Object in Method" + jMethod);
                         solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
@@ -170,7 +186,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
                     if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, jMethod,intLiteral.getValue());
+                                new CryptoObjInformation(stmt, jMethod, intLiteral.getValue());
                         Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
                         logger.debug("Create Integer Object in Method" + jMethod);
                         solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
@@ -184,7 +200,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     elementToBase.put(rhs, base);
                     if (rhs.isConst()) {
                         CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, jMethod,PREDICTABLE_DESC);
+                                new CryptoObjInformation(stmt, jMethod, PREDICTABLE_DESC);
                         Obj cryptoObj = manager.makeCryptoObj(coi, base.getType());
                         solver.addVarPointsTo(ctx, base, emptyContext, cryptoObj);
                         logger.debug("the store array stmt " + storeArray + "is unsafe with type " + base.getType());
@@ -348,20 +364,32 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     public void onFinish() {
         ClassHierarchy classHierarchy = World.get().getClassHierarchy();
         PointerAnalysisResult result = solver.getResult();
-
+        List<Issue> issueList = new ArrayList<>();
         fromVarToRule.forEach((var, compositeRule) -> {
             CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
             compositeRule.getToVarToStmt().forEach((toVar, stmt) -> {
-                judge.judge(result, (Invoke) stmt);
+                issueList.add(judge.judge(result, (Invoke) stmt));
             });
         });
 
         ruleToJudge.forEach((rule, ruleJudge) -> {
             result.getCallGraph()
                     .getCallersOf(rule.getMethod())
-                    .forEach(callSite -> ruleJudge.judge(result, callSite));
+                    .forEach(callSite -> {
+                        Issue issue = ruleJudge.judge(result, callSite);
+                        if (issue != null) {
+                            issueList.add(issue);
+                        }
+                    });
         });
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().
+                    writeValue(CryptoAPIMisuseAnalysis.outputFile(), issueList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Set<CryptoReport> cryptoReports = cryptoRuleJudge.judgeRules();
         solver.getResult().storeResult(getClass().getName(), cryptoReports);
     }

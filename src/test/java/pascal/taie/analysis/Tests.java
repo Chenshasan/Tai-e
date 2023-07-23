@@ -322,14 +322,14 @@ public final class Tests {
                     .map(Path::toAbsolutePath)
                     .map(Path::toString)
                     .toList();
-            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
-                    .filter(path -> path.toString().endsWith(".jar")
-                            || path.toString().endsWith(".war"))
-                    .map(Path::toAbsolutePath)
-                    .map(Path::toString)
-                    .toList();
+//            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
+//                    .filter(path -> path.toString().endsWith(".jar")
+//                            || path.toString().endsWith(".war"))
+//                    .map(Path::toAbsolutePath)
+//                    .map(Path::toString)
+//                    .toList();
             microserviceArchives.addAll(microserviceArchives1);
-            microserviceArchives.addAll(microserviceArchives2);
+//            microserviceArchives.addAll(microserviceArchives2);
 //            microserviceArchives.forEach(s -> {
 //                System.out.println(s);
 //            });
@@ -402,11 +402,12 @@ public final class Tests {
                         merge-string-builders:true;
                         reflection:null;
                         cs:%s;
+                        crypto-output:%s
                         propagate-types:[reference,byte,char];
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
                         plugins:[pascal.taie.analysis.pta.plugin.spring.SpringAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs),
+                        """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),
                 "-a", """
                         cg=
                         algorithm:pta;
@@ -509,11 +510,12 @@ public final class Tests {
                         merge-string-builders:true;
                         reflection:null;
                         cs:%s;
-                        propagate-types:[reference,byte,char];
+                        crypto-output:%s
+                        propagate-types:[reference,byte,char,int];
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
                         plugins:[pascal.taie.analysis.pta.plugin.cryptomisuse.reachableplugin.CryptoReachablePlugin,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs),
+                        """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),
                 "-a", """
                         cg=
                         algorithm:pta;

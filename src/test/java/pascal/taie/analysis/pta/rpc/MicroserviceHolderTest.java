@@ -1,5 +1,6 @@
 package pascal.taie.analysis.pta.rpc;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import pascal.taie.analysis.Tests;
 import pascal.taie.util.AppClassInferringUtils;
@@ -51,9 +52,8 @@ public class MicroserviceHolderTest {
     }
     @Test
     public void hsweb() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.HSWEB, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.HSWEB, true);
     }
-
     @Test
     public void ijpay() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.IJPAY, true);
@@ -66,17 +66,17 @@ public class MicroserviceHolderTest {
 
     @Test
     public void j360() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.J360, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.J360, true);
     }
 
     @Test
     public void springQuick() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SPRINGQUICK, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SPRINGQUICK, true);
     }
 
     @Test
     public void springStudent() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SPRINGSTUDENT, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SPRINGSTUDENT, true);
     }
 
     @Test
@@ -96,12 +96,12 @@ public class MicroserviceHolderTest {
 
     @Test
     public void saturnApi() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SATURNAPI, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SATURNAPI, true);
     }
 
     @Test
     public void saturnCore() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SATURNCORE, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SATURNCORE, true);
     }
 
     @Test
@@ -111,12 +111,12 @@ public class MicroserviceHolderTest {
 
     @Test
     public void smart() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.SMART, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SMART, true);
     }
 
     @Test
     public void zheng() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.ZHENG, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.ZHENG, true);
     }
 
 //    @Test

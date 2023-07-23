@@ -1,0 +1,61 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst2 = \"SHA\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>[6@L32] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst2)",
+  "var" : "%stringconst2",
+  "constantValue" : "SHA",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String sha(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst2 = \"MD5\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String md5(java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String md5(java.lang.String)>[6@L58] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst2)",
+  "var" : "%stringconst2",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String md5(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[11@L18] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[11@L46] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[11@L75] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[11@L100] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
+} ]

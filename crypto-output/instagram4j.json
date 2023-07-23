@@ -1,0 +1,20 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"MD5\"",
+  "sourceMethod" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String md5hex(java.lang.String)>",
+  "callSite" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String digest(java.lang.String,java.lang.String)>[0@L57] $r1 = invokestatic java.security.MessageDigest.getInstance(r0)",
+  "var" : "r0",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String digest(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "%stringconst1 = \"f372b2a5f14d1bebedaaa4ac6f8d506db30ffdd6185b8e0cdfa7dab42f5a9cc6\"",
+  "sourceMethod" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String generateSignature(java.lang.String)>",
+  "callSite" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String generateHash(java.lang.String,java.lang.String)>[3@L128] invokespecial $r0.<init>($r2, %stringconst0)",
+  "var" : "$r2",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "java.lang.String generateHash(java.lang.String,java.lang.String)"
+} ]

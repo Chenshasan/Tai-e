@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
@@ -43,17 +45,14 @@ public class CompositeRuleJudge implements RuleJudge {
     }
 
     @Override
-    public boolean judge(PointerAnalysisResult result, Invoke callSite) {
+    public Issue judge(PointerAnalysisResult result, Invoke callSite) {
         AtomicBoolean judgeResult = new AtomicBoolean(true);
+        CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
-            if (ruleJudge instanceof PatternMatchRuleJudge) {
-                judgeResult.set(judgeResult.get() && !ruleJudge.judge(result, callSite));
-            } else {
-                judgeResult.set(judgeResult.get() && ruleJudge.judge(result, callSite));
-            }
+            compositeRuleIssue.addIssue(ruleJudge.judge(result, callSite));
         });
         report(judgeResult.get());
-        return judgeResult.get();
+        return compositeRuleIssue;
     }
 
     public void report(boolean b) {

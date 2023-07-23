@@ -1,0 +1,93 @@
+[ {
+  "judgeType" : "Forbidden Method",
+  "message" : "The method is forbidden from being used",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[4@L341] invokespecial $r1.<init>($r3)",
+  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[])>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Forbidden Method",
+  "message" : "The method is forbidden from being used",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[4@L329] invokespecial $r1.<init>($r3)",
+  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[])>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "%intconst1 = 20",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[10@L343] invokespecial $r6.<init>($r7, %intconst1)",
+  "var" : "%intconst1",
+  "constantValue" : "20",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-20000",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "%intconst1 = 20",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[10@L331] invokespecial $r6.<init>($r7, %intconst1)",
+  "var" : "%intconst1",
+  "constantValue" : "20",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-20000",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$r1[%intconst2] = %intconst3",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[10@L343] invokespecial $r6.<init>($r7, %intconst1)",
+  "var" : "$r7",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$r1[%intconst2] = %intconst3",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[10@L331] invokespecial $r6.<init>($r7, %intconst1)",
+  "var" : "$r7",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"PBEWithMD5AndDES\"",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[6@L342] $r5 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "PBEWithMD5AndDES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"PBEWithMD5AndDES\"",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[6@L330] $r5 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "PBEWithMD5AndDES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"PBEWithMD5AndDES\"",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[1@L340] $r0 = invokestatic javax.crypto.SecretKeyFactory.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "PBEWithMD5AndDES",
+  "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"PBEWithMD5AndDES\"",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[1@L328] $r0 = invokestatic javax.crypto.SecretKeyFactory.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "PBEWithMD5AndDES",
+  "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+} ]

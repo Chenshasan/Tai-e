@@ -1,0 +1,11 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"MD5\"",
+  "sourceMethod" : "<com.vip.saturn.job.console.utils.MD5Utils: java.lang.String getMD5Code(byte[])>",
+  "callSite" : "<com.vip.saturn.job.console.utils.MD5Utils: java.lang.String getMD5Code(byte[])>[2@L22] $r0 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String getMD5Code(byte[])"
+} ]

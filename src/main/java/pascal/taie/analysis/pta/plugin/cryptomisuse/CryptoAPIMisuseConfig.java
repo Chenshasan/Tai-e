@@ -14,10 +14,7 @@ import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.*;
 import pascal.taie.config.ConfigException;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
@@ -35,6 +32,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                                     Set<PatternMatchRule> patternMatchRules,
                                     Set<PredictableSourceRule> predictableSourceRules,
                                     Set<NumberSizeRule> numberSizeRules,
+                                    Set<ForbiddenMethodRule> forbiddenMethodRules,
                                     Set<CompositeRule> compositeRules) {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseConfig.class);
 
@@ -121,6 +119,8 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     deserializePredictableSourceRules(node.get("predictableSourceRules"));
             Set<NumberSizeRule> numberSizeRules =
                     deserializeNumberSizeRules(node.get("numberSizeRules"));
+            Set<ForbiddenMethodRule> forbiddenMethodRules =
+                    deserializeForbiddenMethodRules(node.get("forbiddenMethodRules"));
             Set<CompositeRule> compositeRules =
                     deserializeCompositeRules(node.get("compositeRules"));
             return new CryptoAPIMisuseConfig(
@@ -129,6 +129,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     patternMatchRules,
                     predictableSourceRules,
                     numberSizeRules,
+                    forbiddenMethodRules,
                     compositeRules);
         }
 
@@ -240,6 +241,25 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
             }
         }
 
+        private Set<ForbiddenMethodRule> deserializeForbiddenMethodRules(JsonNode node) {
+            if (node instanceof ArrayNode arrayNode) {
+                Set<ForbiddenMethodRule> forbiddenMethodRules = Sets.newSet(arrayNode.size());
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    JMethod method = hierarchy.getMethod(methodSig);
+                    if (method != null) {
+                        forbiddenMethodRules.add(new ForbiddenMethodRule(method));
+                    } else {
+                        logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
+                    }
+                }
+                return Collections.unmodifiableSet(forbiddenMethodRules);
+            } else {
+                // if node is not an instance of ArrayNode, just return an empty set.
+                return Set.of();
+            }
+        }
+
         /**
          * Deserializes a {@link JsonNode} (assume it is an {@link ArrayNode})
          * to a set of {@link CryptoObjPropagate}.
@@ -277,7 +297,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
             if (node instanceof ArrayNode arrayNode) {
                 Set<CompositeRule> compositeRules = Sets.newSet(arrayNode.size());
                 for (JsonNode compositeNode : node) {
-                    compositeNode=compositeNode.get("compositeRule");
+                    compositeNode = compositeNode.get("compositeRule");
                     FromSource fromSource =
                             deserializeFromSource(compositeNode.get("fromSource"));
                     Set<ToSource> toSources =
