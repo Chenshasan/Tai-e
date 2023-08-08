@@ -188,7 +188,8 @@ class Converter {
                     convertAnnotations(sootMethod),
                     convertParamAnnotations(sootMethod),
                     convertParamNames(sootMethod),
-                    sootMethod
+                    sootMethod,
+                    sootMethod.isPhantom()
             );
         });
     }
