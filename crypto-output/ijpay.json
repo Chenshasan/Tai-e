@@ -1,22 +1,4 @@
 [ {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "encoding = \"UTF-8\"",
-  "sourceMethod" : "<com.jpay.unionpay.SDKUtil: boolean sign(java.util.Map,java.lang.String)>",
-  "callSite" : "<com.jpay.unionpay.CertUtil: java.security.KeyStore getKeyInfo(java.lang.String,java.lang.String,java.lang.String)>[38@L496] invokevirtual $r6.load($r17, $r23)",
-  "var" : "$r23",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "java.security.KeyStore getKeyInfo(java.lang.String,java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.jpay.unionpay.CertUtil: java.security.PrivateKey getSignCertPrivateKey()>[12@L320] $r6 = invokevirtual $r2.getKey(r12, $r5)",
-  "sourceMethod" : "<com.jpay.unionpay.CertUtil: java.security.PrivateKey getSignCertPrivateKey()>",
-  "callSite" : "<com.jpay.unionpay.SecureUtil: byte[] decryptData(java.security.PrivateKey,byte[])>[4@L441] invokevirtual $r0.init(%intconst2, r1)",
-  "var" : "r1",
-  "calleeMethod" : "<javax.crypto.Cipher: void init(int,java.security.Key)>",
-  "subSignature" : "byte[] decryptData(java.security.PrivateKey,byte[])"
-}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"MD5\"",
@@ -56,4 +38,13 @@
   "constantValue" : "SHA1withRSA",
   "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
   "subSignature" : "boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "encoding = \"UTF-8\"",
+  "sourceMethod" : "<com.jpay.unionpay.SDKUtil: boolean sign(java.util.Map,java.lang.String)>",
+  "callSite" : "<com.jpay.unionpay.CertUtil: java.security.KeyStore getKeyInfo(java.lang.String,java.lang.String,java.lang.String)>[38@L496] invokevirtual $r6.load($r17, $r23)",
+  "var" : "$r23",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "java.security.KeyStore getKeyInfo(java.lang.String,java.lang.String,java.lang.String)"
 } ]

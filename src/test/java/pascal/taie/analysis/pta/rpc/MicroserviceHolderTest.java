@@ -119,6 +119,12 @@ public class MicroserviceHolderTest {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.ZHENG, true);
     }
 
+    @Test
+    public void rigorityj() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.RIGORITYJ, true);
+        System.out.printf("");
+    }
+
 //    @Test
 //    public void gruul() {
 //        Tests.testPTABySpringBootArchives(Benchmark.GRUUL, true);

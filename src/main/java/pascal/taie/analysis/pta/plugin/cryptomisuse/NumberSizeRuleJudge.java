@@ -41,13 +41,16 @@ public class NumberSizeRuleJudge implements RuleJudge {
                     forEach(cryptoObj -> {
                         if (cryptoObj.getAllocation() instanceof
                                 CryptoObjInformation coi) {
-                            int value = coi.constantValue() instanceof String ?
-                                    Integer.parseInt((String) coi.constantValue())
-                                    : (int) coi.constantValue();
-                            if (value >= numberSizeRule.max() ||
-                                    value < numberSizeRule.min()) {
-                                match.set(false);
-                                issue.set(report(coi, var, callSite));
+                            System.out.println("var is " + var + "in callsite " + callSite);
+                            if(isNumeric(coi.constantValue().toString())){
+                                int value = coi.constantValue() instanceof String ?
+                                        Integer.parseInt((String) coi.constantValue())
+                                        : (int) coi.constantValue();
+                                if (value >= numberSizeRule.max() ||
+                                        value < numberSizeRule.min()) {
+                                    match.set(false);
+                                    issue.set(report(coi, var, callSite));
+                                }
                             }
                         }
                     });
@@ -66,5 +69,10 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 numberSizeRule.min() + "-" + numberSizeRule.max(),
                 callSite.getContainer().getSubsignature().toString());
         return issue;
+    }
+
+    public static boolean isNumeric(String str) {
+        // 使用正则表达式判断是否只包含数字
+        return str.matches("\\d+");
     }
 }

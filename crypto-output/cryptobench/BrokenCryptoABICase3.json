@@ -1,0 +1,11 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC4\"",
+  "sourceMethod" : "<BrokenCryptoABICase3: void main(java.lang.String[])>",
+  "callSite" : "<BrokenCryptoABICase3: void go(java.lang.String)>[4@L13] temp$2 = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+} ]

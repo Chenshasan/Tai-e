@@ -27,6 +27,7 @@ import pascal.taie.World;
 import pascal.taie.analysis.ProgramAnalysis;
 import pascal.taie.analysis.pta.core.cs.element.MapBasedCSManager;
 import pascal.taie.analysis.pta.core.cs.selector.ContextSelector;
+import pascal.taie.analysis.pta.core.cs.selector.ContextSelectorDecorator;
 import pascal.taie.analysis.pta.core.cs.selector.ContextSelectorFactory;
 import pascal.taie.analysis.pta.core.heap.AllocationSiteBasedModel;
 import pascal.taie.analysis.pta.core.heap.HeapModel;
@@ -104,6 +105,7 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
         if (selector == null) {
             selector = ContextSelectorFactory.makePlainSelector(cs);
         }
+        selector = new ContextSelectorDecorator(selector);
         return runAnalysis(heapModel, selector);
     }
 

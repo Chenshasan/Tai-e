@@ -20,6 +20,16 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst1 = \"SHA-1\"",
+  "sourceMethod" : "<com.jzy.game.engine.mina.websocket.WebSocketUtils: java.lang.String getWebSocketKeyChallengeResponse(java.lang.String)>",
+  "callSite" : "<com.jzy.game.engine.mina.websocket.WebSocketUtils: java.lang.String getWebSocketKeyChallengeResponse(java.lang.String)>[7@L52] $r4 = invokestatic java.security.MessageDigest.getInstance(%stringconst1)",
+  "var" : "%stringconst1",
+  "constantValue" : "SHA-1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String getWebSocketKeyChallengeResponse(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst33 = \"MD5\"",
   "sourceMethod" : "<com.jzy.game.engine.util.CipherUtil: java.lang.String md5(byte[])>",
   "callSite" : "<com.jzy.game.engine.util.CipherUtil: java.lang.String md5(byte[])>[51@L16] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst33)",

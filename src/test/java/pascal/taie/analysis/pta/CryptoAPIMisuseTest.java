@@ -49,9 +49,9 @@ public class CryptoAPIMisuseTest {
 
     @Test
     public void testPatternMatcher() {
-        Tests.testPTA(DIR + "/" + PATTERN,
-                "BrokenCryptoBBCase1",
-                "crypto-config:src/test/resources/pta/cryptomisuse/patternmatcher/crypto-config.yml");
+        Tests.testPTA(DIR + "/" + CRYPTO,
+                "BrokenCryptoABICase2",
+                "crypto-config:src/test/resources/pta/cryptomisuse/brokencrypto/crypto-config.yml");
     }
 
     @Test

@@ -172,6 +172,7 @@ public final class Tests {
         }
         List<String> ptaArgs = new ArrayList<>();
         ptaArgs.add("implicit-entries:false");
+        ptaArgs.add("crypto-output:" + "crypto-output/cryptobench/" + main + ".json");
         String expectedFile = getExpectedFile(classPath, main, id);
 //        if (processResult) {
 //            ptaArgs.add(GENERATE_EXPECTED_RESULTS ? "dump:true"
@@ -184,6 +185,9 @@ public final class Tests {
                 specifyOnlyApp = true;
             }
         }
+        Set<String> appClasses = Sets.newSet();
+        appClasses.add(main);
+        CryptoAPIMisuseAnalysis.addAppClass(appClasses);
 //        if (!specifyOnlyApp) {
 //            // if given options do not specify only-app, then set it true
 //            ptaArgs.add("only-app:true");
@@ -407,7 +411,7 @@ public final class Tests {
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
                         plugins:[pascal.taie.analysis.pta.plugin.spring.SpringAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),
+                        """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
                 "-a", """
                         cg=
                         algorithm:pta;
@@ -427,7 +431,7 @@ public final class Tests {
         }
 
         List<String> microserviceArchives1;
-        List<String> microserviceArchives2;
+//        List<String> microserviceArchives2;
         List<String> microserviceArchives = new ArrayList<>();
         try {
             microserviceArchives1 = Files.list(Path.of(benchmark.dir))
@@ -436,14 +440,14 @@ public final class Tests {
                     .map(Path::toAbsolutePath)
                     .map(Path::toString)
                     .toList();
-            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
-                    .filter(path -> path.toString().endsWith(".jar")
-                            || path.toString().endsWith(".war"))
-                    .map(Path::toAbsolutePath)
-                    .map(Path::toString)
-                    .toList();
+//            microserviceArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
+//                    .filter(path -> path.toString().endsWith(".jar")
+//                            || path.toString().endsWith(".war"))
+//                    .map(Path::toAbsolutePath)
+//                    .map(Path::toString)
+//                    .toList();
             microserviceArchives.addAll(microserviceArchives1);
-            microserviceArchives.addAll(microserviceArchives2);
+//            microserviceArchives.addAll(microserviceArchives2);
             logger.info("{} Microservices detected: {}", microserviceArchives.size(), microserviceArchives);
         } catch (IOException e) {
             logger.error("", e);
@@ -487,7 +491,7 @@ public final class Tests {
                 .collect(Collectors.joining(File.pathSeparator));
 
         boolean onlyApp = false;
-        String cs = "ci";
+        String cs = "1-call";
 
         List<String> args = new ArrayList<>();
         Collections.addAll(args, "-java", "8");
@@ -515,7 +519,7 @@ public final class Tests {
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
                         plugins:[pascal.taie.analysis.pta.plugin.cryptomisuse.reachableplugin.CryptoReachablePlugin,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),
+                        """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
                 "-a", """
                         cg=
                         algorithm:pta;

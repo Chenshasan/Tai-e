@@ -50,9 +50,6 @@ public class PatternMatchRuleJudge implements RuleJudge {
                             if (coi.constantValue() instanceof String value) {
                                 logger.debug("coi constant value is " + value);
                                 boolean usedToBeTrue = match.get();
-                                if(value.equals("AES/CBC/NoPadding")){
-                                    System.out.print("the value is ok");
-                                }
                                 match.set(match.get() && !(Pattern.matches(
                                         patternMatchRule.pattern(), value)));
                                 // used to be ture and now it is false

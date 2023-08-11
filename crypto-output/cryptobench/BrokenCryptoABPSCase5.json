@@ -1,0 +1,11 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst1 = \"IDEA\"",
+  "sourceMethod" : "<BrokenCryptoABPSCase5: void go(int)>",
+  "callSite" : "<BrokenCryptoABPSCase5: void go(int)>[6@L13] temp$2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst1)",
+  "var" : "%stringconst1",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+} ]

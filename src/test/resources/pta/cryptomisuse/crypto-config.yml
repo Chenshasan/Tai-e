@@ -5,9 +5,9 @@ patternMatchRules:
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
   - { method: "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "MD2|(.)*MD5|(.)*MD4|(.)*SHA-1|SHA1|SHA" }
-  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>", index: 0, pattern: "HmacMD5" }
-  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "HmacMD5" }
-  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "HmacMD5" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
+  - { method: "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "HmacMD5|HmacSHA1" }
   - { method: "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>", index: 0, pattern: "PBEWithMD5AndDES|DES|DESede" }
   - { method: "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String,java.lang.String)>", index: 0, pattern: "PBEWithMD5AndDES|DES|DESede" }
   - { method: "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String,java.security.Provider)>", index: 0, pattern: "PBEWithMD5AndDES|DES|DESede" }
@@ -20,6 +20,11 @@ patternMatchRules:
   - { method: "<okhttp3.Request$Builder: okhttp3.Request$Builder url(java.lang.String)>", index: 0, pattern: "^(?!http://$)http://(.*)$" }
   - { method: "<retrofit2.Retrofit$Builder: retrofit2.Retrofit$Builder baseUrl(java.lang.String)>", index: 0, pattern: "^(?!http://$)http://(.*)$" }
 
+influencingFactorRules:
+  - { method: "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: 1 }
+  - { method: "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: 1 }
+  - { method: "boolean verify(java.lang.String,javax.net.ssl.SSLSession)", index: result }
+
 predictableSourceRules:
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],int,int,java.lang.String)>", index: 0 }
@@ -29,16 +34,22 @@ predictableSourceRules:
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 0 }
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int,java.security.spec.AlgorithmParameterSpec)>", index: 0 }
   - { method: "<javax.crypto.Cipher: void init(int,java.security.Key)>", index: 1 }
+  - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
+  - { method: "<java.security.SecureRandom: void setSeed(byte[])>", index: 0 }
+  - { method: "<java.security.SecureRandom: void <init>(byte[])>", index: 0 }
 
 cryptoSources:
   - { method: "<java.util.Base64$Decoder: byte[] decode(java.lang.String)>", type: "byte[]", index: result }
   - { method: "<java.security.MessageDigest: byte[] digest()>", type: "byte[]", index: result }
   - { method: "<java.util.Random: void nextBytes(byte[])>", type: "byte[]", index: 0 }
+  - { method: "<java.util.Random: java.util.stream.IntStream ints()>", type: "java.util.stream.IntStream", index: result }
+  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result }
 #  - { method: "<java.security.KeyStore: java.security.Key getKey(java.lang.String,char[])>", type: "java.security.PrivateKey", index: result }
 
 numberSizeRules:
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 1, min: 1000, max: 20000 }
   - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int)>", index: 2, min: 1000, max: 20000 }
+  - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>", index: 3, min: 1000, max: 20000 }
 
 forbiddenMethodRules:
   - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[])>" }
@@ -65,3 +76,21 @@ cryptoObjPropagate:
   - { method: "<java.lang.Byte: void <init>(byte)>", from: 0, to: base, type: "java.lang.Byte" }
   - { method: "<java.lang.Byte: byte byteValue()>", from: base, to: result, type: "byte" }
   - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
+
+#compositeRules:
+#  - compositeRule:
+#      fromSource:
+#        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
+#        index: result
+#        type: "java.security.KeyPairGenerator"
+#      toSources:
+#        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "RSA" }
+#        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 2048, max: 10000 }
+#  - compositeRule:
+#      fromSource:
+#        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
+#        index: result
+#        type: "java.security.KeyPairGenerator"
+#      toSources:
+#        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "ECC" }
+#        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 224, max: 10000 }

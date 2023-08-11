@@ -3,9 +3,18 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
   "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[36@L103] invokespecial $r19.<init>($r20, %intconst0, %intconst4)",
-  "var" : "$r20",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $r23.<init>($r25)",
+  "var" : "$r25",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void afterPropertiesSet()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[29@L100] invokespecial $r16.<init>($r17, %stringconst2)",
+  "var" : "$r17",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
   "subSignature" : "void afterPropertiesSet()"
 }, {
   "judgeType" : "Pattern Match",
@@ -42,17 +51,8 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
   "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $r23.<init>($r25)",
-  "var" : "$r25",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void afterPropertiesSet()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[29@L100] invokespecial $r16.<init>($r17, %stringconst2)",
-  "var" : "$r17",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[36@L103] invokespecial $r19.<init>($r20, %intconst0, %intconst4)",
+  "var" : "$r20",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>",
   "subSignature" : "void afterPropertiesSet()"
 } ]

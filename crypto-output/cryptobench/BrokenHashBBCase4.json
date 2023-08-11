@@ -1,0 +1,11 @@
+[ {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"MD2\"",
+  "sourceMethod" : "<BrokenHashBBCase4: void main(java.lang.String[])>",
+  "callSite" : "<BrokenHashBBCase4: void main(java.lang.String[])>[2@L8] temp$0 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+} ]

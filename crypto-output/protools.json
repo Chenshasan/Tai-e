@@ -50,12 +50,12 @@
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"DESede/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<pro.tools.security.ToolDESede: byte[] encrypt(byte[],byte[])>",
-  "callSite" : "<pro.tools.security.ToolDESede: byte[] encrypt(byte[],byte[])>[2@L110] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "sourceMethod" : "<pro.tools.security.ToolDESede: byte[] decrypt(byte[],byte[])>",
+  "callSite" : "<pro.tools.security.ToolDESede: byte[] decrypt(byte[],byte[])>[2@L81] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
   "var" : "%stringconst0",
   "constantValue" : "DESede/ECB/PKCS5Padding",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(byte[],byte[])"
+  "subSignature" : "byte[] decrypt(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -69,6 +69,16 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst1 = \"PBEWithMD5AndTripleDES\"",
+  "sourceMethod" : "<pro.tools.security.ToolPBE: byte[] decrypt(byte[],java.lang.String,byte[])>",
+  "callSite" : "<pro.tools.security.ToolPBE: byte[] decrypt(byte[],java.lang.String,byte[])>[5@L150] $r4 = invokestatic javax.crypto.Cipher.getInstance(%stringconst1)",
+  "var" : "%stringconst1",
+  "constantValue" : "PBEWithMD5AndTripleDES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decrypt(byte[],java.lang.String,byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"AES/ECB/PKCS5Padding\"",
   "sourceMethod" : "<pro.tools.security.ToolAES: byte[] decrypt(byte[],byte[])>",
   "callSite" : "<pro.tools.security.ToolAES: byte[] decrypt(byte[],byte[])>[2@L85] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
@@ -76,16 +86,6 @@
   "constantValue" : "AES/ECB/PKCS5Padding",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "byte[] decrypt(byte[],byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"IDEA/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<pro.tools.security.ToolIDEA: byte[] encrypt(byte[],byte[])>",
-  "callSite" : "<pro.tools.security.ToolIDEA: byte[] encrypt(byte[],byte[])>[2@L106] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "IDEA/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -99,16 +99,6 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"DESede/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<pro.tools.security.ToolDESede: byte[] decrypt(byte[],byte[])>",
-  "callSite" : "<pro.tools.security.ToolDESede: byte[] decrypt(byte[],byte[])>[2@L81] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "DESede/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] decrypt(byte[],byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"DES/ECB/PKCS5PADDING\"",
   "sourceMethod" : "<pro.tools.security.ToolDES: byte[] decrypt(byte[],byte[])>",
   "callSite" : "<pro.tools.security.ToolDES: byte[] decrypt(byte[],byte[])>[2@L82] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
@@ -119,13 +109,13 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst1 = \"PBEWithMD5AndTripleDES\"",
-  "sourceMethod" : "<pro.tools.security.ToolPBE: byte[] decrypt(byte[],java.lang.String,byte[])>",
-  "callSite" : "<pro.tools.security.ToolPBE: byte[] decrypt(byte[],java.lang.String,byte[])>[5@L150] $r4 = invokestatic javax.crypto.Cipher.getInstance(%stringconst1)",
-  "var" : "%stringconst1",
-  "constantValue" : "PBEWithMD5AndTripleDES",
+  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceMethod" : "<pro.tools.security.ToolDH: byte[] encrypt(byte[],byte[])>",
+  "callSite" : "<pro.tools.security.ToolDH: byte[] decrypt(byte[],byte[])>[4@L191] $r3 = invokestatic javax.crypto.Cipher.getInstance($r2)",
+  "var" : "$r2",
+  "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] decrypt(byte[],java.lang.String,byte[])"
+  "subSignature" : "byte[] decrypt(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -139,13 +129,13 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
-  "sourceMethod" : "<pro.tools.security.ToolDH: byte[] encrypt(byte[],byte[])>",
-  "callSite" : "<pro.tools.security.ToolDH: byte[] decrypt(byte[],byte[])>[4@L191] $r3 = invokestatic javax.crypto.Cipher.getInstance($r2)",
-  "var" : "$r2",
-  "constantValue" : "AES",
+  "sourceStmt" : "%stringconst0 = \"DESede/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<pro.tools.security.ToolDESede: byte[] encrypt(byte[],byte[])>",
+  "callSite" : "<pro.tools.security.ToolDESede: byte[] encrypt(byte[],byte[])>[2@L110] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "DESede/ECB/PKCS5Padding",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] decrypt(byte[],byte[])"
+  "subSignature" : "byte[] encrypt(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -164,6 +154,16 @@
   "callSite" : "<pro.tools.security.ToolAES: byte[] encrypt(byte[],byte[])>[2@L114] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
   "var" : "%stringconst0",
   "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(byte[],byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"IDEA/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<pro.tools.security.ToolIDEA: byte[] encrypt(byte[],byte[])>",
+  "callSite" : "<pro.tools.security.ToolIDEA: byte[] encrypt(byte[],byte[])>[2@L106] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "IDEA/ECB/PKCS5Padding",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "byte[] encrypt(byte[],byte[])"
 }, {
@@ -189,6 +189,16 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"MD5\"",
+  "sourceMethod" : "<pro.tools.security.md.ToolMD5: byte[] encodeMD5(byte[])>",
+  "callSite" : "<pro.tools.security.md.ToolMD5: byte[] encodeMD5(byte[])>[5@L35] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encodeMD5(byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"MD4\"",
   "sourceMethod" : "<pro.tools.security.md.ToolMD4: byte[] encodeMD4(byte[])>",
   "callSite" : "<pro.tools.security.md.ToolMD4: byte[] encodeMD4(byte[])>[5@L36] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
@@ -199,13 +209,13 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"MD5\"",
-  "sourceMethod" : "<pro.tools.security.md.ToolMD5: byte[] encodeMD5(byte[])>",
-  "callSite" : "<pro.tools.security.md.ToolMD5: byte[] encodeMD5(byte[])>[5@L35] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encodeMD5(byte[])"
+  "sourceStmt" : "%stringconst0 = \"HmacMD5\"",
+  "sourceMethod" : "<pro.tools.security.md.ToolMAC: byte[] encodeHmacMD5(byte[],byte[])>",
+  "callSite" : "<pro.tools.security.md.ToolHmacRipeMD: byte[] encodeHmacRipeMD160(byte[],byte[])>[8@L142] $r4 = invokestatic javax.crypto.Mac.getInstance($r3)",
+  "var" : "$r3",
+  "constantValue" : "HmacMD5",
+  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encodeHmacRipeMD160(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -236,16 +246,6 @@
   "constantValue" : "HmacMD5",
   "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
   "subSignature" : "byte[] encodeHmacSHA256(byte[],byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"HmacMD5\"",
-  "sourceMethod" : "<pro.tools.security.md.ToolMAC: byte[] encodeHmacMD5(byte[],byte[])>",
-  "callSite" : "<pro.tools.security.md.ToolHmacRipeMD: byte[] encodeHmacRipeMD160(byte[],byte[])>[8@L142] $r4 = invokestatic javax.crypto.Mac.getInstance($r3)",
-  "var" : "$r3",
-  "constantValue" : "HmacMD5",
-  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encodeHmacRipeMD160(byte[],byte[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",

@@ -49,6 +49,8 @@ public enum Benchmark {
     NETTYGAMESERVER("nettygameserver", CRYPTO_BENCHMARKS_DIR + "/nettygameserver"),
 
     ZHENG("zheng", CRYPTO_BENCHMARKS_DIR + "/zheng"),
+
+    RIGORITYJ("rigorityj", CRYPTO_BENCHMARKS_DIR + "/rigorityj-samples"),
     ;
 
     public final String name;

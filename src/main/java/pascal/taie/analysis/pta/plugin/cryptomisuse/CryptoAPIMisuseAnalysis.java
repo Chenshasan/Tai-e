@@ -15,6 +15,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
@@ -49,16 +50,21 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
 
     private static Set<JClass> appClasses = Sets.newSet();
+
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
+
     private final MultiMap<JMethod, CryptoSource> sources = Maps.newMultiMap();
+
     private final MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates = Maps.newMultiMap();
 
     private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
+
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
 
     private final MultiMap<FromSource, CompositeRule> fromSourceToRule = Maps.newMultiMap();
 
     private final MultiMap<Var, CompositeRule> fromVarToRule = Maps.newMultiMap();
+
     private final MultiMap<JMethod, FromSource> compositeFromSources = Maps.newMultiMap();
 
     private final Map<ToSource, CompositeRule> toSourceToRule = Maps.newMap();
@@ -87,7 +93,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private CryptoAPIMisuseConfig config;
 
-
     public static void addAppClass(Set<String> appClass) {
         appClassesInString = appClass;
     }
@@ -113,14 +118,17 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         this.solver = solver;
         config.sources().forEach(s -> sources.put(s.method(), s));
         config.propagates().forEach(p -> propagates.put(p.method(), p));
-        config.patternMatchRules().forEach(pa ->
-                ruleToJudge.put(pa, new PatternMatchRuleJudge(pa, manager)));
+        config.patternMatchRules().forEach(pa -> {
+            ruleToJudge.put(pa, new PatternMatchRuleJudge(pa, manager));
+        });
         config.predictableSourceRules().forEach(pr ->
                 ruleToJudge.put(pr, new PredictableSourceRuleJudge(pr, manager)));
         config.numberSizeRules().forEach(n ->
                 ruleToJudge.put(n, new NumberSizeRuleJudge(n, manager)));
         config.forbiddenMethodRules().forEach(f ->
                 ruleToJudge.put(f, new ForbiddenMethodRuleJudge(f, manager)));
+        config.influencingFactorRules().forEach(i ->
+                ruleToJudge.put(i, new InfluencingFactorRuleJudge(i, manager)));
         config.compositeRules().forEach(cr -> {
             compositeRules.add(cr);
             fromSourceToRule.put(cr.getFromSource(), cr);
@@ -166,11 +174,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     @Override
     public void onNewCSMethod(CSMethod csMethod) {
         JMethod jMethod = csMethod.getMethod();
-        //logger.info(jMethod.getDeclaringClass().getName());
         Context ctx = csMethod.getContext();
-        if(jMethod.getSignature().equals("<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>")){
-            logger.info("run to this");
-        }
         if (jMethod.getDeclaringClass().isApplication()) {
             jMethod.getIR().getStmts().forEach(stmt -> {
                 if (stmt instanceof AssignLiteral assignStmt) {
@@ -224,6 +228,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             Type type = p.second();
             propagateCryptoObj(pts, csVar.getContext(), to, type, true);
         });
+
 
         elementToBase.get(var).forEach(base -> {
             pts.objects()
@@ -290,6 +295,12 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 compositeVarPropagates, true);
     }
 
+
+    /**
+     * When adding pts to the pointer set of var, if pts contains compositeObj and
+     * var is the 'toVar' in compositeRule, then add the statement containing 'toVar'
+     * to the judgeStmt.
+     */
     private void addJudgeStmtFromPts(Var var, PointsToSet pts) {
         pts.objects()
                 .map(CSObj::getObject)
@@ -335,6 +346,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         };
     }
 
+    /**
+     * Transform the cryptoObj from pts into new type and add it to the pts of toVar.
+     */
     private void propagateCryptoObj(PointsToSet pts, Context ctx,
                                     Var to, Type type, boolean isComposite) {
         PointsToSet newCryptoObjs = solver.makePointsToSet();
@@ -373,14 +387,21 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         });
 
         ruleToJudge.forEach((rule, ruleJudge) -> {
-            result.getCallGraph()
-                    .getCallersOf(rule.getMethod())
-                    .forEach(callSite -> {
-                        Issue issue = ruleJudge.judge(result, callSite);
-                        if (issue != null) {
-                            issueList.add(issue);
-                        }
-                    });
+            if (rule instanceof InfluencingFactorRule) {
+                Issue issue = ruleJudge.judge(result, null);
+                if (issue != null) {
+                    issueList.add(issue);
+                }
+            } else {
+                result.getCallGraph()
+                        .getCallersOf(rule.getMethod())
+                        .forEach(callSite -> {
+                            Issue issue = ruleJudge.judge(result, callSite);
+                            if (issue != null) {
+                                issueList.add(issue);
+                            }
+                        });
+            }
         });
 
         ObjectMapper objectMapper = new ObjectMapper();

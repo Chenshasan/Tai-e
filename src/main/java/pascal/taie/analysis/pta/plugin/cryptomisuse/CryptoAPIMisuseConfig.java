@@ -33,6 +33,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                                     Set<PredictableSourceRule> predictableSourceRules,
                                     Set<NumberSizeRule> numberSizeRules,
                                     Set<ForbiddenMethodRule> forbiddenMethodRules,
+                                    Set<InfluencingFactorRule> influencingFactorRules,
                                     Set<CompositeRule> compositeRules) {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseConfig.class);
 
@@ -121,6 +122,8 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     deserializeNumberSizeRules(node.get("numberSizeRules"));
             Set<ForbiddenMethodRule> forbiddenMethodRules =
                     deserializeForbiddenMethodRules(node.get("forbiddenMethodRules"));
+            Set<InfluencingFactorRule> influencingFactorRules =
+                    deserializeInfluencingFactorRules(node.get("influencingFactorRules"));
             Set<CompositeRule> compositeRules =
                     deserializeCompositeRules(node.get("compositeRules"));
             return new CryptoAPIMisuseConfig(
@@ -130,6 +133,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     predictableSourceRules,
                     numberSizeRules,
                     forbiddenMethodRules,
+                    influencingFactorRules,
                     compositeRules);
         }
 
@@ -254,6 +258,32 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     }
                 }
                 return Collections.unmodifiableSet(forbiddenMethodRules);
+            } else {
+                // if node is not an instance of ArrayNode, just return an empty set.
+                return Set.of();
+            }
+        }
+
+        private Set<InfluencingFactorRule> deserializeInfluencingFactorRules(JsonNode node) {
+            if (node instanceof ArrayNode arrayNode) {
+                Set<InfluencingFactorRule> influencingFactorRules = Sets.newSet(arrayNode.size());
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    int index = IndexUtils.toInt(elem.get("index").asText());
+                    hierarchy.allClasses().forEach(jClass -> {
+                        if(jClass.isApplication()){
+                            if(jClass.getName().contains("DummyCertValidationCase1")){
+                                System.out.println("xxxx");
+                            }
+                            jClass.getDeclaredMethods().forEach(jMethod -> {
+                                if(jMethod.getSignature().contains(methodSig)){
+                                    influencingFactorRules.add(new InfluencingFactorRule(jMethod,index));
+                                }
+                            });
+                        }
+                    });
+                }
+                return Collections.unmodifiableSet(influencingFactorRules);
             } else {
                 // if node is not an instance of ArrayNode, just return an empty set.
                 return Set.of();
