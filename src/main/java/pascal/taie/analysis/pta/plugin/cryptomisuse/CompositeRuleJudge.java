@@ -53,8 +53,15 @@ public class CompositeRuleJudge implements RuleJudge {
         CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
             Issue issue = ruleJudge.judge(result, callSite);
-            if (issue != null) {
-                compositeRuleIssue.addIssue(issue);
+            if (ruleJudge instanceof PatternMatchRuleJudge) {
+                //If the PatternMatchRuleJudge determines that this string does not match, further processing will be halted.
+                if (issue == null) {
+                    compositeRuleIssue.setPredicate(1);
+                }
+            } else {
+                if (issue != null) {
+                    compositeRuleIssue.addIssue(issue);
+                }
             }
         });
         report(judgeResult.get());

@@ -49,7 +49,7 @@ cryptoSources:
 numberSizeRules:
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 1, min: 1000, max: 20000 }
   - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int)>", index: 2, min: 1000, max: 20000 }
-  - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>", index: 3, min: 1000, max: 20000 }
+  - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>", index: 2, min: 1000, max: 20000 }
 
 forbiddenMethodRules:
   - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[])>" }

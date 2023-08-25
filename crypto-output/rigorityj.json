@@ -1,16 +1,6 @@
 [ {
   "judgeType" : "CompositeRule",
   "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase3: void method1(int)>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase3: void method1(int)>[1@L18] $r0 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void method1(int)"
-  }, {
     "judgeType" : "Number Size",
     "message" : "The number size is not allowed for the API",
     "sourceStmt" : "%intconst0 = 1024",
@@ -25,29 +15,6 @@
 }, {
   "judgeType" : "CompositeRule",
   "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABPSCase1: void go(int)>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABPSCase1: void go(int)>[1@L8] $r0 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void go(int)"
-  } ]
-}, {
-  "judgeType" : "CompositeRule",
-  "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherBBCase1: void go()>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherBBCase1: void go()>[1@L9] $r0 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void go()"
-  }, {
     "judgeType" : "Number Size",
     "message" : "The number size is not allowed for the API",
     "sourceStmt" : "%intconst1 = 1024",
@@ -62,16 +29,6 @@
 }, {
   "judgeType" : "CompositeRule",
   "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABMC1: void go(int)>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABMC1: void go(int)>[1@L13] $r0 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void go(int)"
-  }, {
     "judgeType" : "Number Size",
     "message" : "The number size is not allowed for the API",
     "sourceStmt" : "%intconst0 = 1024",
@@ -86,16 +43,6 @@
 }, {
   "judgeType" : "CompositeRule",
   "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase2: void main(java.lang.String[])>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase2: void main(java.lang.String[])>[5@L41] $r1 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void main(java.lang.String[])"
-  }, {
     "judgeType" : "Number Size",
     "message" : "The number size is not allowed for the API",
     "sourceStmt" : "%intconst0 = 1024",
@@ -110,16 +57,6 @@
 }, {
   "judgeType" : "CompositeRule",
   "issues" : [ {
-    "judgeType" : "Pattern Match",
-    "message" : "The pattern is not matched for the API",
-    "sourceStmt" : "%stringconst0 = \"RSA\"",
-    "sourceMethod" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase1: void go(int)>",
-    "callSite" : "<org.cryptoapi.bench.insecureasymmetriccrypto.InsecureAsymmetricCipherABICase1: void go(int)>[1@L12] $r0 = invokestatic java.security.KeyPairGenerator.getInstance(%stringconst0)",
-    "var" : "%stringconst0",
-    "constantValue" : "RSA",
-    "calleeMethod" : "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>",
-    "subSignature" : "void go(int)"
-  }, {
     "judgeType" : "Number Size",
     "message" : "The number size is not allowed for the API",
     "sourceStmt" : "%intconst0 = 1024",
@@ -628,7 +565,7 @@
   "sourceMethod" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordCorrected: void go()>",
   "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordCorrected: void go()>[13@L26] invokevirtual $r0.load($r7, $r8)",
   "var" : "$r8",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "calleeMethod" : "<java.security.KeyStore: void                                                                                                                load(java.io.InputStream,char[])>",
   "subSignature" : "void go()"
 }, {
   "judgeType" : "Predictable Source",
@@ -1536,127 +1473,6 @@
   "constantValue" : "Blowfish",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst1 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.CryptoPredictablePBE: void method1(java.lang.String)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.CryptoPredictablePBE: void method1(java.lang.String)>[12@L37] invokespecial $r2.<init>($r3, $r4, %intconst2, %intconst1)",
-  "var" : "%intconst1",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst3 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>[12@L22] invokespecial $r4.<init>($r0, r1, %intconst4, %intconst3)",
-  "var" : "%intconst3",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key()"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase1: void key()>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase1: void key()>[9@L22] invokespecial $r4.<init>($r5, r1, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key()"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABHCase2: void key(java.lang.String)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABHCase2: void key(java.lang.String)>[8@L30] invokespecial $r3.<init>($r5, r0, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABMC1: void key(java.lang.String)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABMC1: void key(java.lang.String)>[8@L16] invokespecial $r3.<init>($r5, r0, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase3: void method2(java.lang.String)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase3: void method2(java.lang.String)>[8@L28] invokespecial $r3.<init>($r5, r0, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void method2(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase1: void go(java.lang.String)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase1: void go(java.lang.String)>[8@L22] invokespecial $r3.<init>($r5, r0, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABHCase1: void key(byte[])>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABHCase1: void key(byte[])>[10@L25] invokespecial $r3.<init>($r6, r0, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key(byte[])"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst1 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABPSCase1: void key(int)>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABPSCase1: void key(int)>[15@L27] invokespecial $r2.<init>($r3, $r6, %intconst2, %intconst1)",
-  "var" : "%intconst1",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key(int)"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordCorrected: void key()>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordCorrected: void key()>[10@L22] invokespecial $r5.<init>($r6, r3, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void key()"
-}, {
-  "judgeType" : "Number Size",
-  "message" : "The number size is not allowed for the API",
-  "sourceStmt" : "%intconst0 = 16",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase2: void go()>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase2: void go()>[8@L33] invokespecial $r3.<init>($r4, r1, %intconst1, %intconst0)",
-  "var" : "%intconst0",
-  "constantValue" : "16",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "numberSize" : "1000-20000",
-  "subSignature" : "void go()"
 }, {
   "judgeType" : "Influencing Factory",
   "message" : "Concerned var in this method has no influencing stmts",

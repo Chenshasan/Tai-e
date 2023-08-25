@@ -285,7 +285,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             compositeFromSources.get(callee).forEach(compositeSource -> {
                 Var var = IndexUtils.getVar(callSite, compositeSource.index());
                 fromSourceToRule.get(compositeSource).forEach(compositeRule -> {
-                    if(!fromVarToRule.containsKey(var)){
+                    if (!fromVarToRule.containsKey(var)) {
                         CompositeRule cloneCompositeRule = compositeRule.clone();
                         cloneCompositeRule.setFromVar(var);
                         fromVarToRule.put(var, cloneCompositeRule);
@@ -405,7 +405,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     Stmt stmt = pair.first();
                     compositeRuleIssue.addIssue(judge.judge(result, (Invoke) stmt));
                 });
-                if (compositeRuleIssue.getIssues().size() > 0) {
+                if (compositeRuleIssue.getIssues().size() > 0 && compositeRuleIssue.getPredicate() != 1) {
                     issueList.add(compositeRuleIssue);
                 }
             }
