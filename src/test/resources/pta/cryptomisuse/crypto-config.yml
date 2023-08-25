@@ -77,20 +77,20 @@ cryptoObjPropagate:
   - { method: "<java.lang.Byte: byte byteValue()>", from: base, to: result, type: "byte" }
   - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
 
-#compositeRules:
-#  - compositeRule:
-#      fromSource:
-#        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
-#        index: result
-#        type: "java.security.KeyPairGenerator"
-#      toSources:
-#        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "RSA" }
-#        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 2048, max: 10000 }
-#  - compositeRule:
-#      fromSource:
-#        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
-#        index: result
-#        type: "java.security.KeyPairGenerator"
-#      toSources:
-#        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "ECC" }
-#        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 224, max: 10000 }
+compositeRules:
+  - compositeRule:
+      fromSource:
+        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
+        index: result
+        type: "java.security.KeyPairGenerator"
+      toSources:
+        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "RSA" }
+        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 2048, max: 10000 }
+  - compositeRule:
+      fromSource:
+        method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>"
+        index: result
+        type: "java.security.KeyPairGenerator"
+      toSources:
+        - { method: "<java.security.KeyPairGenerator: java.security.KeyPairGenerator getInstance(java.lang.String)>", index: result, ruleType: "PatternMatch", ruleIndex: 0, pattern: "ECC" }
+        - { method: "<java.security.KeyPairGenerator: void initialize(int)>", index: base, ruleType: "NumberSize", ruleIndex: 0, min: 224, max: 10000 }

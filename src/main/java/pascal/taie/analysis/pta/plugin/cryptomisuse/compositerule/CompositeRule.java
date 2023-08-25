@@ -5,6 +5,7 @@ import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
+import pascal.taie.util.collection.Pair;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,9 +15,7 @@ public class CompositeRule implements Cloneable {
     Var fromVar;
     Set<ToSource> toSourceSet;
     Set<CryptoObjPropagate> transfers;
-    MultiMap<Stmt, ToSource> judgeStmts = Maps.newMultiMap();
-    Map<Var, Stmt> toVarToStmt = Maps.newMap();
-    Map<Var, ToSource> toSourceToToVar = Maps.newMap();
+    MultiMap<Var, Pair<Stmt, ToSource>> toVarToStmtAndToSource = Maps.newMultiMap();
 
     public CompositeRule(FromSource fromSource,
                          Set<ToSource> toSourceSet,
@@ -38,17 +37,10 @@ public class CompositeRule implements Cloneable {
         return transfers;
     }
 
-    public MultiMap<Stmt, ToSource> getJudgeStmts() {
-        return judgeStmts;
+    public MultiMap<Var, Pair<Stmt, ToSource>> getToVarToStmtAndToSource() {
+        return toVarToStmtAndToSource;
     }
 
-    public Map<Var, Stmt> getToVarToStmt() {
-        return toVarToStmt;
-    }
-
-    public Map<Var, ToSource> getToSourceToToVar() {
-        return toSourceToToVar;
-    }
 
     public Var getFromVar() {
         return fromVar;
@@ -58,15 +50,16 @@ public class CompositeRule implements Cloneable {
         this.fromVar = fromVar;
     }
 
-    public void renewJudgeStmts() {
-        this.judgeStmts = Maps.newMultiMap();
+    public void refresh() {
+        toVarToStmtAndToSource = Maps.newMultiMap();
+
     }
 
     @Override
     public CompositeRule clone() {
         try {
-            CompositeRule compositeRule = (CompositeRule)super.clone();
-            compositeRule.renewJudgeStmts();
+            CompositeRule compositeRule = (CompositeRule) super.clone();
+            compositeRule.refresh();
             return compositeRule;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

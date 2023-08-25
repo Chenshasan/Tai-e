@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
@@ -28,7 +29,9 @@ public class CompositeRuleJudge implements RuleJudge {
     }
 
     CompositeRuleJudge(CompositeRule compositeRule, CryptoObjManager manager) {
-        compositeRule.getJudgeStmts().forEach((stmt, toSource) -> {
+        compositeRule.getToVarToStmtAndToSource().forEach((toVar, pair) -> {
+            Stmt stmt = pair.first();
+            ToSource toSource = pair.second();
             RuleJudge ruleJudge = null;
             if (toSource.rule() instanceof PatternMatchRule pm) {
                 ruleJudge = new PatternMatchRuleJudge(pm, manager);
@@ -49,7 +52,10 @@ public class CompositeRuleJudge implements RuleJudge {
         AtomicBoolean judgeResult = new AtomicBoolean(true);
         CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
-            compositeRuleIssue.addIssue(ruleJudge.judge(result, callSite));
+            Issue issue = ruleJudge.judge(result, callSite);
+            if (issue != null) {
+                compositeRuleIssue.addIssue(issue);
+            }
         });
         report(judgeResult.get());
         return compositeRuleIssue;

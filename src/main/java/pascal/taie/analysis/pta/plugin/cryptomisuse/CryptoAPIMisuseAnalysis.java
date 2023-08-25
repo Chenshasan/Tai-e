@@ -14,6 +14,7 @@ import pascal.taie.analysis.pta.plugin.Plugin;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
@@ -51,15 +52,23 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private static Set<JClass> appClasses = Sets.newSet();
 
+    /**
+     * Rule Property
+     */
     private final MultiMap<JMethod, CryptoObjPropagate> propagates = Maps.newMultiMap();
 
     private final MultiMap<JMethod, CryptoSource> sources = Maps.newMultiMap();
 
     private final MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates = Maps.newMultiMap();
 
-    private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
-
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
+
+    /**
+     * Composite Rule Property
+     */
+    private final MultiMap<JMethod, CryptoObjPropagate> compositePropagates = Maps.newMultiMap();
+
+    private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
 
     private final MultiMap<FromSource, CompositeRule> fromSourceToRule = Maps.newMultiMap();
 
@@ -71,16 +80,21 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private final MultiMap<JMethod, ToSource> compositeToSources = Maps.newMultiMap();
 
-    private final MultiMap<JMethod, CryptoObjPropagate> compositePropagates = Maps.newMultiMap();
-
-    private final MultiMap<Var, Var> elementToBase = Maps.newMultiMap();
-
     private final Set<CompositeRule> compositeRules = Sets.newSet();
+
+    private final MultiMap<Var, Pair<Stmt, ToSource>> compositeVarJudge = Maps.newMultiMap();
+
+    /**
+     * Array Involved Property
+     */
+    private final MultiMap<Var, Var> elementToBase = Maps.newMultiMap();
 
     private final String PREDICTABLE_DESC = "PredictableSourceObj";
 
+    /**
+     * Environment Property
+     */
     private CryptoObjManager manager;
-
     private TypeSystem typeSystem;
 
     private Solver solver;
@@ -229,6 +243,11 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             propagateCryptoObj(pts, csVar.getContext(), to, type, true);
         });
 
+        compositeVarJudge.get(var).forEach(p -> {
+            Stmt callSite = p.first();
+            ToSource toSource = p.second();
+            addJudgeStmtFromPts(var, pts, callSite, toSource);
+        });
 
         elementToBase.get(var).forEach(base -> {
             pts.objects()
@@ -239,7 +258,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
                     .forEach(csObj -> solver.addVarPointsTo(csVar.getContext(), base, csObj));
         });
-        addJudgeStmtFromPts(var, pts);
     }
 
     @Override
@@ -255,21 +273,27 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 Type type = source.type();
                 Obj cryptoObj = manager.makeCryptoObj(coi, type);
                 solver.addVarPointsTo(edge.getCallSite().getContext(), var,
-                        emptyContext, cryptoObj);
+                        edge.getCallSite().getContext(), cryptoObj);
             });
+        }
+
+        if (callee.getSignature().contains("<java.security.KeyPairGenerator: void initialize(int)>") && callSite.getContainer().getSignature().contains("InsecureAsymmetricCipherABICase1")) {
+            System.out.println("here");
         }
 
         if (compositeFromSources.containsKey(callee)) {
             compositeFromSources.get(callee).forEach(compositeSource -> {
                 Var var = IndexUtils.getVar(callSite, compositeSource.index());
                 fromSourceToRule.get(compositeSource).forEach(compositeRule -> {
-                    CompositeRule cloneCompositeRule = compositeRule.clone();
-                    cloneCompositeRule.setFromVar(var);
-                    fromVarToRule.put(var, cloneCompositeRule);
-                    Type type = compositeSource.type();
-                    Obj compositeObj = manager.makeCompositeCryptoObj(cloneCompositeRule, type);
-                    solver.addVarPointsTo(edge.getCallSite().getContext(), var,
-                            emptyContext, compositeObj);
+                    if(!fromVarToRule.containsKey(var)){
+                        CompositeRule cloneCompositeRule = compositeRule.clone();
+                        cloneCompositeRule.setFromVar(var);
+                        fromVarToRule.put(var, cloneCompositeRule);
+                        Type type = compositeSource.type();
+                        Obj compositeObj = manager.makeCompositeCryptoObj(cloneCompositeRule, type);
+                        solver.addVarPointsTo(edge.getCallSite().getContext(), var,
+                                edge.getCallSite().getContext(), compositeObj);
+                    }
                 });
                 logger.debug("generate from var when call method: " + callee + " on stmt: " + callSite);
             });
@@ -278,14 +302,10 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         if (compositeToSources.containsKey(callee)) {
             compositeToSources.get(callee).forEach(toSource -> {
                 Var var = IndexUtils.getVar(callSite, toSource.index());
-                CompositeRule compositeRule = toSourceToRule.get(toSource);
-                compositeRule.getToVarToStmt().put(var, callSite);
-                compositeRule.getToSourceToToVar().put(var, toSource);
-                compositeRule.getJudgeStmts().put(callSite, toSource);
-                logger.debug("generate to var when call method: " + callee + " on stmt: " + callSite);
                 Context ctx = edge.getCallSite().getContext();
                 CSVar csVar = csManager.getCSVar(ctx, var);
-                addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar));
+                compositeVarJudge.put(var, new Pair<>(callSite, toSource));
+                addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar), callSite, toSource);
             });
         }
 
@@ -301,17 +321,15 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
      * var is the 'toVar' in compositeRule, then add the statement containing 'toVar'
      * to the judgeStmt.
      */
-    private void addJudgeStmtFromPts(Var var, PointsToSet pts) {
+    private void addJudgeStmtFromPts(Var var, PointsToSet pts, Stmt callSite, ToSource toSource) {
         pts.objects()
                 .map(CSObj::getObject)
                 .filter(manager::isCompositeCryptoObj)
                 .map(manager::getAllocationOfRule)
                 .forEach(compositeRule -> {
-                    Map<Var, Stmt> ToVarToStmt = compositeRule.getToVarToStmt();
-                    if (ToVarToStmt.containsKey(var)) {
-                        ToSource toSource = compositeRule.getToSourceToToVar().get(var);
-                        compositeRule.getJudgeStmts().put(ToVarToStmt.get(var), toSource);
-                        logger.debug("add judge stmt: " + ToVarToStmt.get(var) + "of to var: " + var);
+                    if (compositeRule.getToSources().contains(toSource)) {
+                        compositeRule.getToVarToStmtAndToSource().put(var, new Pair<>(callSite, toSource));
+                        logger.info("add judge stmt: " + callSite + " of to var: " + var);
                     }
                 });
     }
@@ -380,10 +398,17 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         PointerAnalysisResult result = solver.getResult();
         List<Issue> issueList = new ArrayList<>();
         fromVarToRule.forEach((var, compositeRule) -> {
-            CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
-            compositeRule.getToVarToStmt().forEach((toVar, stmt) -> {
-                issueList.add(judge.judge(result, (Invoke) stmt));
-            });
+            if (compositeRule.getToVarToStmtAndToSource().size() >= compositeRule.getToSources().size()) {
+                CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
+                CompositeRuleJudge judge = new CompositeRuleJudge(compositeRule, manager);
+                compositeRule.getToVarToStmtAndToSource().forEach((toVar, pair) -> {
+                    Stmt stmt = pair.first();
+                    compositeRuleIssue.addIssue(judge.judge(result, (Invoke) stmt));
+                });
+                if (compositeRuleIssue.getIssues().size() > 0) {
+                    issueList.add(compositeRuleIssue);
+                }
+            }
         });
 
         ruleToJudge.forEach((rule, ruleJudge) -> {
