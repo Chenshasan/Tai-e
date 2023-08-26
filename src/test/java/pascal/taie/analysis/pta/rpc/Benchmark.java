@@ -50,8 +50,10 @@ public enum Benchmark {
 
     ZHENG("zheng", CRYPTO_BENCHMARKS_DIR + "/zheng"),
 
+
     RIGORITYJ("rigorityj", CRYPTO_BENCHMARKS_DIR + "/rigorityj-samples"),
-    ;
+
+    OWASP("OWASP", CRYPTO_BENCHMARKS_DIR + "/OWASP");
 
     public final String name;
 

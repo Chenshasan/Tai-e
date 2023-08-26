@@ -57,6 +57,7 @@ forbiddenMethodRules:
 cryptoObjPropagate:
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: 0, to: result, type: "java.lang.String" }
+  - { method: "<java.util.Properties: java.lang.String getProperty(java.lang.String,java.lang.String)>", from: 1, to: result, type: "java.lang.String" }
   - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
   - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
   - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }

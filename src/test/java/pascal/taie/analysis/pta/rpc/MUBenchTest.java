@@ -1,6 +1,5 @@
 package pascal.taie.analysis.pta.rpc;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import pascal.taie.analysis.Tests;
 import pascal.taie.util.AppClassInferringUtils;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 
-public class MicroserviceHolderTest {
+public class MUBenchTest {
     /* Microservice application based on SpringBoot + Dubbo */
     @Test
     public void aliyun() {

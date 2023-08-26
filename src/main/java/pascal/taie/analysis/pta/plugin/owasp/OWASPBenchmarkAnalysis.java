@@ -30,20 +30,20 @@ public class OWASPBenchmarkAnalysis implements Plugin {
 
     @Override
     public void onStart() {
-        JClass objectClass=classHierarchy.getClass("java.lang.Object");
+        JClass objectClass = classHierarchy.getClass("java.lang.Object");
         classHierarchy.getAllSubclassesOf(objectClass).forEach(jClass -> {
-            if(jClass.getName().contains("BenchmarkTest")){
+            if (jClass.getName().contains("BenchmarkTest")) {
                 jClass.getDeclaredMethods().forEach(jMethod -> {
-                    if(jMethod.getSignature().contains("doPost")){
+                    if (jMethod.getSignature().contains("doPost")) {
                         SpecifiedParamProvider.Builder builder = new SpecifiedParamProvider.Builder(jMethod)
-                                .setDelegate(new OWASPParamProvider());
+                                .setDelegate(new OWASPParamProvider(jMethod, classHierarchy, solver));
                         SpecifiedParamProvider paramProvider = builder.build();
                         solver.addEntryPoint(new EntryPoint(jMethod, paramProvider));
                         logger.info("""
-                            [OWASP Analysis] Adding entry point
-                            \tmethod: {}
-                            \tparamProvider: {}
-                            """, jMethod, paramProvider);
+                                [OWASP Analysis] Adding entry point
+                                \tmethod: {}
+                                \tparamProvider: {}
+                                """, jMethod, paramProvider);
                     }
                 });
             }
