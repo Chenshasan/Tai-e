@@ -7,7 +7,9 @@ public enum Benchmark {
     /* Microservice application based on SpringBoot + Dubbo */
 
     ALIYUN("aliyun-oss-java-sdk", CRYPTO_BENCHMARKS_DIR + "/aliyun-oss-java-sdk"),
+
     FASTBOOT("fast-boot-weixin", CRYPTO_BENCHMARKS_DIR + "/fast-boot-weixin"),
+
     SPRINGQUICK("spring-boot-quick", CRYPTO_BENCHMARKS_DIR + "/spring-boot-quick"),
 
     BICORE("biglybt-core", CRYPTO_BENCHMARKS_DIR + "/biglybt-core"),
@@ -50,7 +52,6 @@ public enum Benchmark {
 
     ZHENG("zheng", CRYPTO_BENCHMARKS_DIR + "/zheng"),
 
-
     RIGORITYJ("rigorityj", CRYPTO_BENCHMARKS_DIR + "/rigorityj-samples"),
 
     OWASP("OWASP", CRYPTO_BENCHMARKS_DIR + "/OWASP");
@@ -58,7 +59,6 @@ public enum Benchmark {
     public final String name;
 
     public final String dir;
-
 
     Benchmark(String name, String dir) {
         this.name = name;

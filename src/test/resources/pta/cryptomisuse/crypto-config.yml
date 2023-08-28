@@ -37,12 +37,13 @@ predictableSourceRules:
   - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
   - { method: "<java.security.SecureRandom: void setSeed(byte[])>", index: 0 }
   - { method: "<java.security.SecureRandom: void <init>(byte[])>", index: 0 }
+  - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>", index: 0 }
 
 cryptoSources:
   - { method: "<java.util.Base64$Decoder: byte[] decode(java.lang.String)>", type: "byte[]", index: result }
   - { method: "<java.security.MessageDigest: byte[] digest()>", type: "byte[]", index: result }
   - { method: "<java.util.Random: void nextBytes(byte[])>", type: "byte[]", index: 0 }
-  - { method: "<java.util.Random: java.util.stream.IntStream ints()>", type: "java.util.stream.IntStream", index: result }
+#  - { method: "<java.util.Random: java.util.stream.IntStream ints()>", type: "java.util.stream.IntStream", index: result }
   - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result }
 #  - { method: "<java.security.KeyStore: java.security.Key getKey(java.lang.String,char[])>", type: "java.security.PrivateKey", index: result }
 
