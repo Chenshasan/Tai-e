@@ -378,7 +378,7 @@ public class JClass extends AbstractResultHolder
             }
 
             JField field = new JField(this, name, Set.of(),
-                    type, AnnotationHolder.emptyHolder());
+                    type, null, AnnotationHolder.emptyHolder());
             phantomFields.put(fieldName, field);
             return field;
         }
@@ -395,7 +395,7 @@ public class JClass extends AbstractResultHolder
         return phantomMethods.computeIfAbsent(subsignature, k -> {
             Triple<String, List<Type>, Type> t = StringReps.parseSubsignature(subsignature);
             return new JMethod(this, t.first(), EnumSet.noneOf(Modifier.class),
-                    t.second(), t.third(), List.of(), AnnotationHolder.emptyHolder(),
+                    t.second(), t.third(), List.of(), null, AnnotationHolder.emptyHolder(),
                     null, null, null
             );
         });
