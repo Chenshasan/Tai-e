@@ -58,4 +58,40 @@
   "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "%stringconst2 = \"12345678\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[4@L14] invokespecial $r1.<init>($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "%stringconst6 = \"@#&^%-$#@Coupon#$%^&@*\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[4@L42] invokespecial $r1.<init>($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "%stringconst2 = \"12345678\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[4@L71] invokespecial $r1.<init>($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "%stringconst6 = \"@#&^%-$#@Coupon#$%^&@*\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[4@L96] invokespecial $r1.<init>($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
 } ]

@@ -8,4 +8,14 @@
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String getMD5Code(byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst0 = \"PBKDF2WithHmacSHA1\"",
+  "sourceMethod" : "<com.vip.saturn.job.console.utils.PasswordUtils: java.lang.String hash(java.lang.String,byte[])>",
+  "callSite" : "<com.vip.saturn.job.console.utils.PasswordUtils: java.lang.String hash(java.lang.String,byte[])>[1@L51] $r0 = invokestatic javax.crypto.SecretKeyFactory.getInstance(%stringconst0)",
+  "var" : "%stringconst0",
+  "constantValue" : "PBKDF2WithHmacSHA1",
+  "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String hash(java.lang.String,byte[])"
 } ]

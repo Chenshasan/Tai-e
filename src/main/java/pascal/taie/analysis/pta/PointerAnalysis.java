@@ -81,6 +81,8 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
             if (advanced.equals("collection")) {
                 selector = ContextSelectorFactory.makeSelectiveSelector(cs,
                         new CollectionMethods(World.get().getClassHierarchy()).get());
+            } else if (advanced.equals("hashmap")) {
+                selector = new ContextSelectorDecorator(ContextSelectorFactory.makePlainSelector(cs));
             } else {
                 // run context-insensitive analysis as pre-analysis
                 PointerAnalysisResult preResult = runAnalysis(heapModel,
@@ -105,7 +107,6 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
         if (selector == null) {
             selector = ContextSelectorFactory.makePlainSelector(cs);
         }
-        selector = new ContextSelectorDecorator(selector);
         return runAnalysis(heapModel, selector);
     }
 

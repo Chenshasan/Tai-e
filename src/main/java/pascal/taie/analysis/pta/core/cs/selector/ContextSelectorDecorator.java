@@ -43,22 +43,7 @@ import java.util.Map;
 public class ContextSelectorDecorator implements ContextSelector {
 
     private static final Collection<String> CONCERNED_CLASS_PREFIXES = List.of(
-            "java.util.HashMap",
-            "org.springframework.amqp.core.AbstractBuilder",
-            "org.springframework.amqp.core.AbstractDeclarable",
-            "org.springframework.amqp.core.AbstractExchange",
-            "org.springframework.amqp.core.Binding",
-            "org.springframework.amqp.core.BindingBuilder",
-            "org.springframework.amqp.core.CustomExchange",
-            "org.springframework.amqp.core.DirectExchange",
-            "org.springframework.amqp.core.Exchange",
-            "org.springframework.amqp.core.ExchangeBuilder",
-            "org.springframework.amqp.core.FanoutExchange",
-            "org.springframework.amqp.core.HeadersExchange",
-            "org.springframework.amqp.core.Queue",
-            "org.springframework.amqp.core.QueueBuilder",
-            "org.springframework.amqp.core.QueueInformation",
-            "org.springframework.amqp.core.TopicExchange"
+            "java.util.HashMap"
     );
 
     private static final int limit = 4;

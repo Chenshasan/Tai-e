@@ -124,6 +124,11 @@ public class MUBenchTest {
         System.out.printf("");
     }
 
+    @Test
+    public void cryptoTest() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.CRYPTOTEST, true);
+    }
+
 //    @Test
 //    public void gruul() {
 //        Tests.testPTABySpringBootArchives(Benchmark.GRUUL, true);

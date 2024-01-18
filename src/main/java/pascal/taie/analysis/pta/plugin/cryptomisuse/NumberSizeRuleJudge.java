@@ -54,7 +54,7 @@ public class NumberSizeRuleJudge implements RuleJudge {
                             }
                         }
                     });
-            System.out.println("the result of number size in" + callSite + " is " + match.get());
+            logger.debug("the result of number size in" + callSite + " is " + match.get());
         }
         return issue.get();
     }

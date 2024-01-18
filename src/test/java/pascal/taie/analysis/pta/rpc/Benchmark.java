@@ -54,7 +54,9 @@ public enum Benchmark {
 
     RIGORITYJ("rigorityj", CRYPTO_BENCHMARKS_DIR + "/rigorityj-samples"),
 
-    OWASP("OWASP", CRYPTO_BENCHMARKS_DIR + "/OWASP");
+    OWASP("OWASP", CRYPTO_BENCHMARKS_DIR + "/OWASP"),
+
+    CRYPTOTEST("crypto-test",CRYPTO_BENCHMARKS_DIR+"/crypto-test");
 
     public final String name;
 

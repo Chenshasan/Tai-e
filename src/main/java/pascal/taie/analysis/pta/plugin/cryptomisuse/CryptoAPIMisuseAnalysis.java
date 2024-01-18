@@ -16,6 +16,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.IssueList;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.analysis.pta.pts.PointsToSet;
@@ -174,6 +175,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         hierarchy.getAllSubclassesOf(objectClass).forEach(
                 jClass -> {
                     if (!((jClass.getName().contains("java.util"))
+                            || jClass.getName().contains("org.owasp.esapi.ESAPI")
+                            || jClass.getName().contains("org.owasp.esapi.util.ObjFactory")
                             || concernedClass.contains(jClass))) {
                         jClass.getDeclaredMethods().forEach(jMethod -> {
                             solver.addIgnoredMethod(jMethod);
@@ -277,10 +280,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             });
         }
 
-        if (callee.getSignature().contains("<java.security.KeyPairGenerator: void initialize(int)>") && callSite.getContainer().getSignature().contains("InsecureAsymmetricCipherABICase1")) {
-            System.out.println("here");
-        }
-
         if (compositeFromSources.containsKey(callee)) {
             compositeFromSources.get(callee).forEach(compositeSource -> {
                 Var var = IndexUtils.getVar(callSite, compositeSource.index());
@@ -295,7 +294,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                                 edge.getCallSite().getContext(), compositeObj);
                     }
                 });
-                logger.debug("generate from var when call method: " + callee + " on stmt: " + callSite);
             });
         }
 
@@ -392,11 +390,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         }
     }
 
-    @Override
-    public void onFinish() {
-        ClassHierarchy classHierarchy = World.get().getClassHierarchy();
-        PointerAnalysisResult result = solver.getResult();
-        List<Issue> issueList = new ArrayList<>();
+    private void addCompositeIssue(List<Issue> issueList, PointerAnalysisResult result) {
         fromVarToRule.forEach((var, compositeRule) -> {
             if (compositeRule.getToVarToStmtAndToSource().size() >= compositeRule.getToSources().size()) {
                 CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
@@ -405,12 +399,14 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     Stmt stmt = pair.first();
                     compositeRuleIssue.addIssue(judge.judge(result, (Invoke) stmt));
                 });
-                if (compositeRuleIssue.getIssues().size() > 0 && compositeRuleIssue.getPredicate() != 1) {
+                if (compositeRuleIssue.getIssues().size() > 0 && compositeRuleIssue.getPredicate() == 1) {
                     issueList.add(compositeRuleIssue);
                 }
             }
         });
+    }
 
+    private void addSimpleIssue(List<Issue> issueList, PointerAnalysisResult result) {
         ruleToJudge.forEach((rule, ruleJudge) -> {
             if (rule instanceof InfluencingFactorRule) {
                 Issue issue = ruleJudge.judge(result, null);
@@ -428,11 +424,29 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                         });
             }
         });
+    }
+
+    @Override
+    public void onFinish() {
+        ClassHierarchy classHierarchy = World.get().getClassHierarchy();
+        PointerAnalysisResult result = solver.getResult();
+        List<Issue> issueList = new ArrayList<>();
+        addSimpleIssue(issueList, result);
+        addCompositeIssue(issueList, result);
+
+        List<Issue> consistIssueList = new ArrayList<>();
+        issueList.forEach(issue -> {
+            if (issue instanceof IssueList listTypeIssue) {
+                consistIssueList.addAll(listTypeIssue.getIssues());
+            } else {
+                consistIssueList.add(issue);
+            }
+        });
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writerWithDefaultPrettyPrinter().
-                    writeValue(CryptoAPIMisuseAnalysis.outputFile(), issueList);
+                    writeValue(CryptoAPIMisuseAnalysis.outputFile(), consistIssueList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

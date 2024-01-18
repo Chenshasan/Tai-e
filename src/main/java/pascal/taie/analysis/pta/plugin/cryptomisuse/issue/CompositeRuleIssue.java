@@ -25,6 +25,9 @@ public class CompositeRuleIssue implements Issue {
 
     public void addIssue(Issue issue) {
         if (issue instanceof CompositeRuleIssue compositeRuleIssue) {
+            if (compositeRuleIssue.getPredicate() == 1) {
+                setPredicate(1);
+            }
             issues.addAll(compositeRuleIssue.getIssues());
         } else {
             issues.add(issue);

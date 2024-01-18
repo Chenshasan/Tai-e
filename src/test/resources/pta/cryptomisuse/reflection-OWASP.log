@@ -1,0 +1,2 @@
+Class.forName;org.owasp.esapi.reference.DefaultEncoder;org.owasp.esapi.util.ObjFactory.loadClassByStringName;158;;
+Method.invoke;<org.owasp.esapi.reference.DefaultEncoder: org.owasp.esapi.Encoder getInstance()>;org.owasp.esapi.util.ObjFactory.make;86;isAccessible=false;

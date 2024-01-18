@@ -514,9 +514,10 @@ public final class Tests {
                         merge-string-builders:true;
                         reflection:null;
                         cs:%s;
-                        crypto-output:%s
+                        advanced:hashmap;
+                        crypto-output:%s;
                         propagate-types:[reference,byte,char,int];
-                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
+                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml;
                         plugins:[pascal.taie.analysis.pta.plugin.cryptomisuse.reachableplugin.CryptoReachablePlugin,
                                  pascal.taie.analysis.pta.plugin.Profiler];
                         """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
@@ -547,7 +548,14 @@ public final class Tests {
                     .map(Path::toAbsolutePath)
                     .map(Path::toString)
                     .toList();
+            cryptoArchives2 = Files.list(Path.of(benchmark.dir + "/dependencies"))
+                    .filter(path -> path.toString().endsWith(".jar")
+                            || path.toString().endsWith(".war"))
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .toList();
             cryptoArchives.addAll(cryptoArchives1);
+            cryptoArchives.addAll(cryptoArchives2);
             logger.info("{} Microservices detected: {}", cryptoArchives.size(), cryptoArchives);
         } catch (IOException e) {
             logger.error("", e);
@@ -614,9 +622,11 @@ public final class Tests {
                         merge-string-builders:true;
                         reflection:null;
                         cs:%s;
-                        crypto-output:%s
+                        crypto-output:%s;
                         propagate-types:[reference,byte,char,int];
-                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml
+                        crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml;
+                        reflection:log;
+                        reflection-log:src/test/resources/pta/cryptomisuse/reflection-OWASP.log;
                         plugins:[pascal.taie.analysis.pta.plugin.owasp.OWASPBenchmarkAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
                         """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),

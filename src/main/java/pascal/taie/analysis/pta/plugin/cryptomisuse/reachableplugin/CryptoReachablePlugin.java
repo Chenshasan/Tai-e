@@ -36,7 +36,7 @@ public class CryptoReachablePlugin implements Plugin {
     public void onStart() {
         for (JClass jClass : CryptoAPIMisuseAnalysis.getAppClasses()) {
             for (JMethod method : jClass.getDeclaredMethods()) {
-                if ((method.isPublic() || method.isStatic()) && !method.isAbstract()
+                if ((!method.isPrivate() || method.isStatic()) && !method.isAbstract()
                         && !method.isNative() && !method.isPrivate()) {
                     SpecifiedParamProvider.Builder builder = new SpecifiedParamProvider.Builder(method)
                             .setDelegate(new CryptoReachableParamProvider(method, classHierarchy, solver));

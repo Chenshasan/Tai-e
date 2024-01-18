@@ -19,6 +19,24 @@
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String aesEncode(java.lang.String)"
 }, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$r2 = \"zheng\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[6@L92] invokevirtual $r1.setSeed($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$r2 = \"zheng\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[6@L38] invokevirtual $r1.setSeed($r3)",
+  "var" : "$r3",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
+}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst33 = \"MD5\"",

@@ -1,6 +1,31 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "%stringconst1 = \"MD5\"",
+  "sourceMethod" : "<com.quick.api.utils.MessageDigestUtil: java.lang.String base64AndMD5(byte[])>",
+  "callSite" : "<com.quick.api.utils.MessageDigestUtil: java.lang.String base64AndMD5(byte[])>[6@L45] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst1)",
+  "var" : "%stringconst1",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String base64AndMD5(byte[])"
+}, {
+  "judgeType" : "Influencing Factory",
+  "message" : "Concerned var in this method has no influencing stmts",
+  "calleeMethod" : "<com.quick.api.utils.HttpUtils$1: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
+  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+}, {
+  "judgeType" : "Influencing Factory",
+  "message" : "Concerned var in this method has no influencing stmts",
+  "calleeMethod" : "<com.quick.api.utils.HttpUtils$1: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
+  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+}, {
+  "judgeType" : "Influencing Factory",
+  "message" : "Concerned var in this method has no influencing stmts",
+  "calleeMethod" : "<com.quick.api.utils.HttpUtil$1: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
+  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "%stringconst0 = \"http://mini.eastday.com/mobile/170725205647104.html\"",
   "sourceMethod" : "<com.quick.api.service.NewService: void main(java.lang.String[])>",
   "callSite" : "<com.quick.api.service.NewService: void main(java.lang.String[])>[2@L75] invokespecial $r0.<init>(%stringconst0)",
@@ -9,13 +34,8 @@
   "calleeMethod" : "<java.net.URL: void <init>(java.lang.String)>",
   "subSignature" : "void main(java.lang.String[])"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst1 = \"MD5\"",
-  "sourceMethod" : "<com.quick.api.utils.MessageDigestUtil: java.lang.String base64AndMD5(byte[])>",
-  "callSite" : "<com.quick.api.utils.MessageDigestUtil: java.lang.String base64AndMD5(byte[])>[6@L45] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst1)",
-  "var" : "%stringconst1",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String base64AndMD5(byte[])"
+  "judgeType" : "Influencing Factory",
+  "message" : "Concerned var in this method has no influencing stmts",
+  "calleeMethod" : "<com.quick.api.utils.HttpUtil$1: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
+  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
 } ]

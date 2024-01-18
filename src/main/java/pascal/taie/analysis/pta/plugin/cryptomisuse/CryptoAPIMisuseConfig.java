@@ -271,13 +271,13 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     String methodSig = elem.get("method").asText();
                     int index = IndexUtils.toInt(elem.get("index").asText());
                     hierarchy.allClasses().forEach(jClass -> {
-                        if(jClass.isApplication()){
-                            if(jClass.getName().contains("DummyCertValidationCase1")){
+                        if (jClass.isApplication()) {
+                            if (jClass.getName().contains("DummyCertValidationCase1")) {
                                 System.out.println("xxxx");
                             }
                             jClass.getDeclaredMethods().forEach(jMethod -> {
-                                if(jMethod.getSignature().contains(methodSig)){
-                                    influencingFactorRules.add(new InfluencingFactorRule(jMethod,index));
+                                if (jMethod.getSignature().contains(methodSig)) {
+                                    influencingFactorRules.add(new InfluencingFactorRule(jMethod, index));
                                 }
                             });
                         }
@@ -334,7 +334,9 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                             deserializeToSources(compositeNode.get("toSources"));
                     Set<CryptoObjPropagate> propagates =
                             deserializePropagates(compositeNode.get("propagates"));
-                    compositeRules.add(new CompositeRule(fromSource, toSources, propagates));
+                    if (fromSource != null) {
+                        compositeRules.add(new CompositeRule(fromSource, toSources, propagates));
+                    }
                 }
                 return compositeRules;
             }
@@ -386,8 +388,10 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                         default:
                             logger.warn("Cannot find the legal rule type");
                     }
-                    System.out.println("add to source of method: " + methodSig + "with rule type of " + ruleType);
-                    toSources.add(new ToSource(method, toIndex, rule));
+                    if (method != null && rule != null) {
+                        toSources.add(new ToSource(method, toIndex, rule));
+                        System.out.println("add to source of method: " + methodSig + "with rule type of " + ruleType);
+                    }
                 }
             }
             return toSources;

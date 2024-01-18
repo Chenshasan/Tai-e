@@ -3,15 +3,6 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
   "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $r23.<init>($r25)",
-  "var" : "$r25",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void afterPropertiesSet()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
   "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[29@L100] invokespecial $r16.<init>($r17, %stringconst2)",
   "var" : "$r17",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
@@ -26,6 +17,15 @@
   "constantValue" : "SHA-1",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String encryptSHA1(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $r23.<init>($r25)",
+  "var" : "$r25",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void afterPropertiesSet()"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",

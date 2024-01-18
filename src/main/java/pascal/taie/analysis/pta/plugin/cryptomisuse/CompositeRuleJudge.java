@@ -55,7 +55,7 @@ public class CompositeRuleJudge implements RuleJudge {
             Issue issue = ruleJudge.judge(result, callSite);
             if (ruleJudge instanceof PatternMatchRuleJudge) {
                 //If the PatternMatchRuleJudge determines that this string does not match, further processing will be halted.
-                if (issue == null) {
+                if (issue != null) {
                     compositeRuleIssue.setPredicate(1);
                 }
             } else {
@@ -69,7 +69,7 @@ public class CompositeRuleJudge implements RuleJudge {
     }
 
     public void report(boolean b) {
-        logger.info("Rule judge type: Composite Rule Judge"
+        logger.debug("Rule judge type: Composite Rule Judge"
                 + "final result: " + b
                 + "\n");
     }

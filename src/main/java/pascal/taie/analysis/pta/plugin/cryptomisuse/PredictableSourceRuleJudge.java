@@ -54,6 +54,10 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                                         + " with crypto obj in"
                                         + ((CryptoObjInformation) cryptoObj.getAllocation()).allocation());
                             }
+                            if(coi.constantValue() instanceof String str
+                                    && str.equals(PREDICTABLE_DESC)){
+                                issue.set(report(coi, var, callSite));
+                            }
                             match.set(false);
                         }
                     });
