@@ -30,4 +30,7 @@ import pascal.taie.util.graph.Edge;
 public interface FlowEdge extends Edge<Node> {
 
     FlowKind kind();
+    default String info() {
+        return kind().name();
+    }
 }

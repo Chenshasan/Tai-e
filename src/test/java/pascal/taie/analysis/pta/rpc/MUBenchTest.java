@@ -1,6 +1,6 @@
 package pascal.taie.analysis.pta.rpc;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pascal.taie.analysis.Tests;
 import pascal.taie.util.AppClassInferringUtils;
 import pascal.taie.util.DirectoryTraverser;

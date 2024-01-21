@@ -49,7 +49,6 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -128,7 +127,7 @@ public class Zipper {
     public Set<JMethod> selectPrecisionCriticalMethods() {
         totalPFGNodes = new AtomicInteger(0);
         totalPFGEdges = new AtomicInteger(0);
-        pcmMap = new ConcurrentHashMap<>(1024);
+        pcmMap = Maps.newConcurrentMap(1024);
 
         // prepare information for Zipper-e
         if (isExpress) {
@@ -140,7 +139,7 @@ public class Zipper {
                 if (size > 0) {
                     totalPts += size;
                     methodPts.computeIfAbsent(var.getMethod(),
-                                    unused -> new MutableInt(0))
+                                    __ -> new MutableInt(0))
                             .add(size);
                 }
             }
@@ -182,7 +181,7 @@ public class Zipper {
                 .stream()
                 .map(Zipper::node2Method)
                 .filter(Objects::nonNull)
-                .filter(pce.PCEMethodsOf(pfg.getType())::contains)
+                .filter(pce.pceMethodsOf(pfg.getType())::contains)
                 .collect(Collectors.toUnmodifiableSet());
         if (isExpress) {
             int accPts = 0;

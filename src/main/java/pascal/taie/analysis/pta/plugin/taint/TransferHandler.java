@@ -22,15 +22,17 @@
 
 package pascal.taie.analysis.pta.plugin.taint;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.graph.callgraph.CallKind;
 import pascal.taie.analysis.graph.callgraph.Edge;
 import pascal.taie.analysis.pta.core.cs.context.Context;
 import pascal.taie.analysis.pta.core.cs.element.CSCallSite;
-import pascal.taie.analysis.pta.core.cs.element.CSManager;
 import pascal.taie.analysis.pta.core.cs.element.CSMethod;
 import pascal.taie.analysis.pta.core.cs.element.CSObj;
 import pascal.taie.analysis.pta.core.cs.element.CSVar;
-import pascal.taie.analysis.pta.core.solver.Solver;
+import pascal.taie.analysis.pta.core.solver.Transfer;
+import pascal.taie.analysis.pta.plugin.util.InvokeUtils;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.CastExp;
 import pascal.taie.ir.exp.FieldAccess;
@@ -42,28 +44,26 @@ import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.ir.stmt.LoadField;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.ir.stmt.StoreField;
+import pascal.taie.language.classes.JField;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.Type;
+import pascal.taie.util.AnalysisException;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
-import pascal.taie.util.collection.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles taint transfers in taint analysis.
  */
-class TransferHandler {
+class TransferHandler extends OnFlyHandler {
 
-    private final Solver solver;
-
-    private final CSManager csManager;
+    private static final Logger logger = LogManager.getLogger(TransferHandler.class);
 
     private final Context emptyContext;
-
-    private final TaintManager manager;
 
     /**
      * Map from method (which causes taint transfer) to set of relevant
@@ -71,12 +71,23 @@ class TransferHandler {
      */
     private final MultiMap<JMethod, TaintTransfer> transfers = Maps.newMultiMap();
 
+    private final Map<Type, Transfer> transferFunctions = Maps.newHybridMap();
+
+    private enum Kind {
+        VAR_TO_ARRAY, VAR_TO_FIELD, ARRAY_TO_VAR, FIELD_TO_VAR
+    }
+
+    private record TransferInfo(Kind kind, Var var, TaintTransfer transfer) {
+    }
+
+    private final MultiMap<Var, TransferInfo> transferInfos = Maps.newMultiMap();
+
     /**
-     * Map from variable to taint transfer information.
-     * The taint objects pointed to by the "key" variable are supposed
-     * to be transferred to "value" variable with specified type.
+     * Map from a method to {@link Invoke} statements in the method
+     * which matches any transfer method.
+     * This map matters only when call-site mode is enabled.
      */
-    private final MultiMap<Var, Pair<Var, Type>> varTransfers = Maps.newMultiMap();
+    private final MultiMap<JMethod, Invoke> callSiteTransfers = Maps.newMultiMap();
 
     /**
      * Whether enable taint back propagation to handle aliases about
@@ -94,73 +105,124 @@ class TransferHandler {
      */
     private int counter = 0;
 
-    TransferHandler(Solver solver, TaintManager manager, List<TaintTransfer> transfers) {
-        this.solver = solver;
-        csManager = solver.getCSManager();
+    TransferHandler(HandlerContext context) {
+        super(context);
         emptyContext = solver.getContextSelector().getEmptyContext();
-        this.manager = manager;
-        transfers.forEach(t -> this.transfers.put(t.method(), t));
+        context.config().transfers()
+                .forEach(t -> this.transfers.put(t.method(), t));
     }
 
-    void handleNewCallEdge(Edge<CSCallSite, CSMethod> edge) {
-        if (edge.getKind() == CallKind.OTHER) {
-            // skip other call edges, e.g., reflective call edges,
-            // which currently cannot be handled for transfer methods
-            // TODO: handle other call edges
+    private void processTransfer(Context context, Invoke callSite, TaintTransfer transfer) {
+        IndexRef from = transfer.from();
+        IndexRef to = transfer.to();
+        Var toVar = InvokeUtils.getVar(callSite, to.index());
+        if (toVar == null) {
             return;
         }
-        Invoke callSite = edge.getCallSite().getCallSite();
-        JMethod callee = edge.getCallee().getMethod();
-        transfers.get(callee).forEach(transfer -> {
-            Var from = IndexUtils.getVar(callSite, transfer.from());
-            Var to = IndexUtils.getVar(callSite, transfer.to());
-            // when transfer to result variable, and the call site
-            // does not have result variable, then "to" is null.
-            if (to != null) {
-                Type type = transfer.type();
-                varTransfers.put(from, new Pair<>(to, type));
-                Context ctx = edge.getCallSite().getContext();
-                CSVar csFrom = csManager.getCSVar(ctx, from);
-                transferTaint(solver.getPointsToSetOf(csFrom), ctx, to, type);
-
-                // If the taint is transferred to base or argument, it means
-                // that the objects pointed to by "to" were mutated
-                // by the invocation. For such cases, we need to propagate the
-                // taint to the pointers aliased with "to". The pointers
-                // whose objects come from "to" will be naturally handled by
-                // pointer analysis, and we just need to specially handle the
-                // pointers whose objects flow to "to", i.e., back propagation.
-                if (enableBackPropagate
-                        && transfer.to() != IndexUtils.RESULT
-                        && !(transfer.to() == IndexUtils.BASE
-                        && transfer.method().isConstructor())) {
-                    backPropagateTaint(to, ctx);
+        Var fromVar = InvokeUtils.getVar(callSite, from.index());
+        CSVar csFrom = csManager.getCSVar(context, fromVar);
+        CSVar csTo = csManager.getCSVar(context, toVar);
+        if (from.kind() == IndexRef.Kind.VAR) { // Var -> Var/Array/Field
+            Kind kind = switch (to.kind()) {
+                case VAR -> {
+                    Transfer tf = getTransferFunction(transfer.type());
+                    solver.addPFGEdge(
+                            new TaintTransferEdge(csFrom, csTo),
+                            tf);
+                    yield null;
                 }
+                case ARRAY -> Kind.VAR_TO_ARRAY;
+                case FIELD -> Kind.VAR_TO_FIELD;
+            };
+            if (kind != null) {
+                TransferInfo info = new TransferInfo(kind, fromVar, transfer);
+                transferInfos.put(toVar, info);
+                transferTaint(solver.getPointsToSetOf(csTo), context, info);
             }
-        });
-    }
-
-    void handleNewPointsToSet(CSVar csVar, PointsToSet pts) {
-        // process taint transfer
-        varTransfers.get(csVar.getVar()).forEach(p -> {
-            Var to = p.first();
-            Type type = p.second();
-            transferTaint(pts, csVar.getContext(), to, type);
-        });
-    }
-
-    private void transferTaint(PointsToSet pts, Context ctx, Var to, Type type) {
-        PointsToSet newTaints = solver.makePointsToSet();
-        pts.objects()
-                .map(CSObj::getObject)
-                .filter(manager::isTaint)
-                .map(manager::getSourcePoint)
-                .map(source -> manager.makeTaint(source, type))
-                .map(taint -> csManager.getCSObj(emptyContext, taint))
-                .forEach(newTaints::addObject);
-        if (!newTaints.isEmpty()) {
-            solver.addVarPointsTo(ctx, to, newTaints);
+        } else if (to.kind() == IndexRef.Kind.VAR) { // Array/Field -> Var
+            Kind kind = switch (from.kind()) {
+                case ARRAY -> Kind.ARRAY_TO_VAR;
+                case FIELD -> Kind.FIELD_TO_VAR;
+                default -> throw new AnalysisException(); // unreachable
+            };
+            TransferInfo info = new TransferInfo(kind, toVar, transfer);
+            transferInfos.put(fromVar, info);
+            transferTaint(solver.getPointsToSetOf(csFrom), context, info);
+        } else { // ignore other cases
+            logger.warn("TaintTransfer {} -> {} (in {}) is not supported",
+                    transfer, from.kind(), to.kind());
         }
+
+        // If the taint is transferred to base or argument, it means
+        // that the objects pointed to by "to" were mutated
+        // by the invocation. For such cases, we need to propagate the
+        // taint to the pointers aliased with "to". The pointers
+        // whose objects come from "to" will be naturally handled by
+        // pointer analysis, and we just need to specially handle the
+        // pointers whose objects flow to "to", i.e., back propagation.
+        if (enableBackPropagate
+                && to.index() != InvokeUtils.RESULT
+                && to.kind() == IndexRef.Kind.VAR
+                && !(to.index() == InvokeUtils.BASE
+                && transfer.method().isConstructor())) {
+            backPropagateTaint(toVar, context);
+        }
+    }
+
+    private void transferTaint(PointsToSet baseObjs, Context ctx, TransferInfo info) {
+        CSVar csVar = csManager.getCSVar(ctx, info.var());
+        Transfer tf = getTransferFunction(info.transfer().type());
+        switch (info.kind()) {
+            case VAR_TO_ARRAY -> {
+                baseObjs.objects()
+                        .map(csManager::getArrayIndex)
+                        .forEach(arrayIndex ->
+                                solver.addPFGEdge(
+                                        new TaintTransferEdge(csVar, arrayIndex),
+                                        tf));
+            }
+            case VAR_TO_FIELD -> {
+                JField f = info.transfer().to().field();
+                baseObjs.objects()
+                        .map(o -> csManager.getInstanceField(o, f))
+                        .forEach(oDotF ->
+                                solver.addPFGEdge(
+                                        new TaintTransferEdge(csVar, oDotF),
+                                        tf));
+            }
+            case ARRAY_TO_VAR -> {
+                baseObjs.objects()
+                        .map(csManager::getArrayIndex)
+                        .forEach(arrayIndex ->
+                                solver.addPFGEdge(
+                                        new TaintTransferEdge(arrayIndex, csVar),
+                                        tf));
+            }
+            case FIELD_TO_VAR -> {
+                JField f = info.transfer().from().field();
+                baseObjs.objects()
+                        .map(o -> csManager.getInstanceField(o, f))
+                        .forEach(oDotF ->
+                                solver.addPFGEdge(
+                                        new TaintTransferEdge(oDotF, csVar),
+                                        tf));
+            }
+        }
+    }
+
+    private Transfer getTransferFunction(Type toType) {
+        return transferFunctions.computeIfAbsent(toType,
+                type -> ((edge, input) -> {
+                    PointsToSet newTaints = solver.makePointsToSet();
+                    input.objects()
+                            .map(CSObj::getObject)
+                            .filter(manager::isTaint)
+                            .map(manager::getSourcePoint)
+                            .map(source -> manager.makeTaint(source, type))
+                            .map(taint -> csManager.getCSObj(emptyContext, taint))
+                            .forEach(newTaints::addObject);
+                    return newTaints;
+                }));
     }
 
     private void backPropagateTaint(Var to, Context ctx) {
@@ -212,7 +274,54 @@ class TransferHandler {
         return new Var(container, varName, type, -1);
     }
 
-    MultiMap<Var, Pair<Var, Type>> getVarTransfers() {
-        return varTransfers;
+    @Override
+    public void onNewCallEdge(Edge<CSCallSite, CSMethod> edge) {
+        if (edge.getKind() == CallKind.OTHER) {
+            // skip other call edges, e.g., reflective call edges,
+            // which currently cannot be handled for transfer methods
+            // TODO: handle OTHER call edges
+            return;
+        }
+        Set<TaintTransfer> tfs = transfers.get(edge.getCallee().getMethod());
+        if (!tfs.isEmpty()) {
+            Context context = edge.getCallSite().getContext();
+            Invoke callSite = edge.getCallSite().getCallSite();
+            tfs.forEach(tf -> processTransfer(context, callSite, tf));
+        }
+    }
+
+    @Override
+    public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
+        Context ctx = csVar.getContext();
+        transferInfos.get(csVar.getVar()).forEach(info ->
+                transferTaint(pts, ctx, info));
+    }
+
+    @Override
+    public void onNewStmt(Stmt stmt, JMethod container) {
+        if (callSiteMode &&
+                stmt instanceof Invoke invoke &&
+                !invoke.isDynamic()) {
+            JMethod callee = invoke.getMethodRef().resolveNullable();
+            if (transfers.containsKey(callee)) {
+                callSiteTransfers.put(container, invoke);
+            }
+        }
+    }
+
+    @Override
+    public void onNewCSMethod(CSMethod csMethod) {
+        if (callSiteMode) {
+            JMethod method = csMethod.getMethod();
+            Set<Invoke> callSites = callSiteTransfers.get(method);
+            if (!callSites.isEmpty()) {
+                Context context = csMethod.getContext();
+                callSites.forEach(callSite -> {
+                    JMethod callee = callSite.getMethodRef().resolve();
+                    transfers.get(callee).forEach(transfer ->
+                            processTransfer(context, callSite, transfer));
+                });
+            }
+        }
     }
 }

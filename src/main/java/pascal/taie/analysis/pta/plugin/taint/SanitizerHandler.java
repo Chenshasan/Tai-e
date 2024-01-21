@@ -23,45 +23,41 @@
 package pascal.taie.analysis.pta.plugin.taint;
 
 import pascal.taie.analysis.pta.core.cs.context.Context;
-import pascal.taie.analysis.pta.core.cs.element.CSManager;
 import pascal.taie.analysis.pta.core.cs.element.CSMethod;
 import pascal.taie.analysis.pta.core.cs.element.CSObj;
 import pascal.taie.analysis.pta.core.cs.element.CSVar;
-import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.ir.IR;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
-
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
  * Handles sanitizers in taint analysis.
  */
-class SanitizerHandler {
+class SanitizerHandler extends OnFlyHandler {
 
     private final MultiMap<JMethod, ParamSanitizer> paramSanitizers = Maps.newMultiMap();
-
-    private final Solver solver;
-
-    private final CSManager csManager;
 
     /**
      * Used to filter out taint objects from points-to set.
      */
     private final Predicate<CSObj> taintFilter;
 
-    SanitizerHandler(Solver solver, TaintManager manager,
-                     List<ParamSanitizer> paramSanitizers) {
-        this.solver = solver;
-        this.csManager = solver.getCSManager();
-        this.taintFilter = o -> !manager.isTaint(o.getObject());
-        paramSanitizers.forEach(s -> this.paramSanitizers.put(s.method(), s));
+    SanitizerHandler(HandlerContext context) {
+        super(context);
+        taintFilter = o -> !context.manager().isTaint(o.getObject());
+        context.config().paramSanitizers()
+                .forEach(s -> this.paramSanitizers.put(s.method(), s));
     }
 
-    void handleParamSanitizer(CSMethod csMethod) {
+    /**
+     *
+     * Handles parameter sanitizers.
+     */
+    @Override
+    public void onNewCSMethod(CSMethod csMethod) {
         JMethod method = csMethod.getMethod();
         if (paramSanitizers.containsKey(method)) {
             Context context = csMethod.getContext();

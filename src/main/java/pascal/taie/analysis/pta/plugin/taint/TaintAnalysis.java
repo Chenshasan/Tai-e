@@ -25,78 +25,46 @@ package pascal.taie.analysis.pta.plugin.taint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.World;
-import pascal.taie.analysis.graph.callgraph.Edge;
-import pascal.taie.analysis.graph.flowgraph.FlowGraphDumper;
-import pascal.taie.analysis.pta.core.cs.element.CSCallSite;
-import pascal.taie.analysis.pta.core.cs.element.CSMethod;
-import pascal.taie.analysis.pta.core.cs.element.CSVar;
 import pascal.taie.analysis.pta.core.solver.Solver;
-import pascal.taie.analysis.pta.plugin.Plugin;
-import pascal.taie.analysis.pta.pts.PointsToSet;
+import pascal.taie.analysis.pta.plugin.CompositePlugin;
+import pascal.taie.util.Timer;
 
 import java.io.File;
 import java.util.Set;
 
-public class TaintAnalysis implements Plugin {
+public class TaintAnalysis extends CompositePlugin {
 
     private static final Logger logger = LogManager.getLogger(TaintAnalysis.class);
 
     private static final String TAINT_FLOW_GRAPH_FILE = "taint-flow-graph.dot";
 
-    private Solver solver;
-
-    private TaintManager manager;
-
-    private SourceHandler sourceHandler;
-
-    private TransferHandler transferHandler;
-
-    private SanitizerHandler sanitizerHandler;
-
-    private SinkHandler sinkHandler;
+    private HandlerContext context;
 
     @Override
     public void setSolver(Solver solver) {
-        this.solver = solver;
-        manager = new TaintManager(solver.getHeapModel());
-        TaintConfig config = TaintConfig.readConfig(
+        TaintManager manager = new TaintManager(solver.getHeapModel());
+        TaintConfig config = TaintConfig.loadConfig(
                 solver.getOptions().getString("taint-config"),
                 solver.getHierarchy(),
                 solver.getTypeSystem());
         logger.info(config);
-        sourceHandler = new SourceHandler(solver, manager,
-                config.callSources(), config.paramSources());
-        transferHandler = new TransferHandler(solver, manager, config.transfers());
-        sanitizerHandler = new SanitizerHandler(solver, manager, config.paramSanitizers());
-        sinkHandler = new SinkHandler(solver, manager, config.sinks());
-    }
-
-    @Override
-    public void onNewCallEdge(Edge<CSCallSite, CSMethod> edge) {
-        sourceHandler.handleCallSource(edge);
-        transferHandler.handleNewCallEdge(edge);
-    }
-
-    @Override
-    public void onNewCSMethod(CSMethod csMethod) {
-        sourceHandler.handleParamSource(csMethod);
-        sanitizerHandler.handleParamSanitizer(csMethod);
-    }
-
-    @Override
-    public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
-        transferHandler.handleNewPointsToSet(csVar, pts);
+        context = new HandlerContext(solver, manager, config);
+        addPlugin(new SourceHandler(context),
+                new TransferHandler(context),
+                new SanitizerHandler(context));
     }
 
     @Override
     public void onFinish() {
-        Set<TaintFlow> taintFlows = sinkHandler.collectTaintFlows();
-        solver.getResult().storeResult(getClass().getName(), taintFlows);
+        Set<TaintFlow> taintFlows = new SinkHandler(context).collectTaintFlows();
         logger.info("Detected {} taint flow(s):", taintFlows.size());
         taintFlows.forEach(logger::info);
-        FlowGraphDumper.dump(
-                new TFGBuilder(solver.getResult(),
-                        transferHandler.getVarTransfers(), manager).build(),
-                new File(World.get().getOptions().getOutputDir(), TAINT_FLOW_GRAPH_FILE));
+        Solver solver = context.solver();
+        solver.getResult().storeResult(getClass().getName(), taintFlows);
+        TaintManager manager = context.manager();
+        Timer.runAndCount(() -> new TFGDumper().dump(
+                        new TFGBuilder(solver.getResult(), taintFlows, manager).build(),
+                        new File(World.get().getOptions().getOutputDir(), TAINT_FLOW_GRAPH_FILE)),
+                "TFGDumper");
     }
 }

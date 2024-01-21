@@ -8,6 +8,7 @@
     distinguish-string-constants: reflection # (distinguish reflection-relevant
     # string constants, i.e., class, method, and field names)
     # | null (do not distinguish any string constants)
+    # | app (distinguish string constants in application code)
     # | all (distinguish all string constants)
     # | <predicate-class-name>
     merge-string-objects: true
@@ -19,9 +20,11 @@
     # zipper | zipper-e | zipper-e=PV
     # scaler | scaler=TST
     # mahjong | collection
-    dump: false # whether dump results
+    dump: false # whether dump points-to results (with contexts)
+    dump-ci: false # whether dump points-to results (without contexts)
+    dump-yaml: false # whether dump points-to results in yaml format
     expected-file: null # path of expected file for comparing results
-    reflection: string-constant # | null | log
+    reflection-inference: string-constant # | solar | null
     reflection-log: null # path to reflection log, required when reflection option is log
     taint-config: null # path to config file of taint analysis,
     # when this file is given, taint analysis will be enabled
@@ -37,10 +40,9 @@
   requires: [ pta(algorithm=pta) ]
   options:
     algorithm: pta # | cha
-    dump: false # whether dump reachable methods and call edges
+    dump: false # whether dump call graph in dot file
     dump-methods: false # whether dump reachable methods
     dump-call-edges: false # whether dump call edges
-    dump-dot: false # whether dump call graph in dot file
 
 - description: identify casts that may fail
   analysisClass: pascal.taie.analysis.pta.client.MayFailCast
@@ -51,6 +53,14 @@
   analysisClass: pascal.taie.analysis.pta.client.PolymorphicCallSite
   id: poly-call
   requires: [ pta ]
+
+- description: find modified objects of methods and statements
+  analysisClass: pascal.taie.analysis.sideeffect.SideEffectAnalysis
+  id: side-effect
+  requires: [ pta ]
+  options:
+    only-app: true # only track modifications on the objects
+    # created in application code
 
 - description: throw analysis
   analysisClass: pascal.taie.analysis.exception.ThrowAnalysis

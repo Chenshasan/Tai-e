@@ -28,6 +28,7 @@ import pascal.taie.analysis.pta.core.cs.element.*;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.stmt.Invoke;
+import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.language.classes.JMethod;
 
 /**
@@ -40,6 +41,8 @@ import pascal.taie.language.classes.JMethod;
  */
 public interface Plugin {
 
+    Plugin DUMMY = new Plugin() {};
+
     /**
      * Sets pointer analysis solver which will be used later by the plugin.
      */
@@ -50,6 +53,16 @@ public interface Plugin {
      * Invoked when pointer analysis starts.
      */
     default void onStart() {
+    }
+
+    /**
+     * Invoked when pointer analysis has processed all entries in the work list.
+     * Some plugins need to perform certain computation at this stage
+     * (so that it can collect enough points-to information in the program),
+     * and may further add entries to the work list to "restart" the
+     * pointer analysis.
+     */
+    default void onPhaseFinish() {
     }
 
     /**
@@ -86,6 +99,15 @@ public interface Plugin {
      * @param method new reachable method
      */
     default void onNewMethod(JMethod method) {
+    }
+
+    /**
+     * Invoked when a new reachable stmt is discovered.
+     *
+     * @param stmt      new reachable stmt
+     * @param container container method of {@code stmt}
+     */
+    default void onNewStmt(Stmt stmt, JMethod container) {
     }
 
     /**

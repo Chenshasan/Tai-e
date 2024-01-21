@@ -98,6 +98,14 @@ public interface Solver {
 
     void addPointsTo(Pointer pointer, Context heapContext, Obj obj);
 
+    /**
+     * Convenient API to add points-to relation for object
+     * with empty heap context.
+     */
+    default void addPointsTo(Pointer pointer, Obj obj) {
+        addPointsTo(pointer, getContextSelector().getEmptyContext(), obj);
+    }
+
     // convenient APIs for adding var-points-to relations
     void addVarPointsTo(Context context, Var var, PointsToSet pts);
 
@@ -125,22 +133,50 @@ public interface Solver {
      * Adds an edge "source -> target" to the PFG.
      */
     default void addPFGEdge(Pointer source, Pointer target, FlowKind kind) {
-        addPFGEdge(source, target, kind, Identity.get());
+        addPFGEdge(new PointerFlowEdge(kind, source, target));
     }
 
     /**
      * Adds an edge "source -> target" to the PFG.
      * For the objects pointed to by "source", only the ones whose types
      * are subtypes of given type are propagated to "target".
+     * @deprecated Use {@link #addPFGEdge(PointerFlowEdge, Type)} instead.
      */
+    @Deprecated
     default void addPFGEdge(Pointer source, Pointer target, FlowKind kind, Type type) {
-        addPFGEdge(source, target, kind, new TypeFilter(type, this));
+        addPFGEdge(new PointerFlowEdge(kind, source, target), type);
     }
 
     /**
      * Adds an edge "source -> target" (with edge transfer) to the PFG.
+     * @deprecated Use {@link #addPFGEdge(PointerFlowEdge, Transfer)} instead.
      */
-    void addPFGEdge(Pointer source, Pointer target, FlowKind kind, Transfer transfer);
+    @Deprecated
+    default void addPFGEdge(Pointer source, Pointer target, FlowKind kind, Transfer transfer) {
+        addPFGEdge(new PointerFlowEdge(kind, source, target), transfer);
+    }
+
+    /**
+     * Adds a pointer flow edge to the PFG.
+     */
+    default void addPFGEdge(PointerFlowEdge edge) {
+        addPFGEdge(edge, Identity.get());
+    }
+
+    /**
+     * Adds a pointer flow edge (with type filer) to the PFG.
+     * For the objects pointed to by {@code edge.source()},
+     * only the ones whose types are subtypes of {@code type}
+     * can be propagated to {@code edge.target()}.
+     */
+    default void addPFGEdge(PointerFlowEdge edge, Type type) {
+        addPFGEdge(edge, new TypeFilter(type, this));
+    }
+
+    /**
+     * Adds a pointer flow edge (with edge transfer) to the PFG.
+     */
+    void addPFGEdge(PointerFlowEdge edge, Transfer transfer);
 
     /**
      * Adds an entry point.
@@ -171,13 +207,6 @@ public interface Solver {
     void addStmts(CSMethod csMethod, Collection<Stmt> stmts);
 
     /**
-     * Analyzes the static initializer (i.e., <clinit>) of given class.
-     *
-     * @param cls the class to be initialized.
-     */
-    void initializeClass(JClass cls);
-
-    /**
      * If a plugin takes over the analysis of a method, and wants this solver
      * to ignore the method (for precision and/or efficiency reasons),
      * then it could call this API with the method.
@@ -190,6 +219,12 @@ public interface Solver {
      */
     void addIgnoredMethod(JMethod method);
 
+    /**
+     * Analyzes the static initializer (i.e., &lt;clinit&gt;) of given class.
+     *
+     * @param cls the class to be initialized.
+     */
+    void initializeClass(JClass cls);
     // ---------- side-effect APIs (end) ----------
 
     /**

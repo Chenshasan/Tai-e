@@ -22,6 +22,7 @@
 
 package pascal.taie.analysis.pta.core.cs.element;
 
+import pascal.taie.analysis.graph.flowgraph.FlowKind;
 import pascal.taie.analysis.pta.core.solver.PointerFlowEdge;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.language.type.Type;
@@ -85,11 +86,16 @@ public interface Pointer extends Indexable {
     Stream<CSObj> objects();
 
     /**
-     * @param edge an out edge of this pointer
-     * @return true if new out edge was added to this pointer as a result
-     * of the call, otherwise false.
+     * Adds a pointer flow edge and returns the edge in the PFG.
+     * If the edge to add already exists, then
+     * <ul>
+     *     <li>if the edge is of {@link FlowKind#OTHER},
+     *     returns the existing edge;
+     *     <li>otherwise, returns {@code null}, meaning that the edge
+     *     does not need to be processed again.
+     * </ul>
      */
-    boolean addOutEdge(PointerFlowEdge edge);
+    PointerFlowEdge addEdge(PointerFlowEdge edge);
 
     /**
      * @return out edges of this pointer in pointer flow graph.

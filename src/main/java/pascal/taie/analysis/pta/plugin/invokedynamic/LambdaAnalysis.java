@@ -35,15 +35,17 @@ import pascal.taie.analysis.pta.core.heap.Descriptor;
 import pascal.taie.analysis.pta.core.heap.HeapModel;
 import pascal.taie.analysis.pta.core.heap.MockObj;
 import pascal.taie.analysis.pta.core.heap.Obj;
+import pascal.taie.analysis.pta.core.solver.PointerFlowEdge;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.Plugin;
+import pascal.taie.analysis.pta.plugin.util.CSObjs;
 import pascal.taie.analysis.pta.pts.PointsToSet;
-import pascal.taie.ir.IR;
 import pascal.taie.ir.exp.InvokeDynamic;
 import pascal.taie.ir.exp.MethodHandle;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.proginfo.MethodRef;
 import pascal.taie.ir.stmt.Invoke;
+import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.classes.Signatures;
@@ -55,7 +57,6 @@ import pascal.taie.util.collection.MultiMap;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class LambdaAnalysis implements Plugin {
 
@@ -101,21 +102,16 @@ public class LambdaAnalysis implements Plugin {
     }
 
     @Override
-    public void onNewMethod(JMethod method) {
-        extractLambdaMetaFactories(method.getIR()).forEach(invoke -> {
+    public void onNewStmt(Stmt stmt, JMethod container) {
+        if (stmt instanceof Invoke invoke &&
+                invoke.isDynamic() &&
+                isLambdaMetaFactory(invoke)) {
             InvokeDynamic indy = (InvokeDynamic) invoke.getInvokeExp();
             Type type = indy.getMethodType().getReturnType();
-            JMethod container = invoke.getContainer();
             // record lambda meta factories of new reachable methods
             lambdaObjs.put(container,
                     heapModel.getMockObj(LAMBDA_DESC, invoke, type, container));
-        });
-    }
-
-    private static Stream<Invoke> extractLambdaMetaFactories(IR ir) {
-        return ir.invokes(true)
-                .filter(Invoke::isDynamic)
-                .filter(LambdaAnalysis::isLambdaMetaFactory);
+        }
     }
 
     static boolean isLambdaMetaFactory(Invoke invoke) {
@@ -153,7 +149,7 @@ public class LambdaAnalysis implements Plugin {
 
     @Override
     public void onUnresolvedCall(CSObj recv, Context context, Invoke invoke) {
-        if (!isLambdaObj(recv.getObject())) {
+        if (!CSObjs.hasDescriptor(recv, LAMBDA_DESC)) {
             return;
         }
         MockObj lambdaObj = (MockObj) recv.getObject();
@@ -221,11 +217,6 @@ public class LambdaAnalysis implements Plugin {
         }
     }
 
-    private static boolean isLambdaObj(Obj obj) {
-        return obj instanceof MockObj mockObj &&
-                mockObj.getDescriptor().equals(LAMBDA_DESC);
-    }
-
     /**
      * @return the MethodHandle to the target method from invokedynamic.
      */
@@ -287,11 +278,11 @@ public class LambdaAnalysis implements Plugin {
             List<Var> targetParams = target.getIR().getParams();
             int j = 0;
             for (int i = shiftC; i < capturedArgs.size(); ++i, ++j) {
-                solver.addPFGEdge(
-                        csManager.getCSVar(lambdaContext, capturedArgs.get(i)),
-                        csManager.getCSVar(calleeContext, targetParams.get(j)),
-                        // filter spurious objects caused by imprecise lambda objects
+                solver.addPFGEdge(new PointerFlowEdge(
                         FlowKind.PARAMETER_PASSING,
+                        csManager.getCSVar(lambdaContext, capturedArgs.get(i)),
+                        csManager.getCSVar(calleeContext, targetParams.get(j))),
+                        // filter spurious objects caused by imprecise lambda objects
                         targetParams.get(j).getType());
             }
             // pass arguments from actual invocation site
@@ -310,12 +301,12 @@ public class LambdaAnalysis implements Plugin {
             List<Var> actualArgs = invoke.getInvokeExp().getArgs();
             Context callerContext = csCallSite.getContext();
             for (int i = shiftA; i < actualArgs.size(); ++i, ++j) {
-                solver.addPFGEdge(
+                solver.addPFGEdge(new PointerFlowEdge(
+                        FlowKind.PARAMETER_PASSING,
                         csManager.getCSVar(callerContext, actualArgs.get(i)),
-                        csManager.getCSVar(calleeContext, targetParams.get(j)),
+                        csManager.getCSVar(calleeContext, targetParams.get(j))),
                         // filter spurious objects caused by imprecise lambda objects
-                        FlowKind.PARAMETER_PASSING, targetParams.get(j).getType()
-                );
+                         targetParams.get(j).getType());
             }
             // pass return value
             Var result = invoke.getResult();
@@ -323,9 +314,10 @@ public class LambdaAnalysis implements Plugin {
                 CSVar csResult = csManager.getCSVar(callerContext, result);
                 target.getIR().getReturnVars().forEach(ret -> {
                     CSVar csRet = csManager.getCSVar(calleeContext, ret);
-                    solver.addPFGEdge(csRet, csResult,
+                    solver.addPFGEdge(new PointerFlowEdge(
+                            FlowKind.RETURN, csRet, csResult),
                             // filter spurious objects caused by imprecise lambda objects
-                            FlowKind.RETURN, result.getType());
+                            result.getType());
                 });
             }
         }

@@ -22,7 +22,8 @@
 
 package pascal.taie.analysis.dataflow.analysis;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import pascal.taie.analysis.Tests;
 
 public class LiveVarTest {
@@ -32,33 +33,17 @@ public class LiveVarTest {
                 LiveVariable.ID, "strongly:false");
     }
 
-    @Test
-    public void testAssign() {
-        testLV("Assign");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Assign",
+            "Branch",
+            "BranchLoop",
+            "Array",
+            "Fibonacci",
+            "Reference",
+    })
+    void test(String inputClass) {
+        testLV(inputClass);
     }
 
-    @Test
-    public void testBranch() {
-        testLV("Branch");
-    }
-
-    @Test
-    public void testBranchLoop() {
-        testLV("BranchLoop");
-    }
-
-    @Test
-    public void Array() {
-        testLV("Array");
-    }
-
-    @Test
-    public void Fibonacci() {
-        testLV("Fibonacci");
-    }
-
-    @Test
-    public void Reference() {
-        testLV("Reference");
-    }
 }

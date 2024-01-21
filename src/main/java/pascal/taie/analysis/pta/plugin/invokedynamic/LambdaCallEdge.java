@@ -22,14 +22,12 @@
 
 package pascal.taie.analysis.pta.plugin.invokedynamic;
 
-import pascal.taie.analysis.graph.callgraph.CallKind;
-import pascal.taie.analysis.graph.callgraph.Edge;
+import pascal.taie.analysis.graph.callgraph.OtherEdge;
 import pascal.taie.analysis.pta.core.cs.context.Context;
 import pascal.taie.analysis.pta.core.cs.element.CSCallSite;
 import pascal.taie.analysis.pta.core.cs.element.CSMethod;
 import pascal.taie.ir.exp.InvokeDynamic;
 import pascal.taie.ir.exp.Var;
-import pascal.taie.util.Hashes;
 
 import java.util.List;
 
@@ -38,7 +36,7 @@ import java.util.List;
  * The edge carries the information about invokedynamic invocation site
  * where the lambda functional object was created.
  */
-class LambdaCallEdge extends Edge<CSCallSite, CSMethod> {
+class LambdaCallEdge extends OtherEdge<CSCallSite, CSMethod> {
 
     private final InvokeDynamic lambdaIndy;
 
@@ -46,7 +44,7 @@ class LambdaCallEdge extends Edge<CSCallSite, CSMethod> {
 
     LambdaCallEdge(CSCallSite csCallSite, CSMethod callee,
                    InvokeDynamic lambdaIndy, Context lambdaContext) {
-        super(CallKind.OTHER, csCallSite, callee);
+        super(csCallSite, callee);
         this.lambdaIndy = lambdaIndy;
         this.lambdaContext = lambdaContext;
     }
@@ -67,7 +65,9 @@ class LambdaCallEdge extends Edge<CSCallSite, CSMethod> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) return false;
+        if (!super.equals(o)) {
+            return false;
+        }
         LambdaCallEdge that = (LambdaCallEdge) o;
         return lambdaIndy.equals(that.lambdaIndy) &&
                 lambdaContext.equals(that.lambdaContext);
@@ -75,6 +75,9 @@ class LambdaCallEdge extends Edge<CSCallSite, CSMethod> {
 
     @Override
     public int hashCode() {
-        return Hashes.hash(super.hashCode(), lambdaIndy, lambdaContext);
+        int result = super.hashCode();
+        result = 31 * result + lambdaIndy.hashCode();
+        result = 31 * result + lambdaContext.hashCode();
+        return result;
     }
 }

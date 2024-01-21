@@ -30,26 +30,33 @@ import java.util.Comparator;
 /**
  * A {@code ParamSourcePoint} is a parameter of a method.
  */
-public record ParamSourcePoint(JMethod sourceMethod, int index) implements SourcePoint {
+public record ParamSourcePoint(JMethod sourceMethod, IndexRef indexRef)
+        implements SourcePoint {
 
     private static final Comparator<ParamSourcePoint> COMPARATOR =
             Comparator.comparing((ParamSourcePoint psp) -> psp.sourceMethod.toString())
-                    .thenComparingInt(ParamSourcePoint::index);
+                    .thenComparing(ParamSourcePoint::indexRef);
 
     @Override
     public int compareTo(@Nonnull SourcePoint sp) {
         if (sp instanceof ParamSourcePoint psp) {
             return COMPARATOR.compare(this, psp);
-        } else if (sp instanceof CallSourcePoint csp) {
-            return -SourcePoint.compare(csp, this);
-        } else {
-            throw new IllegalArgumentException(
-                    "ParamSourcePoint cannot compare to " + sp);
         }
+        return SourcePoint.compare(this, sp);
+    }
+
+    @Override
+    public JMethod getContainer() {
+        return sourceMethod;
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
     }
 
     @Override
     public String toString() {
-        return sourceMethod + "/" + index;
+        return sourceMethod + "/" + indexRef;
     }
 }

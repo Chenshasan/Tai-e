@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,8 +77,9 @@ public class ClassNameExtractor {
     }
 
     private static List<String> extractJar(String jarPath) {
-        try (JarFile jar = new JarFile(jarPath)) {
-            System.out.printf("Scanning %s ... ", jarPath);
+        File file = new File(jarPath);
+        try (JarFile jar = new JarFile(file)) {
+            System.out.printf("Scanning %s ... ", file.getAbsolutePath());
             List<String> classNames = jar.stream()
                     .filter(e -> !e.getName().startsWith("META-INF"))
                     .filter(e -> e.getName().endsWith(CLASS))
@@ -92,17 +92,18 @@ public class ClassNameExtractor {
             System.out.printf("%d classes%n", classNames.size());
             return classNames;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read jar file: " + jarPath, e);
+            throw new RuntimeException("Failed to read jar file: " +
+                    file.getAbsolutePath(), e);
         }
     }
 
     private static List<String> extractDir(String dirPath) {
-        Path dir = Paths.get(dirPath);
+        Path dir = Path.of(dirPath);
         if (!dir.toFile().isDirectory()) {
             throw new RuntimeException(dir + " is not a directory");
         }
         try (Stream<Path> paths = Files.walk(dir)) {
-            System.out.printf("Scanning %s ... ", dirPath);
+            System.out.printf("Scanning %s ... ", dir.toAbsolutePath());
             List<String> classNames = new ArrayList<>();
             paths.map(dir::relativize).forEach(path -> {
                 String fileName = path.getFileName().toString();

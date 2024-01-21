@@ -22,6 +22,7 @@
 
 package pascal.taie.analysis.pta.core.solver;
 
+import pascal.taie.analysis.graph.flowgraph.FlowKind;
 import pascal.taie.analysis.pta.core.cs.element.CSManager;
 import pascal.taie.analysis.pta.core.cs.element.Pointer;
 import pascal.taie.util.collection.Views;
@@ -43,8 +44,18 @@ public class PointerFlowGraph implements Graph<Pointer> {
         this.csManager = csManager;
     }
 
-    public boolean addEdge(PointerFlowEdge edge) {
-        return edge.source().addOutEdge(edge);
+    /**
+     * Adds a pointer flow edge and returns the edge in the PFG.
+     * If the edge to add already exists, then
+     * <ul>
+     *     <li>if the edge is of {@link FlowKind#OTHER},
+     *     returns the existing edge;
+     *     <li>otherwise, returns {@code null}, meaning that the edge
+     *     does not need to be processed again.
+     * </ul>
+     */
+    public PointerFlowEdge addEdge(PointerFlowEdge edge) {
+        return edge.source().addEdge(edge);
     }
 
     @Override

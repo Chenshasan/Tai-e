@@ -13,6 +13,7 @@ import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.ClassType;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MapStructModel extends AbstractIRModel {
@@ -28,6 +29,9 @@ public class MapStructModel extends AbstractIRModel {
         if (getMapper != null) {
             registerIRGen(getMapper, this::getMapper);
         }
+    }
+
+    private void registerIRGen(JMethod getMapper, Function<Invoke, List<Stmt>> function) {
     }
 
     private List<Stmt> getMapper(Invoke invoke) {

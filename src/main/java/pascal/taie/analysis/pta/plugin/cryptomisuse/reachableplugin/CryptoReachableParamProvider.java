@@ -5,14 +5,13 @@ import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.analysis.pta.core.solver.ParamProvider;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.spring.MockObjUtils;
-import pascal.taie.language.classes.ClassHierarchy;
-import pascal.taie.language.classes.ClassNames;
-import pascal.taie.language.classes.JClass;
-import pascal.taie.language.classes.JMethod;
+import pascal.taie.language.classes.*;
 import pascal.taie.language.type.ClassType;
 import pascal.taie.language.type.ReferenceType;
 import pascal.taie.util.JClassUtils;
+import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Sets;
+import pascal.taie.util.collection.TwoKeyMultiMap;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,6 +53,16 @@ public class CryptoReachableParamProvider implements ParamProvider {
             }
         }
         return Set.of();
+    }
+
+    @Override
+    public TwoKeyMultiMap<Obj, JField, Obj> getFieldObjs() {
+        return null;
+    }
+
+    @Override
+    public MultiMap<Obj, Obj> getArrayObjs() {
+        return null;
     }
 
     private Collection<JClass> getNonAbstractSubclasses(JClass jClass) {

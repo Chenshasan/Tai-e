@@ -23,6 +23,7 @@
 package pascal.taie;
 
 import pascal.taie.config.Options;
+import pascal.taie.frontend.cache.CachedIRBuilder;
 import pascal.taie.ir.IRBuilder;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JMethod;
@@ -30,6 +31,12 @@ import pascal.taie.language.natives.NativeModel;
 import pascal.taie.language.type.TypeSystem;
 import pascal.taie.util.AbstractResultHolder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +46,8 @@ import java.util.List;
  * Note that the setters of this class are protected: they are supposed
  * to be called (once) by the world builder, not analysis classes.
  */
-public final class World extends AbstractResultHolder {
+public final class World extends AbstractResultHolder
+        implements Serializable {
 
     /**
      * ZA WARUDO, i.e., the current world.
@@ -50,15 +58,26 @@ public final class World extends AbstractResultHolder {
      * The callbacks that will be invoked at resetting.
      * This is useful to clear class-level caches.
      */
-    private final static List<Runnable> resetCallbacks = new ArrayList<>();
+    private static final List<Runnable> resetCallbacks = new ArrayList<>();
 
-    private Options options;
+    /**
+     * Notes: This field is {@code transient} because it
+     * should be set after deserialization.
+     */
+    private transient Options options;
 
     private TypeSystem typeSystem;
 
     private ClassHierarchy classHierarchy;
 
-    private IRBuilder irBuilder;
+    /**
+     * Notes: add {@code transient} to wrap this {@link IRBuilder} using
+     * {@link pascal.taie.frontend.cache.CachedIRBuilder} in serialization.
+     *
+     * @see #writeObject(ObjectOutputStream)
+     * @see #readObject(ObjectInputStream)
+     */
+    private transient IRBuilder irBuilder;
 
     private NativeModel nativeModel;
 
@@ -94,10 +113,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setOptions(Options options) {
-        if (this.options != null) {
-            throw new IllegalStateException("Options already set");
-        }
-        this.options = options;
+        checkAndSet("options", options);
     }
 
     public TypeSystem getTypeSystem() {
@@ -105,10 +121,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setTypeSystem(TypeSystem typeSystem) {
-        if (this.typeSystem != null) {
-            throw new IllegalStateException("TypeSystem already set");
-        }
-        this.typeSystem = typeSystem;
+        checkAndSet("typeSystem", typeSystem);
     }
 
     public ClassHierarchy getClassHierarchy() {
@@ -116,10 +129,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setClassHierarchy(ClassHierarchy classHierarchy) {
-        if (this.classHierarchy != null) {
-            throw new IllegalStateException("ClassHierarchy already set");
-        }
-        this.classHierarchy = classHierarchy;
+        checkAndSet("classHierarchy", classHierarchy);
     }
 
     public IRBuilder getIRBuilder() {
@@ -127,7 +137,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setIRBuilder(IRBuilder irBuilder) {
-        this.irBuilder = irBuilder;
+        checkAndSet("irBuilder", irBuilder);
     }
 
     public NativeModel getNativeModel() {
@@ -135,7 +145,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setNativeModel(NativeModel nativeModel) {
-        this.nativeModel = nativeModel;
+        checkAndSet("nativeModel", nativeModel);
     }
 
     public JMethod getMainMethod() {
@@ -143,10 +153,7 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setMainMethod(JMethod mainMethod) {
-        if (this.mainMethod != null) {
-            throw new IllegalStateException("Main method already set");
-        }
-        this.mainMethod = mainMethod;
+        checkAndSet("mainMethod", mainMethod);
     }
 
     public Collection<JMethod> getImplicitEntries() {
@@ -154,6 +161,36 @@ public final class World extends AbstractResultHolder {
     }
 
     public void setImplicitEntries(Collection<JMethod> implicitEntries) {
-        this.implicitEntries = implicitEntries;
+        checkAndSet("implicitEntries", implicitEntries);
+    }
+
+    /**
+     * Sets value for specified field (by {@code fieldName}).
+     * Ensures that the specified field is set at most once.
+     */
+    private void checkAndSet(String fieldName, Object value) {
+        try {
+            Field field = World.class.getDeclaredField(fieldName);
+            if (field.get(this) != null) {
+                throw new IllegalStateException(
+                        "World." + fieldName + " already set");
+            }
+            field.set(this, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set World." + fieldName);
+        }
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.defaultWriteObject();
+        s.writeObject(new CachedIRBuilder(irBuilder, classHierarchy));
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream s) throws IOException,
+            ClassNotFoundException {
+        s.defaultReadObject();
+        setIRBuilder((IRBuilder) s.readObject());
     }
 }

@@ -22,11 +22,9 @@
 
 package pascal.taie.analysis;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
 import pascal.taie.Main;
 import pascal.taie.World;
 import pascal.taie.analysis.graph.cfg.CFGBuilder;
@@ -39,8 +37,10 @@ import pascal.taie.analysis.pta.rpc.Benchmark;
 import pascal.taie.util.AppClassInferringUtils;
 import pascal.taie.util.DirectoryTraverser;
 import pascal.taie.util.ZipUtils;
+import pascal.taie.util.collection.Lists;
 import pascal.taie.util.collection.Sets;
 import pascal.taie.util.collection.Tuple;
+import pascal.taie.analysis.pta.plugin.assertion.AssertionChecker;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +52,14 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Static utility methods for testing.
@@ -149,15 +157,12 @@ public final class Tests {
         Main.main(args.toArray(new String[0]));
         if (action.equals("compare")) {
             Set<String> mismatches = World.get().getResult(ResultProcessor.ID);
-            Assert.assertTrue("Mismatches of analysis \"" + id + "\":\n" +
-                            String.join("\n", mismatches),
-                    mismatches.isEmpty());
+            assertTrue(mismatches.isEmpty(),
+                    "Mismatches of analysis \"" + id + "\":\n" +
+                            String.join("\n", mismatches));
         }
     }
 
-    public static void testPTA(String dir, String main, String... opts) {
-        testPTA(true, dir, main, opts);
-    }
 
     public static void testPTA(boolean processResult, String dir, String main, String... opts) {
         String id = PointerAnalysis.ID;
@@ -205,6 +210,7 @@ public final class Tests {
             }
         }
     }
+
 
     public static void testPTABySpringBootArchives(Benchmark benchmark, boolean withDependency) {
         MicroserviceHolder.clear();
@@ -620,12 +626,10 @@ public final class Tests {
                         only-app:%s;
                         handle-invokedynamic:true;
                         merge-string-builders:true;
-                        reflection:null;
                         cs:%s;
                         crypto-output:%s;
                         propagate-types:[reference,byte,char,int];
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml;
-                        reflection:log;
                         reflection-log:src/test/resources/pta/cryptomisuse/reflection-OWASP.log;
                         plugins:[pascal.taie.analysis.pta.plugin.owasp.OWASPBenchmarkAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
@@ -649,14 +653,44 @@ public final class Tests {
      */
     private static String getExpectedFile(String dir, String main, String id) {
         String fileName = String.format("%s-%s-expected.txt", main, id);
-        return Paths.get(dir, fileName).toString();
+        return Path.of(dir, fileName).toString();
+    }
+
+    public static void testPTA(String dir, String main, String... opts) {
+        testPTA(true, dir, main, opts);
+    }
+
+    private static String getPTAArgs(
+            boolean processResult, String expectedFile, String... opts) {
+        List<String> ptaArgs = new ArrayList<>(List.of(
+                "implicit-entries:false",
+                "only-app:true",
+                "distinguish-string-constants:all"));
+        if (processResult) {
+            ptaArgs.add(GENERATE_EXPECTED_RESULTS
+                    ? "dump:true"
+                    : "expected-file:" + expectedFile);
+        }
+        List<String> plugins = new ArrayList<>();
+        plugins.add(AssertionChecker.class.getName());
+        for (String opt : opts) {
+            if (opt.startsWith("plugins")) {
+                // "plugins:[...]"
+                String pluginStr = opt.substring(opt.indexOf('[') + 1, opt.indexOf(']'));
+                plugins.addAll(Arrays.asList(pluginStr.split(",")));
+            } else {
+                ptaArgs.add(opt);
+            }
+        }
+        ptaArgs.add("plugins:[" + String.join(",", plugins) + "]");
+        return String.join(";", ptaArgs);
     }
 
     private static Tuple<String, List<String>, List<String>>
     initializeSpringBootArchivesOfCrypto(List<String> archivePaths) {
         Tuple<String, List<String>, List<String>> result;
 
-        List<Path> tempDirectories = Lists.newArrayListWithCapacity(archivePaths.size());
+        List<Path> tempDirectories = new ArrayList<>(archivePaths.size());;
         String classPath = "";
         List<String> classes = new ArrayList<>();
         List<String> dependencyJarPaths = new ArrayList<>();
@@ -696,7 +730,7 @@ public final class Tests {
     initializeSpringBootArchives(List<String> archivePaths) {
         List<Tuple<String, List<String>, List<String>>> result = new ArrayList<>();
 
-        List<Path> tempDirectories = Lists.newArrayListWithCapacity(archivePaths.size());
+        List<Path> tempDirectories = new ArrayList<>(archivePaths.size());
         for (String archivePath : archivePaths) {
             try {
                 // uncompress archive file at temp directory

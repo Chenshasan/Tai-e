@@ -22,7 +22,8 @@
 
 package pascal.taie.analysis.deadcode;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import pascal.taie.analysis.Tests;
 
 public class DeadCodeTest {
@@ -34,28 +35,16 @@ public class DeadCodeTest {
                 "-a", "const-prop=edge-refine:false");
     }
 
-    @Test
-    public void testControlFlowUnreachable() {
-        testDCD("ControlFlowUnreachable");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ControlFlowUnreachable",
+            "UnreachableIfBranch",
+            "UnreachableSwitchBranch",
+            "DeadAssignment",
+            "Loops",
+    })
+    void test(String inputClass) {
+        testDCD(inputClass);
     }
 
-    @Test
-    public void testUnreachableIfBranch() {
-        testDCD("UnreachableIfBranch");
-    }
-
-    @Test
-    public void testUnreachableSwitchBranch() {
-        testDCD("UnreachableSwitchBranch");
-    }
-
-    @Test
-    public void testDeadAssignment() {
-        testDCD("DeadAssignment");
-    }
-
-    @Test
-    public void testLoops() {
-        testDCD("Loops");
-    }
 }

@@ -36,6 +36,7 @@ import pascal.taie.config.Options;
 import pascal.taie.config.Plan;
 import pascal.taie.config.PlanConfig;
 import pascal.taie.config.Scope;
+import pascal.taie.frontend.cache.CachedWorldBuilder;
 import pascal.taie.util.Timer;
 import pascal.taie.util.collection.Lists;
 
@@ -48,8 +49,7 @@ public class Main {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
 
-    public static void main(String[] args) {
-        LoggerConfigs.reconfigure();
+    public static void main(String... args) {
         Timer.runAndCount(() -> {
             Options options = processArgs(args);
             LoggerConfigs.setOutput(options.getOutputDir());
@@ -60,8 +60,7 @@ public class Main {
             }
             buildWorld(options, plan.analyses());
             executePlan(plan);
-            PointerAnalysisResult result = World.get().getResult("pta");
-            CallGraph callGraph= result.getCallGraph();
+            LoggerConfigs.reconfigure();
         }, "Tai-e");
     }
 
@@ -69,7 +68,7 @@ public class Main {
      * If the given options is empty or specify to print help information,
      * then print help and exit immediately.
      */
-    private static Options processArgs(String[] args) {
+    private static Options processArgs(String... args) {
         Options options = Options.parse(args);
         if (options.isPrintHelp() || args.length == 0) {
             options.printHelp();
@@ -121,6 +120,7 @@ public class Main {
         LoggerConfigs.setOutput(options.getOutputDir());
         Plan plan = processConfigs(options);
         buildWorld(options, plan.analyses());
+        LoggerConfigs.reconfigure();
     }
 
     private static void buildWorld(Options options, List<AnalysisConfig> analyses) {
@@ -129,6 +129,9 @@ public class Main {
                 Class<? extends WorldBuilder> builderClass = options.getWorldBuilderClass();
                 Constructor<? extends WorldBuilder> builderCtor = builderClass.getConstructor();
                 WorldBuilder builder = builderCtor.newInstance();
+                if (options.isWorldCacheMode()) {
+                    builder = new CachedWorldBuilder(builder);
+                }
                 builder.build(options, analyses);
                 logger.info("{} classes with {} methods in the world",
                         World.get()

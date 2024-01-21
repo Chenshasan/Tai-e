@@ -22,47 +22,24 @@
 
 package pascal.taie.analysis.dataflow.analysis.constprop;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class InterCPTestFull extends InterCPTest {
 
-    @Test
-    public void testArgRet() {
-        test("ArgRet");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ArgRet",
+            "Call",
+            "DeadLoop",
+            "FloatArg",
+            "MultiReturn",
+            "CharArgs",
+            "RedBlackBST",
+            "PlusPlus",
+    })
+    void testFull(String mainClass) {
+        testInterCP(mainClass);
     }
 
-    @Test
-    public void testCall() {
-        test("Call");
-    }
-
-    @Test
-    public void testDeadLoop() {
-        test("DeadLoop");
-    }
-
-    @Test
-    public void testFloatArg() {
-        test("FloatArg");
-    }
-
-    @Test
-    public void testMultiReturn() {
-        test("MultiReturn");
-    }
-
-    @Test
-    public void testCharArgs() {
-        test("CharArgs");
-    }
-
-    @Test
-    public void testRedBlackBST() {
-        test("RedBlackBST");
-    }
-
-    @Test
-    public void testPlusPlus() {
-        test("PlusPlus");
-    }
 }

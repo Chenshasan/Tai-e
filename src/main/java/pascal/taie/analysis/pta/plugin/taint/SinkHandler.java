@@ -25,51 +25,77 @@ package pascal.taie.analysis.pta.plugin.taint;
 import pascal.taie.analysis.graph.callgraph.CallKind;
 import pascal.taie.analysis.graph.callgraph.Edge;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
-import pascal.taie.analysis.pta.core.solver.Solver;
+import pascal.taie.analysis.pta.core.heap.Obj;
+import pascal.taie.analysis.pta.plugin.util.InvokeUtils;
 import pascal.taie.ir.exp.Var;
+import pascal.taie.ir.stmt.Invoke;
+import pascal.taie.language.classes.JMethod;
+import pascal.taie.util.collection.MultiMap;
+import pascal.taie.util.collection.MultiMapCollector;
+import pascal.taie.util.collection.Sets;
 
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Handles sinks in taint analysis.
  */
-class SinkHandler {
-
-    private final Solver solver;
-
-    private final TaintManager manager;
+class SinkHandler extends Handler {
 
     private final List<Sink> sinks;
 
-    SinkHandler(Solver solver, TaintManager manager, List<Sink> sinks) {
-        this.solver = solver;
-        this.manager = manager;
-        this.sinks = sinks;
+    SinkHandler(HandlerContext context) {
+        super(context);
+        sinks = context.config().sinks();
     }
 
     Set<TaintFlow> collectTaintFlows() {
         PointerAnalysisResult result = solver.getResult();
-        Set<TaintFlow> taintFlows = new TreeSet<>();
-        sinks.forEach(sink -> {
-            int i = sink.index();
+        Set<TaintFlow> taintFlows = Sets.newOrderedSet();
+        for (Sink sink : sinks) {
             result.getCallGraph()
                     .edgesInTo(sink.method())
                     // TODO: handle other call edges
                     .filter(e -> e.getKind() != CallKind.OTHER)
                     .map(Edge::getCallSite)
-                    .forEach(sinkCall -> {
-                        Var arg = IndexUtils.getVar(sinkCall, i);
-                        SinkPoint sinkPoint = new SinkPoint(sinkCall, i);
-                        result.getPointsToSet(arg)
-                                .stream()
-                                .filter(manager::isTaint)
-                                .map(manager::getSourcePoint)
-                                .map(sourcePoint -> new TaintFlow(sourcePoint, sinkPoint))
-                                .forEach(taintFlows::add);
+                    .map(sinkCall -> collectTaintFlows(result, sinkCall, sink))
+                    .forEach(taintFlows::addAll);
+        }
+        if (callSiteMode) {
+            MultiMap<JMethod, Sink> sinkMap = sinks.stream()
+                    .collect(MultiMapCollector.get(Sink::method, s -> s));
+            // scan all reachable call sites to search sink calls
+            result.getCallGraph()
+                    .reachableMethods()
+                    .flatMap(m -> m.getIR().invokes(false))
+                    .forEach(callSite -> {
+                        JMethod callee = callSite.getMethodRef().resolveNullable();
+                        if (callee != null) {
+                            for (Sink sink : sinkMap.get(callee)) {
+                                taintFlows.addAll(collectTaintFlows(result, callSite, sink));
+                            }
+                        }
                     });
-        });
+        }
         return taintFlows;
+    }
+
+    private Set<TaintFlow> collectTaintFlows(
+            PointerAnalysisResult result, Invoke sinkCall, Sink sink) {
+        IndexRef indexRef = sink.indexRef();
+        Var arg = InvokeUtils.getVar(sinkCall, indexRef.index());
+        SinkPoint sinkPoint = new SinkPoint(sinkCall, indexRef);
+        // obtain objects to check for different IndexRef.Kind
+        Set<Obj> objs = switch (indexRef.kind()) {
+            case VAR -> result.getPointsToSet(arg);
+            case ARRAY -> result.getPointsToSet(arg, (Var) null);
+            case FIELD -> result.getPointsToSet(arg, indexRef.field());
+        };
+        return objs.stream()
+                .filter(manager::isTaint)
+                .map(manager::getSourcePoint)
+                .map(sourcePoint -> new TaintFlow(sourcePoint, sinkPoint))
+                .collect(Collectors.toSet());
     }
 }

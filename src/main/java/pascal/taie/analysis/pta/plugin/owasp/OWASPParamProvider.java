@@ -7,8 +7,12 @@ import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.spring.MockObjUtils;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JClass;
+import pascal.taie.language.classes.JField;
 import pascal.taie.language.classes.JMethod;
+import pascal.taie.util.collection.Maps;
+import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Sets;
+import pascal.taie.util.collection.TwoKeyMultiMap;
 
 import java.util.Set;
 
@@ -40,5 +44,15 @@ public class OWASPParamProvider implements ParamProvider {
     @Override
     public Set<Obj> getParamObjs(int i) {
         return Set.of();
+    }
+
+    @Override
+    public TwoKeyMultiMap<Obj, JField, Obj> getFieldObjs() {
+        return Maps.newTwoKeyMultiMap();
+    }
+
+    @Override
+    public MultiMap<Obj, Obj> getArrayObjs() {
+        return Maps.emptyMultiMap();
     }
 }

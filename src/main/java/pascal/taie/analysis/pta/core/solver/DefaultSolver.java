@@ -22,7 +22,6 @@
 
 package pascal.taie.analysis.pta.core.solver;
 
-import fj.Primitive;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.World;
@@ -70,8 +69,8 @@ import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JField;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.ArrayType;
-import pascal.taie.language.type.NullType;
-import pascal.taie.language.type.ReferenceType;
+import pascal.taie.language.type.ClassType;
+import pascal.taie.language.type.Type;
 import pascal.taie.language.type.TypeSystem;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.Sets;
@@ -126,6 +125,8 @@ public class DefaultSolver implements Solver {
      * Time limit for pointer analysis (in seconds).
      */
     private final long timeLimit;
+
+    private TimeLimiter timeLimiter;
 
     /**
      * Whether the analysis has reached time limit.
@@ -250,7 +251,8 @@ public class DefaultSolver implements Solver {
         stmtProcessor = new StmtProcessor();
         isTimeout = false;
         if (timeLimit != UNLIMITED) {
-            new TimeLimiter().countDown(timeLimit);
+            timeLimiter = new TimeLimiter(timeLimit);
+            timeLimiter.countDown();
         }
         plugin.onStart();
     }
@@ -259,21 +261,33 @@ public class DefaultSolver implements Solver {
 
         private static final long MILLIS_FACTOR = 1000;
 
+        private final Thread thread;
+
         /**
-         * Starts count down.
-         *
          * @param seconds the time limit.
          */
-        private void countDown(long seconds) {
-            new Thread(() -> {
+        private TimeLimiter(long seconds) {
+            thread = new Thread(() -> {
                 try {
                     Thread.sleep(seconds * MILLIS_FACTOR);
-                    isTimeout = true;
-                } catch (InterruptedException e) {
-                    // this should rarely happen
-                    throw new RuntimeException(e);
+                } catch (InterruptedException ignored) {
                 }
-            }).start();
+                isTimeout = true;
+            });
+        }
+
+        /**
+         * Starts count down.
+         */
+        private void countDown() {
+            thread.start();
+        }
+
+        /**
+         * Stops count down.
+         */
+        private void stop() {
+            thread.interrupt();
         }
     }
 
@@ -282,29 +296,32 @@ public class DefaultSolver implements Solver {
      */
     private void analyze() {
         while (!workList.isEmpty() && !isTimeout) {
-            WorkList.Entry entry = workList.pollEntry();
-            if (entry instanceof WorkList.PointerEntry pEntry) {
-                Pointer p = pEntry.pointer();
-                PointsToSet pts = pEntry.pointsToSet();
-                PointsToSet diff = propagate(p, pts);
-                if (!diff.isEmpty() && p instanceof CSVar v) {
-                    processInstanceStore(v, diff);
-                    processInstanceLoad(v, diff);
-                    processArrayStore(v, diff);
-                    processArrayLoad(v, diff);
-                    processCall(v, diff);
-                    plugin.onNewPointsToSet(v, diff);
+            // phase starts
+            while (!workList.isEmpty() && !isTimeout) {
+                WorkList.Entry entry = workList.pollEntry();
+                if (entry instanceof WorkList.PointerEntry pEntry) {
+                    Pointer p = pEntry.pointer();
+                    PointsToSet pts = pEntry.pointsToSet();
+                    PointsToSet diff = propagate(p, pts);
+                    if (!diff.isEmpty() && p instanceof CSVar v) {
+                        processInstanceStore(v, diff);
+                        processInstanceLoad(v, diff);
+                        processArrayStore(v, diff);
+                        processArrayLoad(v, diff);
+                        processCall(v, diff);
+                        plugin.onNewPointsToSet(v, diff);
+                    }
+                } else if (entry instanceof WorkList.CallEdgeEntry eEntry) {
+                    processCallEdge(eEntry.edge());
                 }
-                if (p instanceof VirtualPointer vp) {
-                    plugin.onNewPointsToSet(vp, diff);
-                }
-            } else if (entry instanceof WorkList.CallEdgeEntry eEntry) {
-                processCallEdge(eEntry.edge());
             }
+            plugin.onPhaseFinish();
         }
         if (!workList.isEmpty() && isTimeout) {
             logger.warn("Pointer analysis stops early as it reaches time limit ({} seconds)," +
                     " and the result may be unsound!", timeLimit);
+        } else if (timeLimiter != null) { // finish normally but time limiter is still running
+            timeLimiter.stop();
         }
         plugin.onFinish();
     }
@@ -324,8 +341,11 @@ public class DefaultSolver implements Solver {
         }
         PointsToSet diff = getPointsToSetOf(pointer).addAllDiff(pointsToSet);
         if (!diff.isEmpty()) {
-            pointerFlowGraph.getOutEdgesOf(pointer).forEach(edge ->
-                    addPointsTo(edge.target(), edge.transfer().apply(edge, diff)));
+            pointerFlowGraph.getOutEdgesOf(pointer).forEach(edge -> {
+                Pointer target = edge.target();
+                edge.getTransfers().forEach(transfer ->
+                        addPointsTo(target, transfer.apply(edge, diff)));
+            });
         }
         return diff;
     }
@@ -396,8 +416,9 @@ public class DefaultSolver implements Solver {
                         ArrayIndex arrayIndex = csManager.getArrayIndex(array);
                         // we need type guard for array stores as Java arrays
                         // are covariant
-                        addPFGEdge(from, arrayIndex,
-                                FlowKind.ARRAY_STORE, arrayIndex.getType());
+                        addPFGEdge(new PointerFlowEdge(
+                                FlowKind.ARRAY_STORE, from, arrayIndex),
+                                arrayIndex.getType());
                     }
                 });
             }
@@ -511,6 +532,7 @@ public class DefaultSolver implements Solver {
     private void processNewMethod(JMethod method) {
         if (reachableMethods.add(method)) {
             plugin.onNewMethod(method);
+            method.getIR().forEach(stmt -> plugin.onNewStmt(stmt, method));
         }
     }
 
@@ -628,9 +650,9 @@ public class DefaultSolver implements Solver {
             @Override
             public Void visit(AssignLiteral stmt) {
                 Literal literal = stmt.getRValue();
-                if (literal.getType() instanceof ReferenceType type
-                        && !(type instanceof NullType)) {
-                    // by default, we only generate objects of non-null reference type
+                Type type = literal.getType();
+                if (type instanceof ClassType) {
+                    // here we only generate objects of ClassType
                     Obj obj = heapModel.getConstantObj((ReferenceLiteral) literal);
                     Context heapContext = contextSelector
                             .selectHeapContext(csMethod, obj);
@@ -656,7 +678,9 @@ public class DefaultSolver implements Solver {
                 if (propTypes.isAllowed(cast.getValue())) {
                     CSVar from = csManager.getCSVar(context, cast.getValue());
                     CSVar to = csManager.getCSVar(context, stmt.getLValue());
-                    addPFGEdge(from, to, FlowKind.CAST, cast.getType());
+                    addPFGEdge(new PointerFlowEdge(
+                            FlowKind.CAST, from, to),
+                            cast.getType());
                 }
                 return null;
             }
@@ -742,13 +766,13 @@ public class DefaultSolver implements Solver {
     }
 
     @Override
-    public void addPFGEdge(Pointer source, Pointer target, FlowKind kind,
-                           Transfer transfer) {
-        PointerFlowEdge edge = new PointerFlowEdge(kind, source, target, transfer);
-        if (pointerFlowGraph.addEdge(edge)) {
-            PointsToSet targetSet = transfer.apply(edge, getPointsToSetOf(source));
+    public void addPFGEdge(PointerFlowEdge edge, Transfer transfer) {
+        edge = pointerFlowGraph.addEdge(edge);
+        if (edge != null && edge.addTransfer(transfer)) {
+            PointsToSet targetSet = transfer.apply(
+                    edge, getPointsToSetOf(edge.source()));
             if (!targetSet.isEmpty()) {
-                addPointsTo(target, targetSet);
+                addPointsTo(edge.target(), targetSet);
             }
         }
     }
@@ -756,14 +780,15 @@ public class DefaultSolver implements Solver {
     @Override
     public void addEntryPoint(EntryPoint entryPoint) {
         Context entryCtx = contextSelector.getEmptyContext();
-        JMethod entryMethod = entryPoint.getMethod();
+        JMethod entryMethod = entryPoint.method();
         CSMethod csEntryMethod = csManager.getCSMethod(entryCtx, entryMethod);
         callGraph.addEntryMethod(csEntryMethod);
         addCSMethod(csEntryMethod);
         IR ir = entryMethod.getIR();
+        ParamProvider paramProvider = entryPoint.paramProvider();
         // pass this objects
         if (!entryMethod.isStatic()) {
-            for (Obj thisObj : entryPoint.getThisObjs()) {
+            for (Obj thisObj : paramProvider.getThisObjs()) {
                 addVarPointsTo(entryCtx, ir.getThis(), entryCtx, thisObj);
             }
         }
@@ -771,11 +796,23 @@ public class DefaultSolver implements Solver {
         for (int i = 0; i < entryMethod.getParamCount(); ++i) {
             Var param = ir.getParam(i);
             if (propTypes.isAllowed(param)) {
-                for (Obj paramObj : entryPoint.getParamObjs(i)) {
+                for (Obj paramObj : paramProvider.getParamObjs(i)) {
                     addVarPointsTo(entryCtx, param, entryCtx, paramObj);
                 }
             }
         }
+        // pass field objects
+        paramProvider.getFieldObjs().forEach((base, field, obj) -> {
+            CSObj csBase = csManager.getCSObj(entryCtx, base);
+            InstanceField iField = csManager.getInstanceField(csBase, field);
+            addPointsTo(iField, entryCtx, obj);
+        });
+        // pass array objects
+        paramProvider.getArrayObjs().forEach((array, elem) -> {
+            CSObj csArray = csManager.getCSObj(entryCtx, array);
+            ArrayIndex arrayIndex = csManager.getArrayIndex(csArray);
+            addPointsTo(arrayIndex, entryCtx, elem);
+        });
     }
 
     @Override
@@ -803,6 +840,11 @@ public class DefaultSolver implements Solver {
     }
 
     @Override
+    public void addIgnoredMethod(JMethod method) {
+        ignoredMethods.add(method);
+    }
+
+    @Override
     public void initializeClass(JClass cls) {
         if (cls == null || initializedClasses.contains(cls)) {
             return;
@@ -824,11 +866,6 @@ public class DefaultSolver implements Solver {
                     contextSelector.getEmptyContext(), clinit);
             addCSMethod(csMethod);
         }
-    }
-
-    @Override
-    public void addIgnoredMethod(JMethod method) {
-        ignoredMethods.add(method);
     }
 
     @Override

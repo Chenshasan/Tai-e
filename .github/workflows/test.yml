@@ -12,7 +12,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -25,5 +25,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: |
-            test --tests pascal.taie.TaieTestSuite
+            test
+            jacocoTestReport
             --scan
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -24,10 +24,13 @@ package pascal.taie.analysis.pta.plugin.util;
 
 import pascal.taie.World;
 import pascal.taie.analysis.pta.core.cs.element.CSObj;
+import pascal.taie.analysis.pta.core.heap.Descriptor;
+import pascal.taie.analysis.pta.core.heap.MockObj;
 import pascal.taie.ir.exp.ClassLiteral;
 import pascal.taie.ir.exp.MethodHandle;
 import pascal.taie.ir.exp.MethodType;
 import pascal.taie.ir.exp.StringLiteral;
+import pascal.taie.language.annotation.Annotation;
 import pascal.taie.language.classes.ClassNames;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JField;
@@ -44,6 +47,15 @@ import javax.annotation.Nullable;
 public final class CSObjs {
 
     private CSObjs() {
+    }
+
+    /**
+     * @return {@code true} if {@code csObj} is {@link MockObj} and it has
+     * descriptor {@code desc}.
+     */
+    public static boolean hasDescriptor(CSObj csObj, Descriptor desc) {
+        return csObj.getObject() instanceof MockObj mockObj &&
+                mockObj.getDescriptor().equals(desc);
     }
 
     /**
@@ -133,6 +145,15 @@ public final class CSObjs {
     public static MethodHandle toMethodHandle(CSObj csObj) {
         Object alloc = csObj.getObject().getAllocation();
         return alloc instanceof MethodHandle mh ? mh : null;
+    }
+
+    /**
+     * Converts a CSObj of an Annotation to the Annotation.
+     * If the object is not an Annotation object, then return null.
+     */
+    public static Annotation toAnnotation(CSObj csObj) {
+        Object alloc = csObj.getObject().getAllocation();
+        return alloc instanceof Annotation a ? a : null;
     }
 
     /**

@@ -54,7 +54,6 @@ import pascal.taie.util.Indexer;
 import pascal.taie.util.collection.HybridBitSet;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.Pair;
-import pascal.taie.util.collection.Sets;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -137,7 +136,6 @@ public class PointerAnalysisResultImpl extends AbstractResultHolder
     }
 
     @Override
-
     public Collection<CSVar> getCSVars() {
         return csManager.getCSVars();
     }
@@ -300,7 +298,7 @@ public class PointerAnalysisResultImpl extends AbstractResultHolder
     public boolean mayAlias(Var v1, Var v2) {
         Set<Obj> s1 = getPointsToSet(v1);
         Set<Obj> s2 = getPointsToSet(v2);
-        return Sets.haveOverlap(s1, s2);
+        return !Collections.disjoint(s1, s2);
     }
 
     @Override
@@ -352,18 +350,40 @@ public class PointerAnalysisResultImpl extends AbstractResultHolder
         csCallGraph.reachableMethods()
                 .map(CSMethod::getMethod)
                 .forEach(callGraph::addReachableMethod);
-        csCallGraph.edges().forEach(edge -> {
-            Invoke callSite = edge.getCallSite().getCallSite();
-            JMethod callee = edge.getCallee().getMethod();
-            callGraph.addEdge(new Edge<>(edge.getKind(),
-                    callSite, callee));
-        });
+        csCallGraph.edges()
+                .map(CIEdge::new)
+                .forEach(callGraph::addEdge);
         return callGraph;
+    }
+
+    /**
+     * Represents context-insensitive call edges.
+     */
+    private static class CIEdge extends Edge<Invoke, JMethod> {
+
+        private static final Canonicalizer<String> canonicalizer = new Canonicalizer<>();
+
+        private final String info;
+
+        /**
+         * Removes contexts and keeps info of given context-sensitive edge.
+         */
+        private CIEdge(Edge<CSCallSite, CSMethod> edge) {
+            super(edge.getKind(),
+                    edge.getCallSite().getCallSite(),
+                    edge.getCallee().getMethod());
+            this.info = canonicalizer.get(edge.getInfo());
+        }
+
+        @Override
+        public String getInfo() {
+            return info;
+        }
     }
 
     public ObjectFlowGraph getObjectFlowGraph() {
         if (ofg == null) {
-            ofg = new ObjectFlowGraph(pfg, callGraph);
+            ofg = new ObjectFlowGraph(pfg, getCallGraph());
         }
         return ofg;
     }

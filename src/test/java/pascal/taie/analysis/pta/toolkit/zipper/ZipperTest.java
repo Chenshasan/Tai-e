@@ -22,7 +22,9 @@
 
 package pascal.taie.analysis.pta.toolkit.zipper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import pascal.taie.World;
 import pascal.taie.analysis.Tests;
 import pascal.taie.analysis.graph.flowgraph.FlowGraphDumper;
@@ -34,7 +36,6 @@ import pascal.taie.analysis.pta.toolkit.PointerAnalysisResultExImpl;
 import pascal.taie.util.graph.DotDumper;
 
 import java.io.File;
-import java.util.stream.Stream;
 
 public class ZipperTest {
 
@@ -45,12 +46,12 @@ public class ZipperTest {
     private static final String MISC = "misc";
 
     @Test
-    public void testOAG() {
-        dumpOAG(CS, "TwoObject", "cs:2-obj");
+    void testOAG() {
+        dumpOAG("TwoObject", "cs:2-obj");
     }
 
-    private static void dumpOAG(String dir, String main, String opts) {
-        Tests.testPTA(false, dir, main, opts);
+    private static void dumpOAG(String main, String... opts) {
+        Tests.testPTA(false, CS, main, opts);
         PointerAnalysisResult pta = World.get().getResult(PointerAnalysis.ID);
         ObjectAllocationGraph oag = new ObjectAllocationGraph(
                 new PointerAnalysisResultExImpl(pta, true));
@@ -58,14 +59,20 @@ public class ZipperTest {
         new DotDumper<Obj>().dump(oag, output);
     }
 
-    @Test
-    public void testOFG() {
-        Stream.of("Cast", "StoreLoad", "Array", "CallParamRet", "Cycle")
-                .forEach(main -> dumpOFG(BASIC, main));
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Cast",
+            "StoreLoad",
+            "Array",
+            "CallParamRet",
+            "Cycle",
+    })
+    void testOFG(String mainClass) {
+        dumpOFG(mainClass);
     }
 
-    private static void dumpOFG(String dir, String main) {
-        Tests.testPTA(false, dir, main);
+    private static void dumpOFG(String main) {
+        Tests.testPTA(false, BASIC, main);
         PointerAnalysisResult pta = World.get().getResult(PointerAnalysis.ID);
         ObjectFlowGraph ofg = pta.getObjectFlowGraph();
         File output = new File(World.get().getOptions().getOutputDir(), main + "-ofg.dot");
@@ -73,7 +80,7 @@ public class ZipperTest {
     }
 
     @Test
-    public void testPFGBuilder() {
+    void testPFGBuilder() {
         Tests.testPTA(false, MISC, "Zipper", "advanced:zipper");
     }
 }

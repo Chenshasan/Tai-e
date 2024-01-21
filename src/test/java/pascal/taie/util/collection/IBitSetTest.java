@@ -22,9 +22,10 @@
 
 package pascal.taie.util.collection;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import pascal.taie.util.SerializationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +34,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pascal.taie.util.collection.SparseBitSet.SHIFT1;
 import static pascal.taie.util.collection.SparseBitSet.SHIFT2;
 import static pascal.taie.util.collection.SparseBitSet.SHIFT3;
@@ -49,7 +50,7 @@ public abstract class IBitSetTest {
     // test set operations
     // ------------------------------------------------------------------------
     @Test
-    public void test() {
+    void test() {
         IBitSet s = of();
         assertTrue(s.set(1));
         assertFalse(s.set(1));
@@ -60,7 +61,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         IBitSet s = of(1, 10000);
         assertEquals(2, s.cardinality());
         s.clear(1);
@@ -70,7 +71,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testIntersects() {
+    void testIntersects() {
         IBitSet s1 = of();
         IBitSet s2 = of();
         assertFalse(s1.intersects(s2));
@@ -85,7 +86,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         assertTrue(of().contains(of()));
         assertTrue(of(1, 2, 3).contains(of()));
         assertTrue(of(1, 2, 3).contains(of(1)));
@@ -103,7 +104,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testContains2() {
+    void testContains2() {
         IBitSet s1 = of(762);
         IBitSet s2 = of(188);
         assertFalse(s1.contains(s2));
@@ -111,7 +112,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testContains3() {
+    void testContains3() {
         IBitSet s1 = of(1000);
         IBitSet s2 = of(1000, 3000);
         s2.clear(3000);
@@ -119,7 +120,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testAnd() {
+    void testAnd() {
         IBitSet s = of(1, 2, 3);
         assertFalse(s.and(of(1, 2, 3)));
         assertTrue(s.and(of(1)));
@@ -131,7 +132,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testAndNot() {
+    void testAndNot() {
         IBitSet s = of(1, 2, 3, 6666);
         assertFalse(s.andNot(of()));
         assertTrue(s.andNot(of(1, 2, 3, 6666)));
@@ -153,7 +154,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testOr() {
+    void testOr() {
         IBitSet s = of(1, 2, 3);
         assertFalse(s.or(of(1, 2, 3)));
         assertFalse(s.or(of(1)));
@@ -165,8 +166,8 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    @Ignore
-    public void testRandomOr() {
+    @Disabled
+    void testRandomOr() {
         final int MAX = 80000, TIMES = 100;
         final Random random = new Random(0);
         int bits = 0;
@@ -188,7 +189,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testClearOr() {
+    void testClearOr() {
         IBitSet s = of(1, 555, 66666);
         IBitSet s2 = of(1, 555, 66666);
         s2.clear(66666);
@@ -203,7 +204,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testOrDiff() {
+    void testOrDiff() {
         IBitSet s = of();
         IBitSet diff = s.orDiff(of(1, 333, 66666));
         assertEquals(of(1, 333, 66666), diff);
@@ -218,7 +219,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testXor() {
+    void testXor() {
         IBitSet s = of(1, 2, 300);
         assertTrue(s.xor(s));
         assertTrue(s.isEmpty());
@@ -232,7 +233,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testSetTo() {
+    void testSetTo() {
         IBitSet s = of(1, 2, 300);
         s.setTo(of());
         assertTrue(s.isEmpty());
@@ -245,7 +246,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         IBitSet s = of(1, 3333, 66666);
         IBitSet copy = s.copy();
         assertEquals(s, copy);
@@ -258,28 +259,28 @@ public abstract class IBitSetTest {
     // ------------------------------------------------------------------------
     private IBitSet set;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         set = of();
     }
 
     @Test
-    public void testPreviousSetBit() {
+    void testPreviousSetBit() {
         assertEquals(-1, set.previousSetBit(0));
     }
 
     @Test
-    public void testPreviousClearBit() {
+    void testPreviousClearBit() {
         assertEquals(0, set.previousClearBit(0));
     }
 
     @Test
-    public void testNextSetBit() {
+    void testNextSetBit() {
         assertEquals(-1, set.nextSetBit(0));
     }
 
     @Test
-    public void testNextClearBit() {
+    void testNextClearBit() {
         assertEquals(0, set.nextClearBit(0));
     }
 
@@ -287,28 +288,28 @@ public abstract class IBitSetTest {
     // test previousClearBit(int)
     // ------------------------------------------------------------------------
     @Test
-    public void minusOne() {
+    void minusOne() {
         final int ret = set.previousClearBit(-1);
 
         assertEquals(-1, ret);
     }
 
     @Test
-    public void empty() {
+    void empty() {
         final int ret = set.previousClearBit(0);
 
         assertEquals(0, ret);
     }
 
     @Test
-    public void bottomBit() {
+    void bottomBit() {
         final int ret = set.previousClearBit(1);
 
         assertEquals(1, ret);
     }
 
     @Test
-    public void sameBit() {
+    void sameBit() {
         set.set(12345);
         final int ret = set.previousClearBit(12345);
 
@@ -316,7 +317,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level1Miss() {
+    void level1Miss() {
         final int i = (1 << (SHIFT1 + SHIFT3));
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -325,7 +326,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level1MissPlus1() {
+    void level1MissPlus1() {
         final int i = (1 << (SHIFT1 + SHIFT3)) + 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -334,7 +335,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level1MissMinus1() {
+    void level1MissMinus1() {
         final int i = (1 << (SHIFT1 + SHIFT3)) - 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -343,7 +344,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level2Miss() {
+    void level2Miss() {
         final int i = (1 << (SHIFT3 + SHIFT2));
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -352,7 +353,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level2MissPlus1() {
+    void level2MissPlus1() {
         final int i = (1 << (SHIFT3 + SHIFT2)) + 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -361,7 +362,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level2MissMinus1() {
+    void level2MissMinus1() {
         final int i = (1 << (SHIFT3 + SHIFT2)) - 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -370,7 +371,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level3Miss() {
+    void level3Miss() {
         final int i = (1 << SHIFT3);
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -379,7 +380,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level3MissPlus1() {
+    void level3MissPlus1() {
         final int i = (1 << SHIFT3) + 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -388,7 +389,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void level3MissMinus1() {
+    void level3MissMinus1() {
         final int i = (1 << SHIFT3) - 1;
         set.set(i);
         final int ret = set.previousClearBit(i);
@@ -397,7 +398,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void noneBelow() {
+    void noneBelow() {
         set.set(1);
         final int ret = set.previousClearBit(1);
 
@@ -405,7 +406,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void oneBelow() {
+    void oneBelow() {
         set.set(1);
         final int ret = set.previousClearBit(2);
 
@@ -413,7 +414,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void threeNo() {
+    void threeNo() {
         set.set(1);
         final int ret = set.previousClearBit(3);
 
@@ -421,7 +422,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void three() {
+    void three() {
         set.set(3);
         final int ret = set.previousClearBit(3);
 
@@ -429,7 +430,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void topBit() {
+    void topBit() {
         final int i = Integer.MAX_VALUE - 1;
         final int ret = set.previousClearBit(i);
 
@@ -437,18 +438,18 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void randomSingleEntry() {
+    void randomSingleEntry() {
         final Random random = new Random(0);
         for (int i = 0; i < 10000; ++i) {
             set = of();
             final int x = Math.abs(random.nextInt() + 1);
             final int ret = set.previousClearBit(x);
-            assertEquals("Failed on i = " + i, x, ret);
+            assertEquals(x, ret, "Failed on i = " + i);
         }
     }
 
     @Test
-    public void bug15() {
+    void bug15() {
         set.set(1);
         set.set(64);
         assertEquals(63, set.previousClearBit(64));
@@ -458,7 +459,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void randomMultiEntry() {
+    void randomMultiEntry() {
         if (getClass() != SparseBitSetTest.class) {
             // skip this for non-sparse bit set test
             return;
@@ -478,7 +479,7 @@ public abstract class IBitSetTest {
                 --expected;
             }
             final int ret = set.previousClearBit(x);
-            assertEquals("Failed on i = " + i + " x = " + x, expected, ret);
+            assertEquals(expected, ret, "Failed on i = " + i + " x = " + x);
             values.clear();
         }
     }
@@ -487,14 +488,14 @@ public abstract class IBitSetTest {
     // test previousSetBit(int)
     // ------------------------------------------------------------------------
     @Test
-    public void setEmpty() {
+    void setEmpty() {
         final int ret = set.previousSetBit(0);
 
         assertEquals(-1, ret);
     }
 
     @Test
-    public void setBottomBit() {
+    void setBottomBit() {
         set.set(0);
         final int ret = set.previousSetBit(0);
 
@@ -502,7 +503,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setBetweenTwo() {
+    void setBetweenTwo() {
         set.set(4);
         set.set(8);
         final int ret = set.previousSetBit(5);
@@ -511,7 +512,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setInRun() {
+    void setInRun() {
         set.set(4);
         set.set(8);
         set.set(13);
@@ -523,7 +524,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setSameBit() {
+    void setSameBit() {
         set.set(12345);
         final int ret = set.previousSetBit(12345);
 
@@ -531,7 +532,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setNoneBelow() {
+    void setNoneBelow() {
         set.set(1);
         final int ret = set.previousSetBit(0);
 
@@ -539,7 +540,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setOneBelow() {
+    void setOneBelow() {
         set.set(1);
         final int ret = set.previousSetBit(2);
 
@@ -547,7 +548,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setTwoBelow() {
+    void setTwoBelow() {
         set.set(1);
         final int ret = set.previousSetBit(3);
 
@@ -555,7 +556,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setTopBit() {
+    void setTopBit() {
         final int i = Integer.MAX_VALUE - 1;
         set.set(i);
         final int ret = set.previousSetBit(i);
@@ -564,7 +565,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel1Miss() {
+    void setLevel1Miss() {
         final int i = (1 << (SHIFT1 + SHIFT3));
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -573,7 +574,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel1MissPlus1() {
+    void setLevel1MissPlus1() {
         final int i = (1 << (SHIFT1 + SHIFT3)) + 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -582,7 +583,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel1MissMinus1() {
+    void setLevel1MissMinus1() {
         final int i = (1 << (SHIFT1 + SHIFT3)) - 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -591,7 +592,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel2Miss() {
+    void setLevel2Miss() {
         final int i = (1 << (SHIFT3 + SHIFT2));
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -600,7 +601,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel2MissPlus1() {
+    void setLevel2MissPlus1() {
         final int i = (1 << (SHIFT3 + SHIFT2)) + 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -609,7 +610,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel2MissMinus1() {
+    void setLevel2MissMinus1() {
         final int i = (1 << (SHIFT3 + SHIFT2)) - 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -618,7 +619,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel3Miss() {
+    void setLevel3Miss() {
         final int i = (1 << SHIFT3);
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -627,7 +628,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel3MissPlus1() {
+    void setLevel3MissPlus1() {
         final int i = (1 << SHIFT3) + 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -636,7 +637,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setLevel3MissMinus1() {
+    void setLevel3MissMinus1() {
         final int i = (1 << SHIFT3) - 1;
         set.set(i - 1);
         final int ret = set.previousSetBit(i);
@@ -645,7 +646,7 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setRandomSingleEntry() {
+    void setRandomSingleEntry() {
         if (getClass() != SparseBitSetTest.class) {
             // skip this for non-sparse bit set test
             return;
@@ -657,12 +658,12 @@ public abstract class IBitSetTest {
             final int x = Math.abs(random.nextInt() + 1);
             set.set(x);
             final int ret = set.previousSetBit(max);
-            assertEquals("Failed on i = " + i, x, ret);
+            assertEquals(x, ret, "Failed on i = " + i);
         }
     }
 
     @Test
-    public void setRandomMultiEntry() {
+    void setRandomMultiEntry() {
         if (getClass() != SparseBitSetTest.class) {
             // skip this for non-sparse bit set test
             return;
@@ -671,11 +672,11 @@ public abstract class IBitSetTest {
     }
 
     @Test
-    public void setRandomMultiEntryTight() {
+    void setRandomMultiEntryTight() {
         setRandomMultiEntry(2000);
     }
 
-    public void setRandomMultiEntry(final int max) {
+    void setRandomMultiEntry(final int max) {
         final Random random = new Random(0);
         final List<Integer> values = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
@@ -695,8 +696,36 @@ public abstract class IBitSetTest {
                 expected = val;
             }
             final int ret = set.previousSetBit(x);
-            assertEquals("Failed on i = " + i, expected, ret);
+            assertEquals(expected, ret, "Failed on i = " + i);
             values.clear();
         }
+    }
+
+    @Test
+    void testSerializable() {
+        IBitSet set1 = of(1, 2, 3);
+        IBitSet set2 = SerializationUtils.serializedCopy(set1);
+        assertEquals(set1, set2);
+        set1.set(4);
+        set1.set(8);
+        set2.set(4);
+        set2.set(8);
+        assertEquals(set1, set2);
+    }
+
+    @Test
+    void setRandomMultiEntryAndSerializable() {
+        int max = 2000;
+        final Random random = new Random(0);
+        IBitSet set1 = of();
+        for (int j = 0; j < 100; ++j) {
+            int x = Math.abs(random.nextInt() + 1) % max;
+            set1.set(x);
+        }
+        IBitSet set2 = SerializationUtils.serializedCopy(set1);
+        int x = Math.abs(random.nextInt() + 1) % max;
+        int ret = set1.previousSetBit(x);
+        int ret2 = set2.previousSetBit(x);
+        assertEquals(ret, ret2);
     }
 }

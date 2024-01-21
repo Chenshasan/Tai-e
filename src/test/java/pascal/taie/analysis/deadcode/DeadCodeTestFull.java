@@ -22,62 +22,27 @@
 
 package pascal.taie.analysis.deadcode;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class DeadCodeTestFull extends DeadCodeTest {
 
-    @Test
-    public void testControlFlowUnreachable2() {
-        testDCD("ControlFlowUnreachable2");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ControlFlowUnreachable2",
+            "UnreachableIfBranch2",
+            "UnreachableSwitchBranch2",
+            "DeadAssignment2",
+            "LiveAssignments",
+            "MixedDeadCode",
+            "NotDead",
+            "Corner",
+            "AllReachableIfBranch",
+            "ForLoops",
+            "ArrayField",
+    })
+    void testFull(String inputClass) {
+        testDCD(inputClass);
     }
 
-    @Test
-    public void testUnreachableIfBranch2() {
-        testDCD("UnreachableIfBranch2");
-    }
-
-    @Test
-    public void testUnreachableSwitchBranch2() {
-        testDCD("UnreachableSwitchBranch2");
-    }
-
-    @Test
-    public void testDeadAssignment2() {
-        testDCD("DeadAssignment2");
-    }
-
-    @Test
-    public void testLiveAssignments() {
-        testDCD("LiveAssignments");
-    }
-
-    @Test
-    public void testMixedDeadCode() {
-        testDCD("MixedDeadCode");
-    }
-
-    @Test
-    public void testNotDead() {
-        testDCD("NotDead");
-    }
-
-    @Test
-    public void testCorner() {
-        testDCD("Corner");
-    }
-
-    @Test
-    public void testAllReachableIfBranch() {
-        testDCD("AllReachableIfBranch");
-    }
-
-    @Test
-    public void testForLoops() {
-        testDCD("ForLoops");
-    }
-
-    @Test
-    public void testArrayField() {
-        testDCD("ArrayField");
-    }
 }

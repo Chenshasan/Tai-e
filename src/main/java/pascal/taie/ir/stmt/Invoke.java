@@ -34,13 +34,13 @@ import pascal.taie.ir.exp.RValue;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.proginfo.MethodRef;
 import pascal.taie.language.classes.JMethod;
-import pascal.taie.util.collection.CollectionUtils;
+import pascal.taie.util.collection.ArraySet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Representation of invocation statement, e.g., r = o.m(...) or o.m(...).
@@ -65,18 +65,18 @@ public class Invoke extends DefinitionStmt<Var, InvokeExp>
      */
     private final JMethod container;
 
-    public Invoke(JMethod method, InvokeExp invokeExp, @Nullable Var result) {
+    public Invoke(JMethod container, InvokeExp invokeExp, @Nullable Var result) {
         this.invokeExp = invokeExp;
         this.result = result;
         if (invokeExp instanceof InvokeInstanceExp) {
             Var base = ((InvokeInstanceExp) invokeExp).getBase();
             base.addInvoke(this);
         }
-        this.container = method;
+        this.container = container;
     }
 
-    public Invoke(JMethod method, InvokeExp invokeExp) {
-        this(method, invokeExp, null);
+    public Invoke(JMethod container, InvokeExp invokeExp) {
+        this(container, invokeExp, null);
     }
 
     @Override
@@ -141,8 +141,10 @@ public class Invoke extends DefinitionStmt<Var, InvokeExp>
     }
 
     @Override
-    public List<RValue> getUses() {
-        return CollectionUtils.append(invokeExp.getUses(), invokeExp);
+    public Set<RValue> getUses() {
+        Set<RValue> uses = new ArraySet<>(invokeExp.getUses());
+        uses.add(invokeExp);
+        return uses;
     }
 
     @Override

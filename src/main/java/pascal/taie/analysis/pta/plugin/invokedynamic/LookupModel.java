@@ -23,19 +23,18 @@
 package pascal.taie.analysis.pta.plugin.invokedynamic;
 
 import pascal.taie.analysis.pta.core.cs.context.Context;
-import pascal.taie.analysis.pta.core.cs.element.CSVar;
 import pascal.taie.analysis.pta.core.solver.Solver;
-import pascal.taie.analysis.pta.plugin.util.AbstractModel;
+import pascal.taie.analysis.pta.plugin.util.AnalysisModelPlugin;
 import pascal.taie.analysis.pta.plugin.util.CSObjs;
-import pascal.taie.analysis.pta.plugin.util.Reflections;
+import pascal.taie.analysis.pta.plugin.util.InvokeHandler;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.MethodHandle;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
+import pascal.taie.language.classes.Reflections;
 
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -47,32 +46,17 @@ import java.util.stream.Stream;
  * TODO: take Lookup.lookupClass's visibility into account
  * TODO: take MethodType into account
  */
-class LookupModel extends AbstractModel {
+public class LookupModel extends AnalysisModelPlugin {
 
     LookupModel(Solver solver) {
         super(solver);
     }
 
-    @Override
-    protected void registerVarAndHandler() {
-        JMethod findConstructor = hierarchy.getJREMethod("<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findConstructor(java.lang.Class,java.lang.invoke.MethodType)>");
-        registerRelevantVarIndexes(findConstructor, 0);
-        registerAPIHandler(findConstructor, this::findConstructor);
-
-        JMethod findVirtual = hierarchy.getJREMethod("<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findVirtual(java.lang.Class,java.lang.String,java.lang.invoke.MethodType)>");
-        registerRelevantVarIndexes(findVirtual, 0, 1);
-        registerAPIHandler(findVirtual, this::findVirtual);
-
-        JMethod findStatic = hierarchy.getJREMethod("<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findStatic(java.lang.Class,java.lang.String,java.lang.invoke.MethodType)>");
-        registerRelevantVarIndexes(findStatic, 0, 1);
-        registerAPIHandler(findStatic, this::findStatic);
-    }
-
-    private void findConstructor(CSVar csVar, PointsToSet pts, Invoke invoke) {
+    @InvokeHandler(signature = "<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findConstructor(java.lang.Class,java.lang.invoke.MethodType)>", argIndexes = {0})
+    public void findConstructor(Context context, Invoke invoke, PointsToSet clsObjs) {
         Var result = invoke.getResult();
         if (result != null) {
-            Context context = csVar.getContext();
-            pts.forEach(clsObj -> {
+            clsObjs.forEach(clsObj -> {
                 JClass cls = CSObjs.toClass(clsObj);
                 if (cls != null) {
                     Reflections.getDeclaredConstructors(cls)
@@ -86,32 +70,32 @@ class LookupModel extends AbstractModel {
         }
     }
 
-    private void findVirtual(CSVar csVar, PointsToSet pts, Invoke invoke) {
+    @InvokeHandler(signature = "<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findVirtual(java.lang.Class,java.lang.String,java.lang.invoke.MethodType)>", argIndexes = {0, 1})
+    public void findVirtual(Context context, Invoke invoke,
+                            PointsToSet clsObjs, PointsToSet nameObjs) {
         // TODO: find private methods in (direct/indirect) super class.
-        findMethod(csVar, pts, invoke, (cls, name) ->
+        findMethod(context, invoke, clsObjs, nameObjs, (cls, name) ->
                         Reflections.getDeclaredMethods(cls, name)
                                 .filter(Predicate.not(JMethod::isStatic)),
                 MethodHandle.Kind.REF_invokeVirtual);
     }
 
-    private void findStatic(CSVar csVar, PointsToSet pts, Invoke invoke) {
+    @InvokeHandler(signature = "<java.lang.invoke.MethodHandles$Lookup: java.lang.invoke.MethodHandle findStatic(java.lang.Class,java.lang.String,java.lang.invoke.MethodType)>", argIndexes = {0, 1})
+    public void findStatic(Context context, Invoke invoke,
+                           PointsToSet clsObjs, PointsToSet nameObjs) {
         // TODO: find static methods in (direct/indirect) super class.
-        findMethod(csVar, pts, invoke, (cls, name) ->
+        findMethod(context, invoke, clsObjs, nameObjs, (cls, name) ->
                         Reflections.getDeclaredMethods(cls, name)
                                 .filter(JMethod::isStatic),
                 MethodHandle.Kind.REF_invokeStatic);
     }
 
-    private void findMethod(
-            CSVar csVar, PointsToSet pts, Invoke invoke,
+    private void findMethod(Context context, Invoke invoke,
+            PointsToSet clsObjs, PointsToSet nameObjs,
             BiFunction<JClass, String, Stream<JMethod>> getter,
             MethodHandle.Kind kind) {
         Var result = invoke.getResult();
         if (result != null) {
-            List<PointsToSet> args = getArgs(csVar, pts, invoke, 0, 1);
-            PointsToSet clsObjs = args.get(0);
-            PointsToSet nameObjs = args.get(1);
-            Context context = csVar.getContext();
             clsObjs.forEach(clsObj -> {
                 JClass cls = CSObjs.toClass(clsObj);
                 if (cls != null) {

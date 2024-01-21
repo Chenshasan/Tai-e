@@ -40,6 +40,7 @@ import pascal.taie.util.AnalysisException;
 import pascal.taie.util.Indexer;
 import pascal.taie.util.SimpleIndexer;
 import pascal.taie.util.collection.Maps;
+import pascal.taie.util.graph.DotAttributes;
 import pascal.taie.util.graph.DotDumper;
 
 import javax.annotation.Nullable;
@@ -49,7 +50,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Static utility methods about call graph.
@@ -61,7 +61,8 @@ public final class CallGraphs {
     private CallGraphs() {
     }
 
-    public static CallKind getCallKind(InvokeExp invokeExp) {
+    public static CallKind getCallKind(Invoke invoke) {
+        InvokeExp invokeExp = invoke.getInvokeExp();
         if (invokeExp instanceof InvokeVirtual) {
             return CallKind.VIRTUAL;
         } else if (invokeExp instanceof InvokeInterface) {
@@ -72,13 +73,8 @@ public final class CallGraphs {
             return CallKind.STATIC;
         } else if (invokeExp instanceof InvokeDynamic) {
             return CallKind.DYNAMIC;
-        } else {
-            throw new AnalysisException("Cannot handle InvokeExp: " + invokeExp);
         }
-    }
-
-    public static CallKind getCallKind(Invoke invoke) {
-        return getCallKind(invoke.getInvokeExp());
+        throw new AnalysisException("Cannot handle Invoke: " + invoke);
     }
 
     @Nullable
@@ -107,7 +103,7 @@ public final class CallGraphs {
         new DotDumper<JMethod>()
                 .setNodeToString(n -> Integer.toString(indexer.getIndex(n)))
                 .setNodeLabeler(JMethod::toString)
-                .setGlobalNodeAttributes(Map.of("shape", "box",
+                .setGlobalNodeAttributes(DotAttributes.of("shape", "box",
                         "style", "filled", "color", "\".3 .2 1.0\""))
                 .setEdgeLabeler(e -> IRPrinter.toString(
                         ((MethodEdge<Invoke, JMethod>) e).callSite()))
@@ -153,7 +149,7 @@ public final class CallGraphs {
     private static Map<Invoke, String> getInvokeReps(JMethod caller) {
         Map<String, Integer> counter = Maps.newMap();
         Map<Invoke, String> invokeReps =
-                new TreeMap<>(Comparator.comparing(Invoke::getIndex));
+                Maps.newOrderedMap(Comparator.comparing(Invoke::getIndex));
         caller.getIR().forEach(s -> {
             if (s instanceof Invoke invoke) {
                 if (invoke.isDynamic()) { // skip invokedynamic
@@ -180,15 +176,5 @@ public final class CallGraphs {
 
     public static String toString(Invoke invoke) {
         return invoke.getContainer() + IRPrinter.toString(invoke);
-    }
-
-    static void dumpDot(CallGraph<Invoke, JMethod> callGraph, File outFile) {
-        logger.info("Dumping call graph to {}",
-                outFile.getAbsolutePath());
-        Indexer<JMethod> indexer = new SimpleIndexer<>();
-        new DotDumper<JMethod>()
-                .setNodeToString(JMethod::getSignature)
-                .setNodeLabeler(m -> Integer.toString(indexer.getIndex(m)))
-                .dump(callGraph, outFile);
     }
 }

@@ -24,6 +24,7 @@ package pascal.taie.util.collection;
 
 import pascal.taie.util.Hashes;
 
+import java.io.Serializable;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ import java.util.Objects;
  * Map entry.
  * Pair of a key and a value.
  */
-public class MapEntry<K, V> implements Entry<K, V> {
+public class MapEntry<K, V> implements Entry<K, V>, Serializable {
 
     private final K key;
 
@@ -64,10 +65,12 @@ public class MapEntry<K, V> implements Entry<K, V> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (!(obj instanceof Entry<?, ?> e))
+        }
+        if (!(obj instanceof Entry<?, ?> e)) {
             return false;
+        }
         return Objects.equals(key, e.getKey()) &&
                 Objects.equals(value, e.getValue());
     }
