@@ -502,12 +502,13 @@ public final class Tests {
         List<String> args = new ArrayList<>();
         Collections.addAll(args, "-java", "8");
         Collections.addAll(args, "-ap");
-        Collections.addAll(args, "--pre-build-ir");
+        //Collections.addAll(args, "--pre-build-ir");
         Collections.addAll(args, "--output-dir", "output/" + benchmark.name);
         if (withDependency) {
             Collections.addAll(args, "-cp", String.join(File.pathSeparator, dependencyPaths));
         }
         Collections.addAll(args, "-acp", appClassPath);
+        Collections.addAll(args, "--world-builder", "pascal.taie.frontend.newfrontend.AsmWorldBuilder");
         // Collections.addAll(args, "--input-classes", String.join(",", appClasses));
         Collections.addAll(args,
                 // "-a", "ir-dumper",
@@ -518,7 +519,6 @@ public final class Tests {
                         only-app:%s;
                         handle-invokedynamic:true;
                         merge-string-builders:true;
-                        reflection:null;
                         cs:%s;
                         advanced:hashmap;
                         crypto-output:%s;
@@ -610,12 +610,12 @@ public final class Tests {
         List<String> args = new ArrayList<>();
         Collections.addAll(args, "-java", "8");
         Collections.addAll(args, "-ap");
-        Collections.addAll(args, "--pre-build-ir");
         Collections.addAll(args, "--output-dir", "output/" + benchmark.name);
         if (withDependency) {
             Collections.addAll(args, "-cp", String.join(File.pathSeparator, dependencyPaths));
         }
         Collections.addAll(args, "-acp", appClassPath);
+        Collections.addAll(args, "--world-builder", "pascal.taie.frontend.newfrontend.AsmWorldBuilder");
         // Collections.addAll(args, "--input-classes", String.join(",", appClasses));
         Collections.addAll(args,
                 // "-a", "ir-dumper",

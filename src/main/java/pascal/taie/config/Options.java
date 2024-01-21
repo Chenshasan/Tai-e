@@ -287,6 +287,44 @@ public class Options implements Serializable {
         return keepResult;
     }
 
+    @JsonProperty
+    @Option(names = {"--jre-dir"},
+            description = "JRE root directory for java 9 and upper," +
+            "should contain jrt-fs.jar and modules JIMAGE file in its lib/ folder")
+    private String jreDir;
+
+    public String getJreDir() {
+        return jreDir;
+    }
+
+    @JsonProperty
+    @Option(names = {"--extract-all"},
+            description = "Extract all classes of lib/app container, " +
+            "these classes will be added to --input-classes")
+    private boolean extractAllClasses;
+
+    public boolean getExtractAllClasses() {
+        return extractAllClasses;
+    }
+
+    @JsonProperty
+    @Option(names = {"--no-append-java"},
+            description = "Do not load jre from java-benchmark")
+    private boolean noAppendJava;
+
+    public boolean getNoAppendJava() {
+        return noAppendJava;
+    }
+
+    @JsonProperty
+    @Option(names = {"--no-parallel-cw"},
+            defaultValue = "false")
+    private boolean useNonParallelCWAlgorithm;
+
+    public boolean getUseNonParallelCWAlgorithm() {
+        return useNonParallelCWAlgorithm;
+    }
+
     /**
      * Parses arguments and return the parsed and post-processed Options.
      */
@@ -315,14 +353,14 @@ public class Options implements Serializable {
             throw new ConfigException("Conflict options: " +
                     "--analysis and --plan-file should not be used simultaneously");
         }
-        if (options.getClassPath() != null
-                && options.mainClass == null
-                && options.inputClasses.isEmpty()
-                && options.getAppClassPath() == null) {
-            throw new ConfigException("Missing options: " +
-                    "at least one of --main-class, --input-classes " +
-                    "or --app-class-path should be specified");
-        }
+//        if (options.getClassPath() != null
+//                && options.mainClass == null
+//                && options.inputClasses.isEmpty()
+//                && options.getAppClassPath() == null) {
+//            throw new ConfigException("Missing options: " +
+//                    "at least one of --main-class, --input-classes " +
+//                    "or --app-class-path should be specified");
+//        }
         // mkdir for output dir
         if (!options.outputDir.exists()) {
             options.outputDir.mkdirs();

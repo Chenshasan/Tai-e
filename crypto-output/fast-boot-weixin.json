@@ -1,58 +1,58 @@
 [ {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c28 = \"AES/CBC/NoPadding\"",
   "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[29@L100] invokespecial $r16.<init>($r17, %stringconst2)",
-  "var" : "$r17",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[31@L102] $-v29 = invokestatic javax.crypto.Cipher.getInstance($-c28)",
+  "var" : "$-c28",
+  "constantValue" : "AES/CBC/NoPadding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "void afterPropertiesSet()"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst2 = \"SHA-1\"",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.util.CryptUtils: java.lang.String encryptSHA1(java.lang.String)>",
-  "callSite" : "<com.mxixm.fastboot.weixin.util.CryptUtils: java.lang.String encryptSHA1(java.lang.String)>[6@L57] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst2)",
-  "var" : "%stringconst2",
-  "constantValue" : "SHA-1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String encryptSHA1(java.lang.String)"
+  "sourceStmt" : "$-c36 = \"AES/CBC/NoPadding\"",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[40@L107] $-v37 = invokestatic javax.crypto.Cipher.getInstance($-c36)",
+  "var" : "$-c36",
+  "constantValue" : "AES/CBC/NoPadding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void afterPropertiesSet()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
+  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[23@L98] $-v24 = invokevirtual $-v16.decode($-v23)",
   "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $r23.<init>($r25)",
-  "var" : "$r25",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[28@L100] invokespecial $-v25.<init>($-v26, $-c27)",
+  "var" : "$-v26",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "void afterPropertiesSet()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[23@L98] $-v24 = invokevirtual $-v16.decode($-v23)",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[35@L103] invokespecial $-v30.<init>($-v32, $-ci0, $-ci16)",
+  "var" : "$-v32",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>",
+  "subSignature" : "void afterPropertiesSet()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[23@L98] $-v24 = invokevirtual $-v16.decode($-v23)",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
+  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[45@L108] invokespecial $-v38.<init>($-v40)",
+  "var" : "$-v40",
   "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
   "subSignature" : "void afterPropertiesSet()"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst3 = \"AES/CBC/NoPadding\"",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[31@L102] $r18 = invokestatic javax.crypto.Cipher.getInstance(%stringconst3)",
-  "var" : "%stringconst3",
-  "constantValue" : "AES/CBC/NoPadding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void afterPropertiesSet()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst3 = \"AES/CBC/NoPadding\"",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[40@L107] $r22 = invokestatic javax.crypto.Cipher.getInstance(%stringconst3)",
-  "var" : "%stringconst3",
-  "constantValue" : "AES/CBC/NoPadding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void afterPropertiesSet()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[24@L98] $r15 = invokevirtual $r8.decode($r14)",
-  "sourceMethod" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>",
-  "callSite" : "<com.mxixm.fastboot.weixin.service.WxXmlCryptoService: void afterPropertiesSet()>[36@L103] invokespecial $r19.<init>($r20, %intconst0, %intconst4)",
-  "var" : "$r20",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[],int,int)>",
-  "subSignature" : "void afterPropertiesSet()"
+  "sourceStmt" : "$-c8 = \"SHA-1\"",
+  "sourceMethod" : "<com.mxixm.fastboot.weixin.util.CryptUtils: java.lang.String encryptSHA1(java.lang.String)>",
+  "callSite" : "<com.mxixm.fastboot.weixin.util.CryptUtils: java.lang.String encryptSHA1(java.lang.String)>[6@L57] sha = invokestatic java.security.MessageDigest.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "SHA-1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encryptSHA1(java.lang.String)"
 } ]

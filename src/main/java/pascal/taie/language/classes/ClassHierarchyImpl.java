@@ -33,11 +33,13 @@ import pascal.taie.language.type.Type;
 import pascal.taie.util.collection.HybridBitSet;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
+import pascal.taie.util.collection.Triple;
 import pascal.taie.util.collection.TwoKeyMap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -180,9 +182,22 @@ public class ClassHierarchyImpl implements ClassHierarchy {
 
     @Override
     @Nullable
+    public JClass getClass(JClassLoader loader, String name, boolean allowPhantom) {
+        return loader.loadClass(name, allowPhantom);
+    }
+
+    @Override
+    @Nullable
     public JClass getClass(String name) {
         // TODO: add warning for missing class loader
         return getClass(getDefaultClassLoader(), name);
+    }
+
+    @Override
+    @Nullable
+    public JClass getClass(String name, boolean allowPhantom) {
+        // TODO: add warning for missing class loader
+        return getClass(getDefaultClassLoader(), name, allowPhantom);
     }
 
     @Override
@@ -218,7 +233,7 @@ public class ClassHierarchyImpl implements ClassHierarchy {
     @Override
     @Nullable
     public JClass getJREClass(String name) {
-        return getClass(getBootstrapClassLoader(), name);
+        return getClass(getBootstrapClassLoader(), name, false);
     }
 
     @Override
@@ -273,13 +288,7 @@ public class ClassHierarchyImpl implements ClassHierarchy {
         JField field;
         // 0. First, check and handle phantom fields
         if (jclass.isPhantom()) {
-            field = jclass.getPhantomField(name, type);
-            if (field == null) {
-                field = new JField(jclass, name, Set.of(),
-                        type, null, AnnotationHolder.emptyHolder());
-                jclass.addPhantomField(name, type, field);
-            }
-            return field;
+            return jclass.getPhantomField(name, type);
         }
         // JVM Spec. (11 Ed.), 5.4.3.2 Field Resolution
         // 1. If C declares a field with the name and descriptor (type) specified
@@ -353,7 +362,11 @@ public class ClassHierarchyImpl implements ClassHierarchy {
         // 2. Otherwise, method resolution attempts to locate the
         // referenced method in C and its superclasses
         for (JClass c = jclass; c != null; c = c.getSuperClass()) {
-            JMethod method = c.getDeclaredMethod(subsignature);
+            JMethod method;
+            if (c.isPhantom()) {
+                return c.getPhantomMethod(subsignature);
+            }
+            method = c.getDeclaredMethod(subsignature);
             if (method != null && (allowAbstract || !method.isAbstract())) {
                 return method;
             }
@@ -378,7 +391,11 @@ public class ClassHierarchyImpl implements ClassHierarchy {
 
     private JMethod lookupMethodFromSuperinterfaces(
             JClass jclass, Subsignature subsignature, boolean allowAbstract) {
-        JMethod method = jclass.getDeclaredMethod(subsignature);
+        JMethod method;
+        if (jclass.isPhantom()) {
+            return jclass.getPhantomMethod(subsignature);
+        }
+        method = jclass.getDeclaredMethod(subsignature);
         if (method != null && (allowAbstract || !method.isAbstract())) {
             return method;
         }

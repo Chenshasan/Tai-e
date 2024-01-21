@@ -1,31 +1,31 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
+  "sourceStmt" : "$-c2 = \"HmacSHA1\"",
+  "sourceMethod" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] generateHmacSha1Key()>",
+  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] generateHmacSha1Key()>[1@L76] keyGenerator = invokestatic javax.crypto.KeyGenerator.getInstance($-c2)",
+  "var" : "$-c2",
+  "constantValue" : "HmacSHA1",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "byte[] generateHmacSha1Key()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"AES\"",
   "sourceMethod" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] aes(byte[],byte[],int)>",
-  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] aes(byte[],byte[],int)>[3@L140] $r2 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
+  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] aes(byte[],byte[],int)>[5@L140] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
   "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "byte[] aes(byte[],byte[],int)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"HmacSHA1\"",
+  "sourceStmt" : "$-c7 = \"HmacSHA1\"",
   "sourceMethod" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] hmacSha1(byte[],byte[])>",
-  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] hmacSha1(byte[],byte[])>[3@L51] $r2 = invokestatic javax.crypto.Mac.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
+  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] hmacSha1(byte[],byte[])>[5@L51] mac = invokestatic javax.crypto.Mac.getInstance($-c7)",
+  "var" : "$-c7",
   "constantValue" : "HmacSHA1",
   "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
   "subSignature" : "byte[] hmacSha1(byte[],byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"HmacSHA1\"",
-  "sourceMethod" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] generateHmacSha1Key()>",
-  "callSite" : "<me.j360.dubbo.modules.util.security.CryptoUtil: byte[] generateHmacSha1Key()>[1@L76] $r0 = invokestatic javax.crypto.KeyGenerator.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "HmacSHA1",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "byte[] generateHmacSha1Key()"
 } ]

@@ -9,6 +9,7 @@ import pascal.taie.language.classes.*;
 import pascal.taie.language.type.ClassType;
 import pascal.taie.language.type.ReferenceType;
 import pascal.taie.util.JClassUtils;
+import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Sets;
 import pascal.taie.util.collection.TwoKeyMultiMap;
@@ -57,12 +58,12 @@ public class CryptoReachableParamProvider implements ParamProvider {
 
     @Override
     public TwoKeyMultiMap<Obj, JField, Obj> getFieldObjs() {
-        return null;
+        return Maps.newTwoKeyMultiMap();
     }
 
     @Override
     public MultiMap<Obj, Obj> getArrayObjs() {
-        return null;
+        return Maps.emptyMultiMap();
     }
 
     private Collection<JClass> getNonAbstractSubclasses(JClass jClass) {

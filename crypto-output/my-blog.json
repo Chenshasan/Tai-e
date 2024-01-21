@@ -1,10 +1,10 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"MD5\"",
+  "sourceStmt" : "$-c5 = \"MD5\"",
   "sourceMethod" : "<com.site.blog.my.core.util.MD5Util: java.lang.String MD5Encode(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.site.blog.my.core.util.MD5Util: java.lang.String MD5Encode(java.lang.String,java.lang.String)>[5@L34] $r2 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
+  "callSite" : "<com.site.blog.my.core.util.MD5Util: java.lang.String MD5Encode(java.lang.String,java.lang.String)>[5@L34] md = invokestatic java.security.MessageDigest.getInstance($-c5)",
+  "var" : "$-c5",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String MD5Encode(java.lang.String,java.lang.String)"

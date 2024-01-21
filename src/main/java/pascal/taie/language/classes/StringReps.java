@@ -22,11 +22,15 @@
 
 package pascal.taie.language.classes;
 
+import pascal.taie.World;
 import pascal.taie.ir.proginfo.MethodRef;
 import pascal.taie.language.type.Type;
+import pascal.taie.language.type.TypeSystem;
 import pascal.taie.util.AnalysisException;
+import pascal.taie.util.collection.Triple;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +75,10 @@ public final class StringReps {
                 declaringClass + ": " +
                 toSubsignature(methodName, parameterTypes, returnType) +
                 ">";
+    }
+
+    public static String getSignatureOf1(JMethod method, String subSig) {
+        return "<" + method.declaringClass + ": " + subSig + ">";
     }
 
     public static String getSignatureOf(JField field) {
@@ -128,14 +136,52 @@ public final class StringReps {
                 ")";
     }
 
+//    public static String toSubsignature(String name, List<Type> parameterTypes, Type returnType) {
+//        return returnType + " " +
+//                name +
+//                "(" +
+//                parameterTypes.stream()
+//                        .map(Type::toString)
+//                        .collect(Collectors.joining(",")) +
+//                ")";
+//    }
+
     public static String toSubsignature(String name, List<Type> parameterTypes, Type returnType) {
-        return returnType + " " +
-                name +
-                "(" +
-                parameterTypes.stream()
-                        .map(Type::toString)
-                        .collect(Collectors.joining(",")) +
-                ")";
+        StringBuilder sb = new StringBuilder();
+        sb.append(returnType.toString());
+        sb.append(" ");
+        sb.append(name);
+        sb.append("(");
+        for (int i = 0; i < parameterTypes.size(); i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append(parameterTypes.get(i).toString());
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+
+    /**
+     *
+     * @param subsignature the subsignature to parse
+     * @return (name, parameterTypes, returnType)
+     */
+    public static Triple<String, List<Type>, Type> parseSubsignature(Subsignature subsignature) {
+        TypeSystem typeSystem = World.get().getTypeSystem();
+        String subsig = subsignature.toString();
+        int space = subsig.indexOf(' ');
+        int leftBracket = subsig.indexOf('(');
+        Type returnType = typeSystem.getType(subsig.substring(0, space));
+        String name = subsig.substring(space + 1, leftBracket);
+        String parameterTypesStr = subsig.substring(leftBracket + 1, subsig.length() - 1);
+        List<Type> parameterTypes;
+        if (parameterTypesStr.isEmpty()) {
+            parameterTypes = List.of();
+        } else {
+            parameterTypes = Arrays.stream(parameterTypesStr.split(",")).map(typeSystem::getType).toList();
+        }
+        return new Triple<>(name, parameterTypes, returnType);
     }
 
     private static void validateSignature(String signature) {

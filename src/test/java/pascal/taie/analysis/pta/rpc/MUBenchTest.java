@@ -39,7 +39,7 @@ public class MUBenchTest {
 
     @Test
     public void fastBoot() {
-        Tests.testPTABySpringBootArchivesOfCrypto(Benchmark.FASTBOOT, true);
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.FASTBOOT, true);
     }
     @Test
     public void gameServer() {

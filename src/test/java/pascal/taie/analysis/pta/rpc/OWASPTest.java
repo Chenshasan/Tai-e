@@ -10,5 +10,4 @@ public class OWASPTest {
         Tests.testPTAInOWASPProgramOfCrypto(Benchmark.OWASP, true);
     }
 
-
 }

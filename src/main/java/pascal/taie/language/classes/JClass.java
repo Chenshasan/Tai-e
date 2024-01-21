@@ -37,11 +37,14 @@ import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.MultiMapCollector;
 import pascal.taie.util.collection.Sets;
+import pascal.taie.util.collection.Triple;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,6 +88,8 @@ public class JClass extends AbstractResultHolder
     private boolean isPhantom;
 
     private final MultiMap<String, JField> phantomFields = Maps.newMultiMap();
+
+    private final Map<Subsignature, JMethod> phantomMethods = Maps.newConcurrentMap();
 
     /**
      * If this class is application class.
@@ -349,6 +354,12 @@ public class JClass extends AbstractResultHolder
         return isPhantom;
     }
 
+    /**
+     *
+     * @param fieldName
+     * @param fieldType
+     * @return the phantom field. If not exist yet, create one atomically.
+     */
     @Nullable
     public JField getPhantomField(String fieldName, Type fieldType) {
         assert isPhantom();
@@ -357,14 +368,41 @@ public class JClass extends AbstractResultHolder
                 return field;
             }
         }
-        return null;
+        // Not found. Add concurrently.
+        synchronized (phantomFields) {
+            // Make sure that no other thread added the field.
+            for (JField field : phantomFields.get(fieldName)) {
+                if (field.getType().equals(fieldType)) {
+                    return field;
+                }
+            }
+
+            JField field = new JField(this, name, Set.of(),
+                    type, null, AnnotationHolder.emptyHolder());
+            phantomFields.put(fieldName, field);
+            return field;
+        }
     }
 
-    public void addPhantomField(String fieldName, Type fieldType, JField field) {
+    /**
+     *
+     * @param subsignature
+     * @return the phantom method. If not exist yet, create one atomically.
+     */
+    @Nullable
+    public JMethod getPhantomMethod(Subsignature subsignature) {
         assert isPhantom();
-        assert getPhantomField(fieldName, fieldType) == null :
-                String.format("'%s' already has phantom field '%s'", this, field);
-        phantomFields.put(fieldName, field);
+        return phantomMethods.computeIfAbsent(subsignature, k -> {
+            Triple<String, List<Type>, Type> t = StringReps.parseSubsignature(subsignature);
+            return new JMethod(this, t.first(), EnumSet.noneOf(Modifier.class),
+                    t.second(), t.third(), List.of(), null, AnnotationHolder.emptyHolder(),
+                    null, null, null
+            );
+        });
+    }
+
+    public Collection<JMethod> getPhantomMethods() {
+        return phantomMethods.values();
     }
 
     void setIndex(int index) {

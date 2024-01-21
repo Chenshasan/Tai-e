@@ -1,47 +1,47 @@
 [ {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst0 = \"``11qqaazzxxccvv\"",
-  "sourceMethod" : "<com.smart.sso.server.util.AESUtils: void main(java.lang.String[])>",
-  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String encrypt(java.lang.String,java.lang.String)>[8@L27] invokespecial $r3.<init>($r5, %stringconst1)",
-  "var" : "$r5",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "java.lang.String encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst0 = \"``11qqaazzxxccvv\"",
-  "sourceMethod" : "<com.smart.sso.server.util.AESUtils: void main(java.lang.String[])>",
-  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String decrypt(java.lang.String,java.lang.String)>[8@L50] invokespecial $r3.<init>($r5, %stringconst1)",
-  "var" : "$r5",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$r1 = \"RandomInitVector\"",
+  "sourceStmt" : "$-c7 = \"RandomInitVector\"",
   "sourceMethod" : "<com.smart.sso.server.util.AESUtils: java.lang.String encrypt(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String encrypt(java.lang.String,java.lang.String)>[4@L26] invokespecial $r0.<init>($r2)",
-  "var" : "$r2",
+  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String encrypt(java.lang.String,java.lang.String)>[4@L26] invokespecial $-v6.<init>($-v9)",
+  "var" : "$-v9",
   "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
   "subSignature" : "java.lang.String encrypt(java.lang.String,java.lang.String)"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$r1 = \"RandomInitVector\"",
+  "sourceStmt" : "$-c7 = \"RandomInitVector\"",
   "sourceMethod" : "<com.smart.sso.server.util.AESUtils: java.lang.String decrypt(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String decrypt(java.lang.String,java.lang.String)>[4@L49] invokespecial $r0.<init>($r2)",
-  "var" : "$r2",
+  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String decrypt(java.lang.String,java.lang.String)>[4@L49] invokespecial $-v6.<init>($-v9)",
+  "var" : "$-v9",
   "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
   "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"MD5\"",
+  "sourceStmt" : "$-c3 = \"MD5\"",
   "sourceMethod" : "<com.smart.sso.server.provider.PasswordProvider: java.lang.String md5(java.lang.String)>",
-  "callSite" : "<com.smart.sso.server.provider.PasswordProvider: java.lang.String md5(java.lang.String)>[2@L42] $r0 = invokestatic java.security.MessageDigest.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
+  "callSite" : "<com.smart.sso.server.provider.PasswordProvider: java.lang.String md5(java.lang.String)>[2@L42] md = invokestatic java.security.MessageDigest.getInstance($-c3)",
+  "var" : "$-c3",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String md5(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "key = \"``11qqaazzxxccvv\"",
+  "sourceMethod" : "<com.smart.sso.server.util.AESUtils: void main(java.lang.String[])>",
+  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String encrypt(java.lang.String,java.lang.String)>[10@L27] invokespecial $-v11.<init>($-v13, $-c14)",
+  "var" : "$-v13",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "key = \"``11qqaazzxxccvv\"",
+  "sourceMethod" : "<com.smart.sso.server.util.AESUtils: void main(java.lang.String[])>",
+  "callSite" : "<com.smart.sso.server.util.AESUtils: java.lang.String decrypt(java.lang.String,java.lang.String)>[10@L50] invokespecial $-v11.<init>($-v13, $-c14)",
+  "var" : "$-v13",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
 } ]
