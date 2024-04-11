@@ -1,4 +1,4 @@
-package pascal.taie.analysis.pta.rpc;
+package pascal.taie.analysis.pta.cryptomisuse;
 
 import org.junit.jupiter.api.Test;
 import pascal.taie.analysis.Tests;
@@ -41,18 +41,22 @@ public class MUBenchTest {
     public void fastBoot() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.FASTBOOT, true);
     }
+
     @Test
     public void gameServer() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.GAMESERVER, true);
     }
+
     @Test
     public void haBridge() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.HABRIDGE, true);
     }
+
     @Test
     public void hsweb() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.HSWEB, true);
     }
+
     @Test
     public void ijpay() {
         Tests.testPTAInLibraryProgramOfCrypto(Benchmark.IJPAY, true);
@@ -135,8 +139,6 @@ public class MUBenchTest {
 //    }
 
 
-
-
     /**
      * uncompress Spring archives and construct app-info.yml
      */
@@ -155,7 +157,7 @@ public class MUBenchTest {
                 if (archiveName.endsWith(".jar") || archiveName.endsWith(".war")) {
                     // uncompress archive
                     Path targetDir = uncompressDir.resolve(benchmarkDir.getName())
-                                                  .resolve(archiveName.substring(0, archiveName.lastIndexOf(".")));
+                            .resolve(archiveName.substring(0, archiveName.lastIndexOf(".")));
                     targetDir.toFile().mkdirs();
                     ZipUtils.uncompressZipFile(archive.getAbsolutePath(), targetDir.toFile().getAbsolutePath());
                     // construct class path
@@ -181,26 +183,26 @@ public class MUBenchTest {
             libJarPaths = new HashSet<>(libName2LibJarPath.values());
             // infer the actual app jar paths
             List<String> appClasses = appJarPaths.stream()
-                                                 .map(DirectoryTraverser::listClassesInJar)
-                                                 .flatMap(Collection::stream)
-                                                 .toList();
+                    .map(DirectoryTraverser::listClassesInJar)
+                    .flatMap(Collection::stream)
+                    .toList();
             Collection<String> inferredAppJarPaths = AppClassInferringUtils.inferAppJarPaths(
                     appClasses, libJarPaths);
             appJarPaths.addAll(inferredAppJarPaths);
             libJarPaths.removeAll(inferredAppJarPaths);
             // change to relative path
             appJarPaths = appJarPaths.stream()
-                                     .map(Path::of)
-                                     .map(uncompressDir::relativize)
-                                     .map(Path::toString)
-                                     .sorted()
-                                     .toList();
+                    .map(Path::of)
+                    .map(uncompressDir::relativize)
+                    .map(Path::toString)
+                    .sorted()
+                    .toList();
             libJarPaths = libJarPaths.stream()
-                                     .map(Path::of)
-                                     .map(uncompressDir::relativize)
-                                     .map(Path::toString)
-                                     .sorted()
-                                     .toList();
+                    .map(Path::of)
+                    .map(uncompressDir::relativize)
+                    .map(Path::toString)
+                    .sorted()
+                    .toList();
             // output app-info
             sb.append(benchmarkDir.getName()).append(":\n");
             sb.append("  apps:\n");
@@ -218,8 +220,8 @@ public class MUBenchTest {
 
     public static void removeDirectory(Path dir) throws IOException {
         Files.walk(dir)
-             .sorted(Comparator.reverseOrder())
-             .map(Path::toFile)
-             .forEach(File::delete);
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
     }
 }

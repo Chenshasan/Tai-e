@@ -1,8 +1,9 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
@@ -28,7 +29,7 @@ public class CompositeRuleJudge implements RuleJudge {
         this.RuleJudgeList.put(stmt, ruleJudge);
     }
 
-    CompositeRuleJudge(CompositeRule compositeRule, CryptoObjManager manager) {
+    public CompositeRuleJudge(CompositeRule compositeRule, CryptoObjManager manager) {
         compositeRule.getToVarToStmtAndToSource().forEach((toVar, pair) -> {
             Stmt stmt = pair.first();
             ToSource toSource = pair.second();
@@ -40,7 +41,6 @@ public class CompositeRuleJudge implements RuleJudge {
             } else if (toSource.rule() instanceof PredictableSourceRule ps) {
                 ruleJudge = new PredictableSourceRuleJudge(ps, manager);
             } else {
-                //System.out.println("composite rule of var:" +compositeRule.getFromVar() + "is not appropriate");
             }
             assert ruleJudge != null;
             RuleJudgeList.put(stmt, ruleJudge);
@@ -54,7 +54,8 @@ public class CompositeRuleJudge implements RuleJudge {
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
             Issue issue = ruleJudge.judge(result, callSite);
             if (ruleJudge instanceof PatternMatchRuleJudge) {
-                //If the PatternMatchRuleJudge determines that this string does not match, further processing will be halted.
+                // If the PatternMatchRuleJudge determines that this string does not match,
+                // further processing will be halted.
                 if (issue != null) {
                     compositeRuleIssue.setPredicate(1);
                 }

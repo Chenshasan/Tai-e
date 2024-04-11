@@ -1,4 +1,4 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
 import pascal.taie.analysis.pta.PointerAnalysisResult;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;

@@ -19,6 +19,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.IssueList;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge.*;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
 import pascal.taie.ir.stmt.*;
@@ -28,7 +29,6 @@ import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.language.type.Type;
-import pascal.taie.language.type.TypeSystem;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Pair;
@@ -67,6 +67,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     /**
      * Composite Rule Property
      */
+    private final MultiMap<JMethod, FromSource> compositeFromSources = Maps.newMultiMap();
+
     private final MultiMap<JMethod, CryptoObjPropagate> compositePropagates = Maps.newMultiMap();
 
     private final MultiMap<Var, Pair<Var, Type>> compositeVarPropagates = Maps.newMultiMap();
@@ -74,8 +76,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private final MultiMap<FromSource, CompositeRule> fromSourceToRule = Maps.newMultiMap();
 
     private final MultiMap<Var, CompositeRule> fromVarToRule = Maps.newMultiMap();
-
-    private final MultiMap<JMethod, FromSource> compositeFromSources = Maps.newMultiMap();
 
     private final Map<ToSource, CompositeRule> toSourceToRule = Maps.newMap();
 
@@ -96,15 +96,12 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
      * Environment Property
      */
     private CryptoObjManager manager;
-    private TypeSystem typeSystem;
 
     private Solver solver;
 
     private CSManager csManager;
 
     private Context emptyContext;
-
-    private CryptoRuleJudge cryptoRuleJudge;
 
     private CryptoAPIMisuseConfig config;
 
@@ -126,10 +123,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         if (solver.getOptions().getString("crypto-output") != null) {
             outputFile = new File(solver.getOptions().getString("crypto-output"));
         }
-        typeSystem = solver.getTypeSystem();
         csManager = solver.getCSManager();
         emptyContext = solver.getContextSelector().getEmptyContext();
-        cryptoRuleJudge = new CryptoRuleJudge();
         this.solver = solver;
         config.sources().forEach(s -> sources.put(s.method(), s));
         config.propagates().forEach(p -> propagates.put(p.method(), p));
@@ -450,7 +445,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Set<CryptoReport> cryptoReports = cryptoRuleJudge.judgeRules();
-        solver.getResult().storeResult(getClass().getName(), cryptoReports);
+        solver.getResult().storeResult(getClass().getName(), consistIssueList);
     }
 }

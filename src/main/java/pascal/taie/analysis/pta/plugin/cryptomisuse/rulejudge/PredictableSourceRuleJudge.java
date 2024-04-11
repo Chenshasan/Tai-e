@@ -1,19 +1,15 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.PredictableSourceIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Invoke;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,7 +23,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
 
     Logger logger = LogManager.getLogger(PredictableSourceRuleJudge.class);
 
-    PredictableSourceRuleJudge(PredictableSourceRule predictableSourceRule,
+    public PredictableSourceRuleJudge(PredictableSourceRule predictableSourceRule,
                                CryptoObjManager manager) {
         this.predictableSourceRule = predictableSourceRule;
         this.manager = manager;

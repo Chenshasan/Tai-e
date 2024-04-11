@@ -1,6 +1,6 @@
-package pascal.taie.analysis.pta.rpc;
+package pascal.taie.analysis.pta.cryptomisuse;
 
-import static pascal.taie.analysis.pta.rpc.BenchmarkConfigs.CRYPTO_BENCHMARKS_DIR;
+import static pascal.taie.analysis.pta.cryptomisuse.BenchmarkConfigs.CRYPTO_BENCHMARKS_DIR;
 
 public enum Benchmark {
 
@@ -56,7 +56,7 @@ public enum Benchmark {
 
     OWASP("OWASP", CRYPTO_BENCHMARKS_DIR + "/OWASP"),
 
-    CRYPTOTEST("crypto-test",CRYPTO_BENCHMARKS_DIR+"/crypto-test");
+    CRYPTOTEST("crypto-test", CRYPTO_BENCHMARKS_DIR + "/crypto-test");
 
     public final String name;
 

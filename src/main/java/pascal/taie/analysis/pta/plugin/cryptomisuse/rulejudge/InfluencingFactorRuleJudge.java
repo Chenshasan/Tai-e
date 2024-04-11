@@ -1,9 +1,11 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.ForbiddenMethodIssue;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoObjInformation;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoObjManager;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.InfluencingFactorIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
@@ -25,7 +27,7 @@ public class InfluencingFactorRuleJudge implements RuleJudge {
 
     Logger logger = LogManager.getLogger(NumberSizeRuleJudge.class);
 
-    InfluencingFactorRuleJudge(InfluencingFactorRule influencingFactorRule, CryptoObjManager manager) {
+    public InfluencingFactorRuleJudge(InfluencingFactorRule influencingFactorRule, CryptoObjManager manager) {
         this.influencingFactorRule = influencingFactorRule;
         this.manager = manager;
     }

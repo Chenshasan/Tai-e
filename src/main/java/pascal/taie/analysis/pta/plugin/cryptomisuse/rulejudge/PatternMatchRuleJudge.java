@@ -1,28 +1,20 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
-import pascal.taie.analysis.pta.core.heap.Obj;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.IssueList;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.NumberSizeIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.PatternMatchIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.ir.exp.Var;
-import pascal.taie.ir.stmt.AssignLiteral;
 import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.ir.stmt.Stmt;
-import pascal.taie.language.classes.JMethod;
 
 public class PatternMatchRuleJudge implements RuleJudge {
 
@@ -32,7 +24,7 @@ public class PatternMatchRuleJudge implements RuleJudge {
 
     Logger logger = LogManager.getLogger(PatternMatchRuleJudge.class);
 
-    PatternMatchRuleJudge(PatternMatchRule patternMatchRule, CryptoObjManager manager) {
+    public PatternMatchRuleJudge(PatternMatchRule patternMatchRule, CryptoObjManager manager) {
         this.patternMatchRule = patternMatchRule;
         this.manager = manager;
     }

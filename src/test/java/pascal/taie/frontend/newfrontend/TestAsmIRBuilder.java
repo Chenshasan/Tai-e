@@ -50,7 +50,7 @@ public class TestAsmIRBuilder {
         String worldPath = "src/test/resources/world";
 
         List<String> args = new ArrayList<>();
-         Collections.addAll(args, "-pp");
+        Collections.addAll(args, "-pp");
         // Collections.addAll(args, "-a", "cfg");
         Collections.addAll(args, "-cp", worldPath);
         Collections.addAll(args, "-java", Integer.toString(javaVersion));
@@ -65,7 +65,7 @@ public class TestAsmIRBuilder {
         classHierarchy.allClasses()
                 .forEach(c -> c.getDeclaredMethods()
                         .forEach(m -> {
-                            if (! m.isAbstract()) {
+                            if (!m.isAbstract()) {
                                 m.getIR();
                             }
                         }));
@@ -87,7 +87,7 @@ public class TestAsmIRBuilder {
                 "arrayAccess", "newArray", "assign", "binary", "binaryMixedType",
                 "copy", "instanceOf", "cast", "ifStmt", "gotoStmt", "switchStmt", "invoke",
                 "returnInt", "exception", "monitor", "iinc");
-        Main.main(new String[]{ "--world-builder", "pascal.taie.frontend.newfrontend.AsmWorldBuilder",
+        Main.main(new String[]{"--world-builder", "pascal.taie.frontend.newfrontend.AsmWorldBuilder",
                 "-java", "8",
                 "-cp", "src/test/resources/world",
                 "--main-class", "AllInOne",
@@ -147,7 +147,7 @@ public class TestAsmIRBuilder {
                 "--input-classes", "AllInOne",
                 "--world-builder", "pascal.taie.frontend.newfrontend.AsmWorldBuilder",
                 "--pre-build-ir"
-                );
+        );
         World.get()
                 .getClassHierarchy()
                 .applicationClasses()
@@ -189,14 +189,14 @@ public class TestAsmIRBuilder {
             );
 
             Timer.runAndCount(() ->
-            World.get()
-                    .getClassHierarchy()
-                    .allClasses()
-                    .forEach(c -> c.getDeclaredMethods().forEach(m -> {
-                        if (!m.isAbstract()) {
-                            m.getIR();
-                        }
-                    })), "Get All IR");
+                    World.get()
+                            .getClassHierarchy()
+                            .allClasses()
+                            .forEach(c -> c.getDeclaredMethods().forEach(m -> {
+                                if (!m.isAbstract()) {
+                                    m.getIR();
+                                }
+                            })), "Get All IR");
         };
 
         Timer.runAndCount(newFrontend, "New frontend builds all the classes in jre" + javaVersion);
@@ -396,7 +396,7 @@ public class TestAsmIRBuilder {
 
         Timer.runAndCount(() -> runSoot(args.toArray(new String[0])),
                 "Try to make soot type inference consume tons of time & memory \n" +
-                         "(just build ir for one class with < 30 lines of java source)");
+                        "(just build ir for one class with < 30 lines of java source)");
 
         System.out.println("Let new frontend build this class");
 
@@ -492,6 +492,7 @@ public class TestAsmIRBuilder {
     }
 
     private static final String BASIC_CLASSES = "basic-classes.yml";
+
     private static void addBasicClasses(Scene scene) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         JavaType type = mapper.getTypeFactory()
@@ -508,6 +509,7 @@ public class TestAsmIRBuilder {
     }
 
     protected static final String JREs = "java-benchmarks/JREs";
+
     protected static String getClassPath(Options options) {
         if (options.isPrependJVM()) {
             return String.join(File.pathSeparator, options.getClassPath());

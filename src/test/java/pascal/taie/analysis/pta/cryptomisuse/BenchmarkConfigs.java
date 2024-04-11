@@ -1,4 +1,4 @@
-package pascal.taie.analysis.pta.rpc;
+package pascal.taie.analysis.pta.cryptomisuse;
 
 public class BenchmarkConfigs {
 

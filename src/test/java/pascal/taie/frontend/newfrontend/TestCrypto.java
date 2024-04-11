@@ -44,7 +44,7 @@ public class TestCrypto {
     }
 
     @Test
-    public void test_fast_boot_weixin() throws IOException  {
+    public void test_fast_boot_weixin() throws IOException {
         test("fast-boot-weixin", true, true);
     }
 
@@ -148,7 +148,7 @@ public class TestCrypto {
         test("zheng", true, true);
     }
 
-    private void test(String testName, boolean allowPhantom, boolean preBuildIR) throws IOException  {
+    private void test(String testName, boolean allowPhantom, boolean preBuildIR) throws IOException {
         String testPath = CRYPTO_BENCHMARKS_DIR + testName;
         String appClassPath = testPath + "/original-classes.jar";
         var dependencies = listRootContainers(testPath + "/dependencies");
@@ -183,7 +183,7 @@ public class TestCrypto {
                                     }
                                 })), "Get All IR because no --pre-build-ir");
             }
-        }, "Build world for " + testName + (preBuildIR ? " (with --pre-build-ir)":""));
+        }, "Build world for " + testName + (preBuildIR ? " (with --pre-build-ir)" : ""));
 
         Printer.printTestRes(false);
 
@@ -192,12 +192,12 @@ public class TestCrypto {
                 .getClassHierarchy()
                 .allClasses()
                 .forEach(c -> c.getDeclaredMethods().forEach(m -> {
-                            if (!m.isAbstract()) {
-                                IR ir = m.getIR();
-                                ir.getStmts().stream()
-                                        .filter(stmt -> stmt instanceof Invoke invoke && !(invoke.getInvokeExp() instanceof InvokeDynamic))
-                                        .forEach(stmt -> World.get().getClassHierarchy().resolveMethod(((Invoke) stmt).getMethodRef()));
-                            }
+                    if (!m.isAbstract()) {
+                        IR ir = m.getIR();
+                        ir.getStmts().stream()
+                                .filter(stmt -> stmt instanceof Invoke invoke && !(invoke.getInvokeExp() instanceof InvokeDynamic))
+                                .forEach(stmt -> World.get().getClassHierarchy().resolveMethod(((Invoke) stmt).getMethodRef()));
+                    }
                 }));
 
         var phantomCount = World.get()
@@ -224,8 +224,7 @@ public class TestCrypto {
             for (var subPath : l.toList()) {
                 if (subPath.toFile().isDirectory()) {
                     res.addAll(listRootContainers(subPath.toString()));
-                }
-                else if (subPath.toString().endsWith(".jar") || subPath.toString().endsWith(".war")) {
+                } else if (subPath.toString().endsWith(".jar") || subPath.toString().endsWith(".war")) {
                     res.add(subPath.toString());
                 }
             }

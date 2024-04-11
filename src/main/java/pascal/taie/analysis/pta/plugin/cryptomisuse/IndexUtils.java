@@ -30,7 +30,7 @@ import pascal.taie.ir.stmt.Invoke;
 /**
  * Utility class to handle method indexes in taint analysis.
  */
-final class IndexUtils {
+final public class IndexUtils {
 
     /**
      * Special number representing the base variable of an invocation.
@@ -81,7 +81,7 @@ final class IndexUtils {
     /**
      * Retrieves variable from a call site and index.
      */
-    static Var getVar(Invoke callSite, int index) {
+    public static Var getVar(Invoke callSite, int index) {
         InvokeExp invokeExp = callSite.getInvokeExp();
         return switch (index) {
             case BASE -> ((InvokeInstanceExp) invokeExp).getBase();

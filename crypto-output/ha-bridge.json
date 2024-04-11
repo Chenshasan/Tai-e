@@ -1,4 +1,22 @@
 [ {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-v3[$-ci7] = $-ci18",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[10@L343] invokespecial $-v10.<init>($-v12, $-ci20)",
+  "var" : "$-v12",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-v3[$-ci7] = $-ci18",
+  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
+  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[10@L331] invokespecial $-v10.<init>($-v12, $-ci20)",
+  "var" : "$-v12",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "java.lang.String encrypt(java.lang.String)"
+}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c8 = \"PBEWithMD5AndDES\"",
@@ -49,23 +67,5 @@
   "var" : "$-c5",
   "constantValue" : "PBEWithMD5AndDES",
   "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String encrypt(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v3[$-ci7] = $-ci18",
-  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
-  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String decrypt(java.lang.String)>[10@L343] invokespecial $-v10.<init>($-v12, $-ci20)",
-  "var" : "$-v12",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "java.lang.String decrypt(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v3[$-ci7] = $-ci18",
-  "sourceMethod" : "<com.bwssystems.HABridge.BridgeSecurity: void <clinit>()>",
-  "callSite" : "<com.bwssystems.HABridge.BridgeSecurity: java.lang.String encrypt(java.lang.String)>[10@L331] invokespecial $-v10.<init>($-v12, $-ci20)",
-  "var" : "$-v12",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
   "subSignature" : "java.lang.String encrypt(java.lang.String)"
 } ]

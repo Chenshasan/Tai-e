@@ -1,19 +1,15 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.NumberSizeIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Invoke;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,7 +21,7 @@ public class NumberSizeRuleJudge implements RuleJudge {
 
     Logger logger = LogManager.getLogger(NumberSizeRuleJudge.class);
 
-    NumberSizeRuleJudge(NumberSizeRule numberSizeRule, CryptoObjManager manager) {
+    public NumberSizeRuleJudge(NumberSizeRule numberSizeRule, CryptoObjManager manager) {
         this.numberSizeRule = numberSizeRule;
         this.manager = manager;
     }
@@ -38,10 +34,10 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 contains(callSite.getContainer().getDeclaringClass())) {
             result.getPointsToSet(var).stream().
                     filter(manager::isCryptoObj).
-                    forEach(cryptoObj -> {
+                    forEach(cryptoObj -> { 
                         if (cryptoObj.getAllocation() instanceof
                                 CryptoObjInformation coi) {
-                            System.out.println("var is " + var + "in callsite " + callSite);
+                            logger.debug("var is " + var + "in callsite " + callSite);
                             if(isNumeric(coi.constantValue().toString())){
                                 int value = coi.constantValue() instanceof String ?
                                         Integer.parseInt((String) coi.constantValue())

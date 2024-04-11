@@ -30,29 +30,29 @@ public class CryptoObjManager {
     /**
      * @return true if given obj represents a crypto API misuse object, otherwise false.
      */
-    boolean isCryptoObj(Obj obj) {
+    public boolean isCryptoObj(Obj obj) {
         return obj instanceof MockObj &&
                 ((MockObj) obj).getDescriptor().equals(CRYPTO_DESC);
     }
 
-    boolean isCompositeCryptoObj(Obj obj) {
+    public boolean isCompositeCryptoObj(Obj obj) {
         return obj instanceof MockObj &&
                 ((MockObj) obj).getDescriptor().equals(COMPOSITE_CRYPTO_DESC);
     }
 
-    boolean isCryptoInvolvedObj(Obj obj) {
+    public boolean isCryptoInvolvedObj(Obj obj) {
         return isCryptoObj(obj) || isCompositeCryptoObj(obj);
     }
 
 
-    CryptoObjInformation getAllocationOfCOI(Obj obj) {
+    public CryptoObjInformation getAllocationOfCOI(Obj obj) {
         if (isCryptoObj(obj)) {
             return (CryptoObjInformation) obj.getAllocation();
         }
         throw new AnalysisException(obj + " is not a crypto object");
     }
 
-    CompositeRule getAllocationOfRule(Obj obj) {
+    public CompositeRule getAllocationOfRule(Obj obj) {
         if (isCompositeCryptoObj(obj)) {
             return (CompositeRule) obj.getAllocation();
         }

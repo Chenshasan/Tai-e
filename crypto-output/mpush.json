@@ -1,13 +1,13 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c10 = \"HmacSHA1\"",
-  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>[8@L93] mac = invokestatic javax.crypto.Mac.getInstance($-c10)",
-  "var" : "$-c10",
-  "constantValue" : "HmacSHA1",
-  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String hmacSha1(java.lang.String,java.lang.String)"
+  "sourceStmt" : "$-c4 = \"MD5withRSA\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: boolean verify(byte[],java.lang.String,java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: boolean verify(byte[],java.lang.String,java.lang.String)>[1@L166] signature = invokestatic java.security.Signature.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "MD5withRSA",
+  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String)>",
+  "subSignature" : "boolean verify(byte[],java.lang.String,java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -21,13 +21,13 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"MD5withRSA\"",
-  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: boolean verify(byte[],java.lang.String,java.lang.String)>",
-  "callSite" : "<com.mpush.tools.crypto.RSAUtils: boolean verify(byte[],java.lang.String,java.lang.String)>[1@L166] signature = invokestatic java.security.Signature.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "MD5withRSA",
-  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String)>",
-  "subSignature" : "boolean verify(byte[],java.lang.String,java.lang.String)"
+  "sourceStmt" : "$-c10 = \"HmacSHA1\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>[8@L93] mac = invokestatic javax.crypto.Mac.getInstance($-c10)",
+  "var" : "$-c10",
+  "constantValue" : "HmacSHA1",
+  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String hmacSha1(java.lang.String,java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -51,16 +51,6 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"SHA-1\"",
-  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String sha1(java.lang.String)>",
-  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String sha1(java.lang.String)>[1@L105] digest = invokestatic java.security.MessageDigest.getInstance($-c2)",
-  "var" : "$-c2",
-  "constantValue" : "SHA-1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String sha1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c2 = \"MD5\"",
   "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(byte[])>",
   "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(byte[])>[1@L70] digest = invokestatic java.security.MessageDigest.getInstance($-c2)",
@@ -68,6 +58,16 @@
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String encrypt(byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"SHA-1\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String sha1(java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String sha1(java.lang.String)>[1@L105] digest = invokestatic java.security.MessageDigest.getInstance($-c2)",
+  "var" : "$-c2",
+  "constantValue" : "SHA-1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String sha1(java.lang.String)"
 }, {
   "judgeType" : "CompositeRule",
   "issues" : [ {

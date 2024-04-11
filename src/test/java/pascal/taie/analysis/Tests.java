@@ -33,11 +33,10 @@ import pascal.taie.analysis.misc.ResultProcessor;
 import pascal.taie.analysis.pta.PointerAnalysis;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
 import pascal.taie.analysis.pta.plugin.spring.MicroserviceHolder;
-import pascal.taie.analysis.pta.rpc.Benchmark;
+import pascal.taie.analysis.pta.cryptomisuse.Benchmark;
 import pascal.taie.util.AppClassInferringUtils;
 import pascal.taie.util.DirectoryTraverser;
 import pascal.taie.util.ZipUtils;
-import pascal.taie.util.collection.Lists;
 import pascal.taie.util.collection.Sets;
 import pascal.taie.util.collection.Tuple;
 import pascal.taie.analysis.pta.plugin.assertion.AssertionChecker;
@@ -52,7 +51,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -633,7 +631,7 @@ public final class Tests {
                         reflection-log:src/test/resources/pta/cryptomisuse/reflection-OWASP.log;
                         plugins:[pascal.taie.analysis.pta.plugin.owasp.OWASPBenchmarkAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs, "crypto-output/"+benchmark.name+".json"),
+                        """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
                 "-a", """
                         cg=
                         algorithm:pta;
@@ -690,7 +688,8 @@ public final class Tests {
     initializeSpringBootArchivesOfCrypto(List<String> archivePaths) {
         Tuple<String, List<String>, List<String>> result;
 
-        List<Path> tempDirectories = new ArrayList<>(archivePaths.size());;
+        List<Path> tempDirectories = new ArrayList<>(archivePaths.size());
+        ;
         String classPath = "";
         List<String> classes = new ArrayList<>();
         List<String> dependencyJarPaths = new ArrayList<>();

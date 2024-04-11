@@ -1,8 +1,9 @@
-package pascal.taie.analysis.pta.plugin.cryptomisuse;
+package pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.ForbiddenMethodIssue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.ForbiddenMethodRule;
@@ -19,7 +20,7 @@ public class ForbiddenMethodRuleJudge implements RuleJudge {
 
     Logger logger = LogManager.getLogger(NumberSizeRuleJudge.class);
 
-    ForbiddenMethodRuleJudge(ForbiddenMethodRule forbiddenMethodRule, CryptoObjManager manager) {
+    public ForbiddenMethodRuleJudge(ForbiddenMethodRule forbiddenMethodRule, CryptoObjManager manager) {
         this.forbiddenMethodRule = forbiddenMethodRule;
         this.manager = manager;
     }
