@@ -28,14 +28,13 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:2.0.7")
     // JSR305, for javax.annotation
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-//    implementation("com.google.guava:guava:30.1-jre")
-    implementation("commons-io:commons-io:2.11.0")
     // Use asm to read java class file
     implementation("org.ow2.asm:asm:9.4")
     implementation("org.ow2.asm:asm-commons:9.5")
     implementation("org.ow2.asm:asm-tree:9.5")
     implementation("org.ow2.asm:asm-util:9.5")
     implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.28.0")
+
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -66,7 +65,6 @@ task("fatJar", type = Jar::class) {
 
 tasks.jar {
     from("COPYING", "COPYING.LESSER")
-    from(zipTree("lib/sootclasses-modified.jar"))
     destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 

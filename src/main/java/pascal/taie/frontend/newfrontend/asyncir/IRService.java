@@ -14,13 +14,11 @@ import pascal.taie.ir.proginfo.MethodRef;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.classes.Subsignature;
+import pascal.taie.language.type.Type;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +28,7 @@ public class IRService {
     private static final int LOADING_START = 1;
     private static final int LOADING_DONE = 2;
 
-    ExecutorService executorService = Executors.newFixedThreadPool(8);
+//    ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     private final ConcurrentHashMap<JMethod, AtomicBoolean> methodStatusMap = new ConcurrentHashMap<>();
 
@@ -43,19 +41,28 @@ public class IRService {
     public void getIRAsync(JMethod method) {
         AtomicBoolean status = methodStatusMap.computeIfAbsent(method, k -> new AtomicBoolean(false));
         if (status.compareAndSet(false, true)) {
-            executorService.submit(() -> {
-                method.getIR();
-            });
+//            executorService.submit(() -> {
+//                method.getIR();
+//            });
         }
     }
 
     public IR loadingAndGetIR(JMethod method) {
         loadClassSourceSync(method.getDeclaringClass());
-        AsmMethodSource source = method2Source.get(method);
-        assert source != null;
+        AsmMethodSource source = method2Source.remove(method);
+        if (source == null) {
+            throw new IllegalStateException("""
+                    Cannot find method source for %s,
+                    most likely the method is built twice by mistake.
+                    """.formatted(method));
+        }
         AsmIRBuilder builder = new AsmIRBuilder(method, source);
         builder.build();
-        return builder.getIr();
+        IR ir = builder.getIr();
+        if (ir == null) {
+            throw new IllegalStateException("IR is null for method %s".formatted(method));
+        }
+        return ir;
     }
 
     public void loadClassSourceSync(JClass clazz) {
@@ -96,13 +103,19 @@ public class IRService {
             @Override
             public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
                 JSRInlinerAdapter adapter = new JSRInlinerAdapter(null, access, name, descriptor, signature, exceptions);
-                org.objectweb.asm.Type t = org.objectweb.asm.Type.getType(descriptor);
-                var paramTypes = Arrays.stream(t.getArgumentTypes())
-                        .map(BuildContext.get()::fromAsmType)
-                        .toList();
-                var retType = BuildContext.get().fromAsmType(t.getReturnType());
+                var paramAndRet = BuildContext.get().fromAsmMethodType(descriptor);
+                List<Type> paramTypes = paramAndRet.first();
+                Type retType = paramAndRet.second();
                 JMethod method1 = clazz.getDeclaredMethod(Subsignature.get(name, paramTypes, retType));
-                assert Objects.requireNonNull(method1).getDeclaringClass() == clazz;
+                if (method1 == null) {
+                    throw new IllegalStateException("Cannot find method %s in class %s".formatted(name, clazz));
+                }
+                if (method2Source.containsKey(method1)) {
+                    throw new IllegalStateException("Method %s is built twice".formatted(method1));
+                }
+                if (method1.getDeclaringClass() != clazz) {
+                    throw new IllegalStateException("Method %s is not declared in class %s".formatted(method1, clazz));
+                }
                 method2Source.put(method1, new AsmMethodSource(adapter, version));
                 return adapter;
             }

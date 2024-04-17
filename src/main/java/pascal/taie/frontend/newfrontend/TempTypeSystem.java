@@ -3,22 +3,32 @@ package pascal.taie.frontend.newfrontend;
 import pascal.taie.language.classes.ClassNames;
 import pascal.taie.language.classes.JClassLoader;
 import pascal.taie.language.type.ArrayType;
+import pascal.taie.language.type.BooleanType;
+import pascal.taie.language.type.ByteType;
+import pascal.taie.language.type.CharType;
 import pascal.taie.language.type.ClassType;
+import pascal.taie.language.type.DoubleType;
+import pascal.taie.language.type.FloatType;
+import pascal.taie.language.type.IntType;
+import pascal.taie.language.type.LongType;
 import pascal.taie.language.type.NullType;
 import pascal.taie.language.type.PrimitiveType;
+import pascal.taie.language.type.ShortType;
 import pascal.taie.language.type.Type;
 import pascal.taie.language.type.TypeSystem;
 import pascal.taie.language.type.VoidType;
 import pascal.taie.util.AnalysisException;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import static pascal.taie.util.collection.Maps.newConcurrentMap;
 
 /**
  * Temporary Type System for frontend,
- * Copy && Paste from language.type.TypeSystemImpl
+ * Copy and Paste from language.type.TypeSystemImpl
  */
 public class TempTypeSystem implements TypeSystem {
 
@@ -28,6 +38,8 @@ public class TempTypeSystem implements TypeSystem {
 
     private final Map<String, ClassType> defaultClassTypes = newConcurrentMap();
 
+    private final Map<String, ClassType> internalNameClassTypes = newConcurrentMap();
+
     /**
      * This map may be concurrently written during IR construction,
      * thus we use concurrent map to ensure its thread-safety.
@@ -35,26 +47,30 @@ public class TempTypeSystem implements TypeSystem {
     private final ConcurrentMap<Integer, ConcurrentMap<Type, ArrayType>> arrayTypes
             = newConcurrentMap(8);
 
-    // Boxed types
-    private final ClassType BOOLEAN;
-    private final ClassType BYTE;
-    private final ClassType SHORT;
-    private final ClassType CHARACTER;
-    private final ClassType INTEGER;
-    private final ClassType LONG;
-    private final ClassType FLOAT;
-    private final ClassType DOUBLE;
+
+    private final Map<PrimitiveType, ClassType> boxedMap;
+
+    private final Map<ClassType, PrimitiveType> unboxedMap;
+
+    private final Map<String, PrimitiveType> primitiveTypes;
 
     public TempTypeSystem(JClassLoader loader) {
         defaultClassLoader = loader;
-        BOOLEAN = getClassType(loader, ClassNames.BOOLEAN);
-        BYTE = getClassType(loader, ClassNames.BYTE);
-        SHORT = getClassType(loader, ClassNames.SHORT);
-        CHARACTER = getClassType(loader, ClassNames.CHARACTER);
-        INTEGER = getClassType(loader, ClassNames.INTEGER);
-        LONG = getClassType(loader, ClassNames.LONG);
-        FLOAT = getClassType(loader, ClassNames.FLOAT);
-        DOUBLE = getClassType(loader, ClassNames.DOUBLE);
+        boxedMap = Map.of(
+                BooleanType.BOOLEAN, getClassType(loader, ClassNames.BOOLEAN),
+                ByteType.BYTE, getClassType(loader, ClassNames.BYTE),
+                ShortType.SHORT, getClassType(loader, ClassNames.SHORT),
+                CharType.CHAR, getClassType(loader, ClassNames.CHARACTER),
+                IntType.INT, getClassType(loader, ClassNames.INTEGER),
+                LongType.LONG, getClassType(loader, ClassNames.LONG),
+                FloatType.FLOAT, getClassType(loader, ClassNames.FLOAT),
+                DoubleType.DOUBLE, getClassType(loader, ClassNames.DOUBLE));
+        unboxedMap = boxedMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        primitiveTypes = boxedMap.keySet()
+                .stream()
+                .collect(Collectors.toMap(PrimitiveType::getName, t -> t));
     }
 
     @Override
@@ -74,8 +90,10 @@ public class TempTypeSystem implements TypeSystem {
                 return getArrayType(
                         getType(loader, typeName.substring(0, i + 1)),
                         dim);
-            } else if (PrimitiveType.isPrimitiveType(typeName)) {
-                return PrimitiveType.get(typeName);
+            } else if (isPrimitiveType(typeName)) {
+                return getPrimitiveType(typeName);
+            } else if (typeName.equals(VoidType.VOID.getName())) {
+                return VoidType.VOID;
             } else {
                 return getClassType(loader, typeName);
             }
@@ -92,13 +110,19 @@ public class TempTypeSystem implements TypeSystem {
 
     @Override
     public ClassType getClassType(JClassLoader loader, String className) {
-        assert loader == defaultClassLoader;
-        if (loader == defaultClassLoader) {
-            return defaultClassTypes.computeIfAbsent(className,
-                    name -> new ClassType(loader, name));
-        }
-        return classTypes.computeIfAbsent(loader, l -> newConcurrentMap())
-                .computeIfAbsent(className, name -> new ClassType(loader, name));
+//        assert loader == defaultClassLoader;
+//        if (loader == defaultClassLoader) {
+//            return defaultClassTypes.computeIfAbsent(className,
+//                    name -> new ClassType(loader, name));
+//        }
+//        return classTypes.computeIfAbsent(loader, l -> newConcurrentMap())
+//                .computeIfAbsent(className, name -> new ClassType(loader, name));
+        return getClassTypeByInternalName(className.replace('.', '/'));
+    }
+
+    public ClassType getClassTypeByInternalName(String internalName) {
+        return internalNameClassTypes.computeIfAbsent(internalName,
+                name -> new ClassType(defaultClassLoader, name.replace('/', '.')));
     }
 
     @Override
@@ -119,40 +143,22 @@ public class TempTypeSystem implements TypeSystem {
     }
 
     @Override
+    public PrimitiveType getPrimitiveType(String typeName) {
+        return Objects.requireNonNull(primitiveTypes.get(typeName),
+                typeName + " is not a primitive type");
+    }
+
+    @Override
     public ClassType getBoxedType(PrimitiveType type) {
-        return switch (type) {
-            case BOOLEAN -> BOOLEAN;
-            case BYTE -> BYTE;
-            case SHORT -> SHORT;
-            case CHAR -> CHARACTER;
-            case INT -> INTEGER;
-            case LONG -> LONG;
-            case FLOAT -> FLOAT;
-            case DOUBLE -> DOUBLE;
-        };
+        return boxedMap.get(type);
     }
 
     @Override
     public PrimitiveType getUnboxedType(ClassType type) {
-        if (type.equals(BOOLEAN)) {
-            return PrimitiveType.BOOLEAN;
-        } else if (type.equals(BYTE)) {
-            return PrimitiveType.BYTE;
-        } else if (type.equals(SHORT)) {
-            return PrimitiveType.SHORT;
-        } else if (type.equals(CHARACTER)) {
-            return PrimitiveType.CHAR;
-        } else if (type.equals(INTEGER)) {
-            return PrimitiveType.INT;
-        } else if (type.equals(LONG)) {
-            return PrimitiveType.LONG;
-        } else if (type.equals(FLOAT)) {
-            return PrimitiveType.FLOAT;
-        } else if (type.equals(DOUBLE)) {
-            return PrimitiveType.DOUBLE;
-        }
-        throw new AnalysisException(type + " cannot be unboxed");
+        return Objects.requireNonNull(unboxedMap.get(type),
+                type + " cannot be unboxed");
     }
+
 
     /**
      * This method should never be called
@@ -160,5 +166,10 @@ public class TempTypeSystem implements TypeSystem {
     @Override
     public boolean isSubtype(Type supertype, Type subtype) {
         return Utils.isSubtype(supertype, subtype);
+    }
+
+    @Override
+    public boolean isPrimitiveType(String typeName) {
+        return false;
     }
 }

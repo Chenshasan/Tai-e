@@ -6,13 +6,14 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.LocalVariableNode;
+import pascal.taie.frontend.newfrontend.typing.VarSSAInfo;
+import pascal.taie.ir.exp.ExpModifier;
 import pascal.taie.ir.exp.IntLiteral;
 import pascal.taie.ir.exp.Literal;
 import pascal.taie.ir.exp.NullLiteral;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.type.NullType;
-import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.Pair;
 
@@ -27,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static pascal.taie.language.type.IntType.INT;
 
 public class VarManager implements IVarManager {
 
@@ -49,13 +52,13 @@ public class VarManager implements IVarManager {
 
     private int counter;
 
-    private final int INT_CACHE_LOW = -128;
+    final int INT_CACHE_LOW = -8;
 
-    private final int INT_CACHE_HIGH = 127;
+    final int INT_CACHE_HIGH = 7;
 
-    private final Var[] intConstVarCache;
+    final Var[] intConstVarCache;
 
-    private final Var[] local2Var; // slot -> Var
+    private Var[] local2Var; // slot -> Var
 
     // parsedLocalVarTable :: slot -> (start(inclusive), end(exclusive)) -> VarNode
     private final Map<Pair<Integer, Integer>, LocalVariableNode>[] parsedLocalVarTable;
@@ -70,25 +73,30 @@ public class VarManager implements IVarManager {
 
     private @Nullable Var thisVar;
 
-    private @Nullable Var zeroLiteral;
-
     private @Nullable Var nullLiteral;
 
+    private final Map<String, Integer> nameUsedCount = Maps.newMap();
+
+    private final VarSSAInfo info;
+
+    @SuppressWarnings("unchecked")
     public VarManager(JMethod method,
                       @Nullable List<LocalVariableNode> localVariableTable,
                       InsnList insnList,
-                      int maxLocal) {
+                      int maxLocal,
+                      VarSSAInfo info) {
         this.method = method;
         this.localVariableTable = localVariableTable;
         this.existsLocalVariableTable = localVariableTable != null && !localVariableTable.isEmpty();
         this.insnList = insnList;
-        this.intConstVarCache = new Var[-INT_CACHE_LOW + 1 + INT_CACHE_HIGH];
+        intConstVarCache = new Var[-INT_CACHE_LOW + 1 + INT_CACHE_HIGH];
         this.local2Var = new Var[maxLocal];
         this.parsedLocalVarTable = existsLocalVariableTable ? new Map[maxLocal] : null;
         this.params = new ArrayList<>();
         this.var2Local = Maps.newMap();
         this.vars = new ArrayList<>(maxLocal * 6);
         this.retVars = new HashSet<>();
+        this.info = info;
 
         if (existsLocalVariableTable) {
             processLocalVarTable();
@@ -113,7 +121,7 @@ public class VarManager implements IVarManager {
                             .stream()
                             .findAny()
                             .map(k -> localVarTableForSlot.get(k).name)
-                            .ifPresent(v::setName);
+                            .ifPresent((name) -> ExpModifier.setName(v, tryUseName(name)));
                 }
             }
             params.add(v);
@@ -183,7 +191,9 @@ public class VarManager implements IVarManager {
     }
 
     public Var getTempVar() {
-        return newVar(TEMP_PREFIX + "v" + counter);
+        Var v = newVar(TEMP_PREFIX + "v" + counter);
+        info.setSSA(v);
+        return v;
     }
 
     @Override
@@ -262,6 +272,7 @@ public class VarManager implements IVarManager {
         Var v1 = newVar(name);
         var2Local.put(v1, slot);
         local2Var[slot] = v1;
+        info.setNonSSA(v1);
     }
 
     private String getLocalName(int slot, boolean isStatic) {
@@ -273,10 +284,10 @@ public class VarManager implements IVarManager {
     }
 
     public void fixName(Var var, String newName) {
-        assert var.getName().startsWith(LOCAL_PREFIX);
+//        assert var.getName().startsWith(LOCAL_PREFIX);
         String sub = var.getName().substring(1);
         String[] counter = sub.split("#");
-        var.setName(newName + (counter.length >= 2 ? "#" + counter[1] : ""));
+        ExpModifier.setName(var, newName + (counter.length >= 2 ? "#" + counter[1] : ""));
     }
 
     public Var splitLocal(Var old, int count, int slot, Stream<AbstractInsnNode> origins) {
@@ -296,7 +307,7 @@ public class VarManager implements IVarManager {
             String finalName = name.orElse(old.getName());
 
             if (count == 1) {
-                old.setName(finalName);
+                ExpModifier.setName(old, finalName);
                 return old;
             } else {
                 Var splitLocal = getSplitVar(getDefaultSplitName(finalName, count), slot);
@@ -315,6 +326,24 @@ public class VarManager implements IVarManager {
         }
     }
 
+    public void enlargeLocal(int newMaxLocal, int[] originMapping) {
+        assert newMaxLocal == originMapping.length;
+        Var[] newLocal2Var = new Var[newMaxLocal];
+        System.arraycopy(local2Var, 0, newLocal2Var, 0, local2Var.length);
+        int counter = 0;
+        for (int i = local2Var.length; i < originMapping.length; ++i) {
+            newLocal2Var[i] = newVar(tryUseName(newLocal2Var[originMapping[i]].getName()));
+            var2Local.put(newLocal2Var[i], originMapping[i]);
+        }
+
+        local2Var = newLocal2Var;
+    }
+
+    public void aliasLocal(Var var, int slot) {
+        assert !var2Local.containsKey(var);
+        var2Local.put(var, slot);
+    }
+
     private Var getSplitVar(String name, int slot) {
         Var v = newVar(name);
         var2Local.put(v, slot);
@@ -329,18 +358,10 @@ public class VarManager implements IVarManager {
         this.retVars.add(v);
     }
 
-    public Var getZeroLiteral() {
-        if (zeroLiteral == null) {
-            zeroLiteral = newConstVar("*intliteral0", IntLiteral.get(0));
-            zeroLiteral.setType(PrimitiveType.INT);
-        }
-        return zeroLiteral;
-    }
-
     public Var getNullLiteral() {
         if (nullLiteral == null) {
             nullLiteral = newConstVar(NULL_LITERAL, NullLiteral.get());
-            nullLiteral.setType(NullType.NULL);
+            ExpModifier.setType(nullLiteral, NullType.NULL);
         }
         return nullLiteral;
     }
@@ -361,7 +382,7 @@ public class VarManager implements IVarManager {
             int index = value - INT_CACHE_LOW;
             if (intConstVarCache[index] == null) {
                 String name = TEMP_PREFIX + "c" + "i" + value;
-                Var v = new Var(method, name, PrimitiveType.INT, counter++, IntLiteral.get(value));
+                Var v = new Var(method, name, INT, counter++, IntLiteral.get(value));
                 intConstVarCache[index] = v;
                 vars.add(intConstVarCache[index]);
             }
@@ -375,6 +396,11 @@ public class VarManager implements IVarManager {
         return v.getName().startsWith(TEMP_PREFIX) && v != nullLiteral;
     }
 
+    public static boolean mayRename(Var v) {
+        return v.getName().startsWith(TEMP_PREFIX) ||
+                v.getName().startsWith(LOCAL_PREFIX);
+    }
+
     public boolean isNotSpecialVar(Var v) {
         return !v.getName().startsWith("*") && !Objects.equals(v.getName(), NULL_LITERAL);
     }
@@ -383,6 +409,10 @@ public class VarManager implements IVarManager {
      * can only be used before splitting
      */
     public boolean isLocalFast(Var v) { return v.getIndex() < local2Var.length; }
+
+    public boolean isLocal(Var v) {
+        return var2Local.containsKey(v);
+    }
 
     private static boolean verifyDefs(List<Pair<Integer, Var>> res) {
         var l = res.stream().map(Pair::first).toList();
@@ -410,14 +440,16 @@ public class VarManager implements IVarManager {
     }
 
     private Var newVar(String name) {
+        name = tryUseName(name);
         Var v = new Var(method, name, null, counter++);
         vars.add(v);
         return v;
     }
 
     private Var newConstVar(String name, Literal literal) {
-        Var v = new Var(method, name, null, counter++, literal);
+        Var v = new Var(method, name, literal.getType(), counter++, literal);
         vars.add(v);
+        info.setNonSSA(v);
         return v;
     }
 
@@ -438,7 +470,18 @@ public class VarManager implements IVarManager {
     public void removeAndReindexVars(Predicate<Var> p) {
         vars.removeIf(p);
         for (int i = 0; i < vars.size(); i++) {
-            vars.get(i).setIndex(i);
+            ExpModifier.setIndex(vars.get(i), i);
+        }
+    }
+
+    public String tryUseName(String name) {
+        if (nameUsedCount.containsKey(name)) {
+            int count = nameUsedCount.get(name);
+            nameUsedCount.put(name, count + 1);
+            return name + "#" + count;
+        } else {
+            nameUsedCount.put(name, 1);
+            return name;
         }
     }
 }

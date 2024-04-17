@@ -1,9 +1,11 @@
 package pascal.taie.frontend.newfrontend.ssa;
 
 import pascal.taie.frontend.newfrontend.SparseSet;
+import pascal.taie.frontend.newfrontend.data.IntGraph;
+import pascal.taie.frontend.newfrontend.data.IntList;
+import pascal.taie.frontend.newfrontend.data.SparseArray;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p> This class implements "A Simple, Fast Dominance Algorithm"
@@ -38,13 +40,11 @@ public class Dominator<N> {
      * <p>So, if we traverse the graph in reverse post order, for any block,
      * its immediate dominator must have been visited.</p>
      */
-    private final int[] postOrder;
+    private int[] postOrder;
 
     private int[] dom;
 
-    private int[] height;
-
-    private int entry;
+    private final int entry;
 
     public static final int UNDEFINED = -1;
 
@@ -53,11 +53,13 @@ public class Dominator<N> {
         this.entry = graph.getIntEntry();
         postIndex = new int[graph.size()];
         postOrder = new int[graph.size()];
+        Arrays.fill(postOrder, UNDEFINED);
+        dfsTrav();
     }
 
-    public record DominatorFrontiers(SparseSet[] res) {
+    public record DominatorFrontiers(SparseArray<SparseSet> res) {
         public SparseSet get(int index) {
-            return res[index];
+            return res.get(index);
         }
     }
 
@@ -73,9 +75,6 @@ public class Dominator<N> {
             boolean changed = true;
             dom = new int[graph.size()];
             Arrays.fill(dom, UNDEFINED);
-
-            // TODO: can/need we calculates idom in dfs?
-            dfsTrav();
             int entry = graph.getIndex(graph.getEntry());
             dom[entry] = entry;
             while (changed) {
@@ -98,18 +97,24 @@ public class Dominator<N> {
         int[] dom = getDomTree();
         // TODO: it seems that sparse set allocation consumes a considerable time,
         //       can we optimize it?
-        SparseSet[] df = new SparseSet[graph.size()];
-        for (int i = 0; i < graph.size(); ++i) {
-            df[i] = new SparseSet(graph.size(), graph.size());
-        }
+        int gSize = graph.size();
+        SparseArray<SparseSet> df = new SparseArray<>(gSize) {
+            @Override
+            protected SparseSet createInstance() {
+                return new SparseSet(gSize, gSize);
+            }
+        };
         for (int i = 0; i < graph.size(); ++i) {
             int size = graph.getMergedInEdgesCount(i);
-            if (size >= 2) {
+            if (size >= 2 || i == graph.getIntEntry()) {
+                /*
+                i == graph.getIntEntry for that we do not have pseudo entry, so we have to
+                force dominator frontier calculator to calculate df for the actual entry.
+                 */
                 for (int j = 0; j < size; ++j) {
                     int runner = graph.getMergedInEdge(i, j);
-                    while (runner != dom[i]) {
-                        assert runner != -1;
-                        df[runner].add(i);
+                    while (runner != dom[i] && runner != -1) {
+                        df.get(runner).add(i);
                         runner = dom[runner];
                     }
                 }
@@ -118,36 +123,58 @@ public class Dominator<N> {
         return new DominatorFrontiers(df);
     }
 
-    public int[] assignDomTreeHeight() {
-        if (height == null) {
-            int[] dom = getDomTree();
-            height = new int[graph.size()];
-            Arrays.fill(height, -1);
-            for (int i = 0; i < graph.size(); ++i) {
-                climbDomTree(i, height);
+    public int[] getDomTreeDfsSeq() {
+        int[] dom = getDomTree();
+        IntGraph domTree = new IntGraph(graph.size());
+        for (int i = 0; i < graph.size(); ++i) {
+            // dom[entry] = entry, avoid circular reference
+            // dom[i] = UNDEFINED, avoid unreachable node
+            if (dom[i] != i && dom[i] != UNDEFINED) {
+                domTree.addEdge(dom[i], i);
             }
         }
-        return height;
+        int[] dfsSeq = new int[graph.size()];
+        timeIn = new int[graph.size()];
+        timeOut = new int[graph.size()];
+        forward = 0;
+        time = 0;
+        dfsDomTree(dfsSeq, domTree, graph.getIndex(graph.getEntry()));
+        return dfsSeq;
     }
 
-    private void climbDomTree(int runner, int[] height) {
-        if (height[runner] != -1) {
-            return;
-        } else if (dom[runner] == runner) {
-            height[runner] = 0;
-            return;
-        } else if (height[dom[runner]] != -1) {
-            height[runner] = height[dom[runner]] + 1;
-            return;
-        } else {
-            climbDomTree(dom[runner], height);
-            height[runner] = height[dom[runner]] + 1;
+    int forward;
+    int[] timeIn;
+    int[] timeOut;
+    int time;
+    private void dfsDomTree(int[] dfsSeq, IntGraph domTree, int now) {
+        dfsSeq[forward++] = now;
+        timeIn[now] = time++;
+        if (domTree.has(now)) {
+            IntList out = domTree.get(now);
+            for (int i = 0; i < out.size(); ++i) {
+                int succ = out.get(i);
+                dfsDomTree(dfsSeq, domTree, succ);
+            }
         }
+        timeOut[now] = time++;
+    }
+
+    /**
+     * Check if a dominates b. Should be used after {@link #getDomTree()} is called.
+     * @param a a node index
+     * @param b a node index
+     * @return {@code true} if a dominates b
+     */
+    public boolean dominates(int a, int b) {
+        return timeIn[a] <= timeIn[b] && timeOut[a] >= timeOut[b];
     }
 
     private void dfsTrav() {
         boolean[] visited = new boolean[graph.size()];
         dfs(entry, visited);
+        if (post != graph.size()) {
+            postOrder = Arrays.copyOf(postOrder, post);
+        }
     }
 
     int post;
@@ -169,7 +196,7 @@ public class Dominator<N> {
         // first set entry node's idom to itself
         dom[entry] = entry;
         // reverse post order
-        for (int i = graph.size() - 1; i >= 0; --i) {
+        for (int i = postOrder.length - 1; i >= 0; --i) {
             int node = postOrder[i];
             changed |= processNode(dom, node);
         }

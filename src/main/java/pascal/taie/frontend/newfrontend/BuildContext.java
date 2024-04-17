@@ -1,19 +1,11 @@
 package pascal.taie.frontend.newfrontend;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.JSRInlinerAdapter;
 import pascal.taie.World;
 import pascal.taie.frontend.newfrontend.asyncir.IRService;
 import pascal.taie.ir.exp.MethodType;
 import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JClassLoader;
-import pascal.taie.language.classes.JMethod;
-import pascal.taie.language.classes.Subsignature;
-import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.language.type.ReferenceType;
 import pascal.taie.language.type.Type;
 import pascal.taie.language.type.TypeSystem;
@@ -22,28 +14,31 @@ import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.Pair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentMap;
+
+import static pascal.taie.language.type.BooleanType.BOOLEAN;
+import static pascal.taie.language.type.ByteType.BYTE;
+import static pascal.taie.language.type.CharType.CHAR;
+import static pascal.taie.language.type.DoubleType.DOUBLE;
+import static pascal.taie.language.type.FloatType.FLOAT;
+import static pascal.taie.language.type.IntType.INT;
+import static pascal.taie.language.type.LongType.LONG;
+import static pascal.taie.language.type.ShortType.SHORT;
 
 public class BuildContext {
 
     private final JClassLoader defaultClassLoader;
 
-    private final TypeSystem typeSystem;
+    private final TempTypeSystem typeSystem;
 
     private ClassHierarchy hierarchy;
-
-    final ConcurrentMap<JMethod, JSRInlinerAdapter> method2Source;
 
     final IRService irService = new IRService();
 
     private BuildContext(JClassLoader defaultClassLoader, TypeSystem typeSystem) {
         this.defaultClassLoader = defaultClassLoader;
-        this.typeSystem = typeSystem;
-        method2Source = Maps.newConcurrentMap();
+        this.typeSystem = (TempTypeSystem) typeSystem;
     }
 
     static BuildContext buildContext;
@@ -79,13 +74,29 @@ public class BuildContext {
     }
 
     public ReferenceType fromAsmInternalName(String internalName) {
+        if (internalName.charAt(0) != '[') {
+            return typeSystem.getClassTypeByInternalName(internalName);
+        }
         return (ReferenceType) fromAsmType(
                 org.objectweb.asm.Type.getObjectType(internalName));
     }
 
     public Type fromAsmType(String descriptor) {
-        org.objectweb.asm.Type t = org.objectweb.asm.Type.getType(descriptor);
-        return fromAsmType(t);
+        return switch (descriptor.charAt(0)) {
+            case 'V' -> VoidType.VOID;
+            case 'Z' -> BOOLEAN;
+            case 'C' -> CHAR;
+            case 'B' -> BYTE;
+            case 'S' -> SHORT;
+            case 'I' -> INT;
+            case 'F' -> FLOAT;
+            case 'J' -> LONG;
+            case 'D' -> DOUBLE;
+            case '[' -> fromAsmType(org.objectweb.asm.Type.getType(descriptor));
+            case 'L' -> typeSystem.getClassTypeByInternalName(
+                    descriptor.substring(1, descriptor.length() - 1));
+            default -> throw new IllegalArgumentException("Invalid descriptor: " + descriptor);
+        };
     }
 
     public Type fromAsmType(org.objectweb.asm.Type t) {
@@ -94,14 +105,14 @@ public class BuildContext {
             return VoidType.VOID;
         } else if (sort < org.objectweb.asm.Type.ARRAY) {
             return switch (sort) {
-                case org.objectweb.asm.Type.BOOLEAN -> PrimitiveType.BOOLEAN;
-                case org.objectweb.asm.Type.BYTE -> PrimitiveType.BYTE;
-                case org.objectweb.asm.Type.CHAR -> PrimitiveType.CHAR;
-                case org.objectweb.asm.Type.SHORT -> PrimitiveType.SHORT;
-                case org.objectweb.asm.Type.INT -> PrimitiveType.INT;
-                case org.objectweb.asm.Type.LONG -> PrimitiveType.LONG;
-                case org.objectweb.asm.Type.FLOAT -> PrimitiveType.FLOAT;
-                case org.objectweb.asm.Type.DOUBLE -> PrimitiveType.DOUBLE;
+                case org.objectweb.asm.Type.BOOLEAN -> BOOLEAN;
+                case org.objectweb.asm.Type.BYTE -> BYTE;
+                case org.objectweb.asm.Type.CHAR -> CHAR;
+                case org.objectweb.asm.Type.SHORT -> SHORT;
+                case org.objectweb.asm.Type.INT -> INT;
+                case org.objectweb.asm.Type.LONG -> LONG;
+                case org.objectweb.asm.Type.FLOAT -> FLOAT;
+                case org.objectweb.asm.Type.DOUBLE -> DOUBLE;
                 default -> throw new UnsupportedOperationException();
             };
         } else if (sort == org.objectweb.asm.Type.ARRAY) {
@@ -128,7 +139,7 @@ public class BuildContext {
         return fromAsmMethodType(t);
     }
 
-    public Pair<List<Type>, Type> fromAsmMethodType(org.objectweb.asm.Type t) {
+    private Pair<List<Type>, Type> fromAsmMethodType(org.objectweb.asm.Type t) {
         if (t.getSort() == org.objectweb.asm.Type.METHOD) {
             List<Type> paramTypes = new ArrayList<>();
             for (org.objectweb.asm.Type t1 : t.getArgumentTypes()) {
@@ -146,10 +157,10 @@ public class BuildContext {
     }
 
     public JClass toJClass(String internalName) {
-        if (internalName.startsWith("[")) {
+        if (internalName.charAt(0) == '[') {
             return Utils.getObject().getJClass();
         } else {
-            return getClassByName(org.objectweb.asm.Type.getObjectType(internalName).getClassName());
+            return typeSystem.getClassTypeByInternalName(internalName).getJClass();
         }
     }
 

@@ -1,11 +1,13 @@
 package pascal.taie.frontend.newfrontend;
 
+import pascal.taie.frontend.newfrontend.ssa.PhiStmt;
 import pascal.taie.ir.exp.ArrayAccess;
 import pascal.taie.ir.exp.ArrayLengthExp;
 import pascal.taie.ir.exp.BinaryExp;
 import pascal.taie.ir.exp.ClassLiteral;
 import pascal.taie.ir.exp.ComparisonExp;
 import pascal.taie.ir.exp.ConditionExp;
+import pascal.taie.ir.exp.ExpModifier;
 import pascal.taie.ir.exp.FieldAccess;
 import pascal.taie.ir.exp.InstanceFieldAccess;
 import pascal.taie.ir.exp.InvokeDynamic;
@@ -47,7 +49,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pascal.taie.frontend.newfrontend.Utils.*;
+import static pascal.taie.language.type.BooleanType.BOOLEAN;
+import static pascal.taie.language.type.ByteType.BYTE;
+import static pascal.taie.language.type.CharType.CHAR;
+import static pascal.taie.language.type.IntType.INT;
+import static pascal.taie.language.type.ShortType.SHORT;
 
+// TODO: moving to newfrontend.typing package
 public class TypeInference0 {
 
     private final AsmIRBuilder builder;
@@ -96,7 +104,7 @@ public class TypeInference0 {
             }
             Type now = computeLocalType(v);
             assert ! (now instanceof Uninitialized);
-            v.setType(now);
+            ExpModifier.setType(v, now);
         }
     }
 
@@ -124,7 +132,8 @@ public class TypeInference0 {
             if (now instanceof PrimitiveType) {
                 assert t == now || canHoldsInt(t) && canHoldsInt(now);
             } else {
-                assert allTypes.stream().allMatch(t1 -> t1 instanceof ReferenceType);
+                assert allTypes.stream().allMatch(t1 -> t1 instanceof ReferenceType ||
+                        t1 instanceof Uninitialized);
                 Set<ReferenceType> res = lca(allTypes.stream()
                         .filter(t1 -> ! (t1 instanceof NullType) && ! (t1 instanceof Uninitialized))
                         .map(i -> (ReferenceType) i)
@@ -161,7 +170,7 @@ public class TypeInference0 {
             Type t = typing.getType(v);
             if (t == null) {
                 int slot = localCells[v.getIndex()];
-                assert slot != -1;
+                assert slot != -1 && slot < typing.frameLocalType().size();
                 Object frameLocalType = typing.frameLocalType().get(slot);
                 Type currentType = fromAsmFrameType(frameLocalType);
                 typing.setType(v, currentType);
@@ -182,16 +191,15 @@ public class TypeInference0 {
                 return;
             }
             if (t == Uninitialized.UNINITIALIZED) {
-                var.setType(getObject());
+                ExpModifier.setType(var, getObject());
             } else {
-                var.setType(t);
+                ExpModifier.setType(var, t);
             }
         }
     }
 
     private boolean isLocal(Var v) {
-        return localTypeConstrains.get(v.getIndex()) != null
-                || localCells[v.getIndex()] != -1;
+        return !builder.varSSAInfo.isSSAVar(v);
     }
 
     private void setType(Typing typing, Var v, Type t) {
@@ -200,6 +208,9 @@ public class TypeInference0 {
     }
 
     private void newTypeAssign(Var var, Type t, Typing typing) {
+        if (var.getType() != null) {
+            return;
+        }
         setType(typing, var, t);
     }
 
@@ -219,6 +230,10 @@ public class TypeInference0 {
         assert types.size() == 1 ||
                 types.stream().allMatch(Utils::canHoldsInt);
         Type resultType = types.get(0);
+        if (resultType == BOOLEAN || resultType == BYTE ||
+                resultType == SHORT || resultType == CHAR) {
+            resultType = INT;
+        }
         setType(typing, var, resultType);
     }
 
@@ -228,12 +243,12 @@ public class TypeInference0 {
         if (t instanceof ArrayType arrayType) {
             Type targetType = arrayType.elementType();
             setType(typing, target, targetType);
+        } else if (t instanceof NullType) {
+            setType(typing, target, t);
         } else {
             throw new UnsupportedOperationException();
         }
     }
-
-    private boolean[] visited;
 
     public void build() {
         buildLocalTypes();
@@ -247,9 +262,9 @@ public class TypeInference0 {
     private void buildLocalTypes() {
         for (BytecodeBlock block : builder.blockSortedList) {
             if (block.getFrame() != null) {
-                block.getInitTyping().forEach((k, v) -> {
-                    if (v != Uninitialized.UNINITIALIZED) {
-                        putMultiSet(localTypeConstrains, k, v);
+                block.visitInitTyping((v, t) -> {
+                    if (t != Uninitialized.UNINITIALIZED) {
+                        putMultiSet(localTypeConstrains, v, t);
                     }
                 });
             }
@@ -274,21 +289,31 @@ public class TypeInference0 {
         if (! m.isStatic()) {
             Var thisVar = this.builder.manager.getThisVar();
             assert thisVar != null;
-            thisVar.setType(m.getDeclaringClass().getType());
+            ExpModifier.setType(thisVar, m.getDeclaringClass().getType());
         }
         for (int i = 0; i < m.getParamCount(); ++i) {
             Var paramI = this.builder.manager.getParams().get(i);
             Type typeI = m.getParamTypes().get(i);
-            paramI.setType(typeI);
+            ExpModifier.setType(paramI, typeI);
         }
     }
 
     private void inferTypes() {
-        visited = new boolean[builder.blockSortedList.size()];
-        for (BytecodeBlock block : builder.blockSortedList) {
-            if (! visited[block.getIndex()]) {
-                inferTypesForBlock(block, getBlockInitTyping(block, varSize));
+//        visited = new boolean[builder.blockSortedList.size()];
+//        for (BytecodeBlock block : builder.blockSortedList) {
+//            if (!visited[block.getIndex()]) {
+//                inferTypesForBlock(block, getBlockInitTyping(block, varSize));
+//            }
+//        }
+        int[] postOrder = builder.getPostOrder();
+        Typing t = new Typing(new Type[varSize], List.of());
+        for (int index = postOrder.length - 1; index >= 0; --index) {
+            int i = postOrder[index];
+            BytecodeBlock block = builder.blockSortedList.get(i);
+            if (block.getFrame() != null) {
+                t = loadNewBlockTyping(block, t);
             }
+            inferTypesForBlock(block, t);
         }
     }
 
@@ -298,166 +323,228 @@ public class TypeInference0 {
         if (builder.isInEdgeEmpty(block) && ! block.isCatch()) {
             frameLocalType = List.of();
         } else {
-            var tempInitTyping = block.getInitTyping();
-            tempInitTyping.forEach((k, v) -> {
-                initTyping[k.getIndex()] = v;
+            block.visitInitTyping((v, t) -> {
+                initTyping[v.getIndex()] = t;
             });
             frameLocalType = block.getFrameLocalType();
         }
         return new Typing(initTyping, frameLocalType);
     }
 
+    Typing loadNewBlockTyping(BytecodeBlock block, Typing typing) {
+        Type[] newTyping = typing.typing;
+        // only NON-SSA need this, it will cause problem in SSA
+        if (!builder.isUSE_SSA()) {
+            for (int i = 0; i < varSize; ++i) {
+                int slot = localCells[i];
+                if (slot != -1) {
+                    newTyping[i] = null;
+                }
+            }
+        }
+        block.visitInitTyping((k, v) -> {
+            if (v != Uninitialized.UNINITIALIZED) {
+                newTyping[k.getIndex()] = v;
+            }
+        });
+        typing.setFrameLocalType(block.getFrameLocalType());
+        return typing;
+    }
+
     private void inferTypesForBlock(BytecodeBlock block, Typing typing) {
-        visited[block.getIndex()] = true;
+        StmtVisitor<Void> visitor = new StmtVisitor<>() {
+            @Override
+            public Void visit(New stmt) {
+                newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(AssignLiteral stmt) {
+                Literal l = stmt.getRValue();
+                Type t;
+                if (l instanceof StringLiteral) {
+                    t = stringType;
+                } else if (l instanceof ClassLiteral) {
+                    t = getKlass();
+                } else {
+                    t = l.getType();
+                }
+                newTypeAssign(stmt.getLValue(), t, typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Copy stmt) {
+                newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue()), typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(LoadArray stmt) {
+                newTypeArrayLoad(stmt.getLValue(), stmt.getRValue(), typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(StoreArray stmt) {
+                Var base = stmt.getArrayAccess().getBase();
+                if (isLocal(base)) {
+                    Type t = getType(typing, stmt.getRValue());
+                    // TODO: this rule is useless, and may not be safe
+                    //       But currently works well, check & remove this in the future
+                    if (t instanceof ReferenceType referenceType && referenceType != NullType.NULL) {
+                        putMultiSet(localTypeAssigns, base, wrap1(referenceType));
+                    }
+                }
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(LoadField stmt) {
+                newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
+                addConstrainsForFieldAccess(stmt.getFieldAccess());
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(StoreField stmt) {
+                addConstrainsForFieldAccess(stmt.getFieldAccess());
+                addTypeConstrain(stmt.getRValue(), stmt.getFieldAccess().getFieldRef().getType());
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Binary stmt) {
+                BinaryExp binaryExp = stmt.getRValue();
+                if (binaryExp instanceof ConditionExp || binaryExp instanceof ComparisonExp) {
+                    newTypeAssign(stmt.getLValue(), binaryExp.getType(), typing);
+                } else if (binaryExp instanceof ShiftExp shiftExp) {
+                    assert canHoldsInt(getType(typing, shiftExp.getOperand2()));
+                    newTypeAssign(stmt.getLValue(), getType(typing, shiftExp.getOperand1()), typing);
+                } else {
+                    newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue().getOperand1(),
+                            stmt.getRValue().getOperand2()), typing);
+                }
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Unary stmt) {
+                if (stmt.getRValue() instanceof ArrayLengthExp arrayLengthExp) {
+                    newTypeAssign(stmt.getLValue(), arrayLengthExp.getType(), typing);
+                } else {
+                    newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue().getOperand()), typing);
+                }
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(InstanceOf stmt) {
+                newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Cast stmt) {
+                newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Invoke stmt) {
+                if (stmt.getLValue() != null) {
+                    newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
+                }
+
+                InvokeExp exp = stmt.getInvokeExp();
+                if (exp instanceof InvokeInstanceExp invokeInstanceExp) {
+                    // TODO: use better rule
+                    if (!invokeInstanceExp.getMethodRef().getName().equals(MethodNames.INIT)) {
+                        addTypeConstrain(invokeInstanceExp.getBase(),
+                                invokeInstanceExp.getMethodRef().getDeclaringClass().getType());
+                    }
+                }
+
+                if (!(exp instanceof InvokeDynamic)) {
+                    List<Var> params = exp.getArgs();
+                    List<Type> paramTypes = exp.getMethodRef().getParameterTypes();
+                    for (int i = 0; i < exp.getArgCount(); ++i) {
+                        Var v = params.get(i);
+                        Type t = paramTypes.get(i);
+                        addTypeConstrain(v, t);
+                    }
+                }
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Return stmt) {
+                if (stmt.getValue() != null) {
+                    addTypeConstrain(stmt.getValue(), builder.method.getReturnType());
+                }
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(Catch stmt) {
+                Type t = block.getExceptionHandlerType();
+                assert t != null;
+                newTypeAssign(stmt.getExceptionRef(), t, typing);
+                return StmtVisitor.super.visit(stmt);
+            }
+
+            @Override
+            public Void visit(PhiStmt stmt) {
+                Var base = stmt.getBase();
+                int slot = localCells[base.getIndex()];
+                if (slot != -1) {
+                    // load from frame
+                    assert slot < typing.frameLocalType().size();
+                    Type t = fromAsmFrameType(typing.frameLocalType().get(slot));
+                    // DON'T use newTypeAssign, it will lose precision
+                    // frame type is type constrain, not type assign
+                    typing.setType(stmt.getLValue(), t);
+                }
+                return null;
+            }
+        };
         for (Stmt stmt : getStmts(block)) {
-            stmt.accept(new StmtVisitor<Void> () {
-                @Override
-                public Void visit(New stmt) {
-                    newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(AssignLiteral stmt) {
-                    Literal l = stmt.getRValue();
-                    Type t;
-                    if (l instanceof StringLiteral) {
-                        t = stringType;
-                    } else if (l instanceof ClassLiteral) {
-                        t = Utils.getKlass();
-                    } else {
-                        t = l.getType();
-                    }
-                    newTypeAssign(stmt.getLValue(), t, typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Copy stmt) {
-                    newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue()), typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(LoadArray stmt) {
-                    newTypeArrayLoad(stmt.getLValue(), stmt.getRValue(), typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(StoreArray stmt) {
-                    Var base = stmt.getArrayAccess().getBase();
-                    if (isLocal(base)) {
-                        Type t = getType(typing, stmt.getRValue());
-                        // TODO: this rule is useless, and may not be safe
-                        //       But currently works well, check & remove this in the future
-                        if (t instanceof ReferenceType referenceType && referenceType != NullType.NULL) {
-                            putMultiSet(localTypeAssigns, base, wrap1(referenceType));
-                        }
-                    }
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(LoadField stmt) {
-                    newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
-                    addConstrainsForFieldAccess(stmt.getFieldAccess());
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(StoreField stmt) {
-                    addConstrainsForFieldAccess(stmt.getFieldAccess());
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Binary stmt) {
-                    BinaryExp binaryExp = stmt.getRValue();
-                    if (binaryExp instanceof ConditionExp || binaryExp instanceof ComparisonExp) {
-                        newTypeAssign(stmt.getLValue(), binaryExp.getType(), typing);
-                    } else if (binaryExp instanceof ShiftExp shiftExp) {
-                        assert canHoldsInt(getType(typing, shiftExp.getOperand2()));
-                        newTypeAssign(stmt.getLValue(), getType(typing, shiftExp.getOperand1()), typing);
-                    } else {
-                        newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue().getOperand1(),
-                                stmt.getRValue().getOperand2()), typing);
-                    }
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Unary stmt) {
-                    if (stmt.getRValue() instanceof ArrayLengthExp arrayLengthExp) {
-                        newTypeAssign(stmt.getLValue(), arrayLengthExp.getType(), typing);
-                    } else {
-                        newTypeAssign(stmt.getLValue(), List.of(stmt.getRValue().getOperand()), typing);
-                    }
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(InstanceOf stmt) {
-                    newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Cast stmt) {
-                    newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Invoke stmt) {
-                    if (stmt.getLValue() != null) {
-                        newTypeAssign(stmt.getLValue(), stmt.getRValue().getType(), typing);
-                    }
-
-                    InvokeExp exp = stmt.getInvokeExp();
-                    if (exp instanceof InvokeInstanceExp invokeInstanceExp) {
-                        // TODO: use better rule
-                        if (!invokeInstanceExp.getMethodRef().getName().equals(MethodNames.INIT)) {
-                            addTypeConstrain(invokeInstanceExp.getBase(),
-                                    invokeInstanceExp.getMethodRef().getDeclaringClass().getType());
-                        }
-                    }
-
-                    if (! (exp instanceof InvokeDynamic)) {
-                        List<Var> params = exp.getArgs();
-                        List<Type> paramTypes = exp.getMethodRef().getParameterTypes();
-                        for (int i = 0; i < exp.getArgCount(); ++i) {
-                            Var v = params.get(i);
-                            Type t = paramTypes.get(i);
-                            addTypeConstrain(v, t);
-                        }
-                    }
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Return stmt) {
-                    if (stmt.getValue() != null) {
-                        addTypeConstrain(stmt.getValue(), builder.method.getReturnType());
-                    }
-                    return StmtVisitor.super.visit(stmt);
-                }
-
-                @Override
-                public Void visit(Catch stmt) {
-                    Type t = block.getExceptionHandlerType();
-                    assert t != null;
-                    newTypeAssign(stmt.getExceptionRef(), t, typing);
-                    return StmtVisitor.super.visit(stmt);
-                }
-            });
+            stmt.accept(visitor);
         }
 
-        for (int i = 0; i < builder.getOutEdgeCount(block); ++i) {
-            BytecodeBlock succ = builder.getOutEdge(block, i);
-            if (!visited[succ.getIndex()] && succ.getFrame() == null) {
-                assert builder.getInEdgeCount(succ) == 1;
-                inferTypesForBlock(succ, typing);
+        if (builder.isUSE_SSA()) {
+            // add type assigns for phi stmts
+            addPhiAssigns(block, typing);
+        }
+    }
+
+    private void addPhiAssigns(BytecodeBlock block, Typing typing) {
+        for (int i = 0; i < builder.getMergedOutEdgesCount(block); ++i) {
+            BytecodeBlock succ = builder.getMergedOutEdge(block, i);
+            for (Stmt stmt : getStmts(succ)) {
+                if (stmt instanceof Catch) {
+                    continue;
+                }
+                if (stmt instanceof PhiStmt phiStmt) {
+                    Var v = phiStmt.getLValue();
+                    if (v.getType() != null) {
+                        continue;
+                    }
+                    Var var = phiStmt.getRValue().findVar(block);
+                    Set<Type> assigns = localTypeAssigns.get(var.getIndex());
+                    if (assigns != null) {
+                        for (Type t : assigns) {
+                            putMultiSet(localTypeAssigns, v, t);
+                        }
+                    } else {
+                        Type t = getType(typing, var);
+                        putMultiSet(localTypeAssigns, v, t);
+                    }
+                } else {
+                    // no more phi stmts
+                    break;
+                }
             }
         }
     }
@@ -466,13 +553,37 @@ public class TypeInference0 {
         return block.getStmts();
     }
 
-    record Typing(Type[] typing, List<Object> frameLocalType) {
+    static final class Typing {
+        private final Type[] typing;
+        private List<Object> frameLocalType;
+
+        Typing(Type[] typing, List<Object> frameLocalType) {
+            this.typing = typing;
+            this.frameLocalType = frameLocalType;
+        }
+
         Type getType(Var v) {
             return typing[v.getIndex()];
         }
 
         void setType(Var v, Type t) {
             typing[v.getIndex()] = t;
+        }
+
+        public List<Object> frameLocalType() {
+            return frameLocalType;
+        }
+
+        public void setFrameLocalType(List<Object> frameLocalType) {
+            this.frameLocalType = frameLocalType;
+        }
+
+        @Override
+        public String toString() {
+            return "Typing{" +
+                    "typing=" + java.util.Arrays.toString(typing) +
+                    ", frameLocalType=" + frameLocalType +
+                    '}';
         }
     }
 

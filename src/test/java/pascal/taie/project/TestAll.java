@@ -7,12 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAll {
 
@@ -58,8 +53,8 @@ public class TestAll {
         FileContainer c = loadContainer(jarInZip);
         assertNotNull(c);
 
-        byte[] card1 = null;
-        byte[] card2 = null;
+        byte[] Card1 = null;
+        byte[] Card2 = null;
 
         for (var i : c.containers()) {
             if (i.fileName().equals("a.zip")) {
@@ -68,7 +63,7 @@ public class TestAll {
                         for (var t : z.files()) {
                             assertSame(t.rootContainer(), c);
                             if (t.fileName().equals("Cards.class")) {
-                                card1 = t.resource().getContent();
+                                Card1 = t.resource().getContent();
                             }
                         }
                     }
@@ -79,14 +74,14 @@ public class TestAll {
                 for (var z : i.files()) {
                     assertSame(z.rootContainer(), c);
                     if (z.fileName().equals("Cards.class")) {
-                        card2 = z.resource().getContent();
+                        Card2 = z.resource().getContent();
                     }
                 }
             }
         }
 
-        assertNotNull(card1);
-        assertNotNull(card2);
-        assertArrayEquals(card1, card2);
+        assertNotNull(Card1);
+        assertNotNull(Card2);
+        assertArrayEquals(Card1, Card2);
     }
 }

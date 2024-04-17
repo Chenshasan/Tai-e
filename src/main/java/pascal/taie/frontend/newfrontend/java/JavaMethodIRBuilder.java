@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
+import org.eclipse.jdt.core.dom.CreationReference;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -163,6 +165,11 @@ import java.util.stream.Stream;
 import static pascal.taie.frontend.newfrontend.java.JDTStringReps.getBinaryName;
 import static pascal.taie.frontend.newfrontend.java.MethodCallBuilder.*;
 import static pascal.taie.frontend.newfrontend.java.TypeUtils.*;
+import static pascal.taie.language.type.BooleanType.BOOLEAN;
+import static pascal.taie.language.type.DoubleType.DOUBLE;
+import static pascal.taie.language.type.FloatType.FLOAT;
+import static pascal.taie.language.type.IntType.INT;
+import static pascal.taie.language.type.LongType.LONG;
 
 
 // TODO: check all the .clone() calls
@@ -194,14 +201,28 @@ public class JavaMethodIRBuilder {
 
     private final List<String> synParaNames;
 
+    private final LambdaExpression lambdaDecl;
+
     public JavaMethodIRBuilder(JavaMethodSource methodSource, JMethod jMethod) {
         this.jMethod = jMethod;
         this.className = jMethod.getDeclaringClass().getName();
         this.targetClass = jMethod.getDeclaringClass();
-        this.targetMethod = methodSource.decl();
+        ASTNode decl = methodSource.decl();
+        if (decl instanceof MethodDeclaration methodDecl) {
+            this.targetMethod = methodDecl;
+            this.lambdaDecl = null;
+            this.rootAst = methodDecl.getAST();
+        } else if (decl instanceof LambdaExpression lambda) {
+            this.targetMethod = null;
+            this.lambdaDecl = lambda;
+            this.rootAst = lambda.getAST();
+        } else {
+            this.targetMethod = null;
+            this.lambdaDecl = null;
+            this.rootAst = methodSource.cu().getAST();
+        }
         this.linenoManger = new LinenoManger(methodSource.cu());
         this.source = methodSource;
-        this.rootAst = targetMethod == null ? methodSource.cu().getAST() : targetMethod.getAST();
         this.innerDesc = InnerClassManager.get().getInnerClassDesc(
                 getDeclClass());
         if (getDeclClass().isAnonymous()) {
@@ -233,6 +254,10 @@ public class JavaMethodIRBuilder {
     }
 
     public IR build() {
+        if (jMethod.isAbstract() || jMethod.isNative()) {
+            // is abstract method
+            throw new NewFrontendException("Cannot build IR for abstract or native method: " + jMethod);
+        }
         IRGenerator generator = new IRGenerator();
         return generator.build();
     }
@@ -436,6 +461,15 @@ public class JavaMethodIRBuilder {
                 }
             }
 
+            if (lambdaDecl != null) {
+                LambdaManager.LambdaDescriptor descriptor = LambdaManager.get().getDescriptor(
+                        lambdaDecl.resolveMethodBinding());
+                List<IVariableBinding> subSig = descriptor.computeArgBindings();
+                for (int i = 0; i < subSig.size(); ++i) {
+                    context.putBinding(subSig.get(i), params.get(i));
+                }
+            }
+
             assert params.size() == jMethod.getParamCount();
         }
 
@@ -458,7 +492,7 @@ public class JavaMethodIRBuilder {
                 buildEnumValuesOf();
             } else {
                 buildCtor();
-                if (targetMethod != null) {
+                if (targetMethod != null || lambdaDecl != null) {
                     buildStmt();
                 } else {
                     context.pushFlow(true);
@@ -701,6 +735,8 @@ public class JavaMethodIRBuilder {
                     //    If `expression` is null, then `enclosedInstance` is `this$0`
                     //    Or else, `enclosedInstance` is `args[0]`
                     //    Use normal protocol to get `capturedBySuper`
+                    //    TODO: normal protocol is not usable here,
+                    //          must be retrieved from the args of current method
                     //    `ctorArgs` can be retrieved from the args of current method
                     InnerClassDescriptor desc = InnerClassManager.get().getInnerClassDesc(
                             binding.getDeclaringClass());
@@ -735,7 +771,7 @@ public class JavaMethodIRBuilder {
                     List<Var> args = List.of(params.get(0), params.get(1));
                     MethodRef ref = MethodRef.get(getClassByName(ENUM).getJClass(),
                             MethodNames.INIT,
-                            getEnumCtorType(), VoidType.VOID, false);
+                            getEnumCtorType(), VoidType.VOID, false, false);
                     InvokeInstanceExp invoke = new InvokeSpecial(ref, getThisVar(), args);
                     addStmt(new Invoke(jMethod, invoke));
                 } else {
@@ -777,7 +813,24 @@ public class JavaMethodIRBuilder {
         }
 
         private void buildStmt() {
-            targetMethod.getBody().accept(stmtVisitor);
+            if (targetMethod != null) {
+                targetMethod.getBody().accept(stmtVisitor);
+            } else {
+                ASTNode body = lambdaDecl.getBody();
+                if (body instanceof Expression exp) {
+                    visitExp(exp);
+                    if (!getReturnType().equals(VoidType.VOID)) {
+                        Var ret = popVar();
+                        addStmt(new Return(ret));
+                    } else {
+                        popSideEffect();
+                        addStmt(new Return());
+                    }
+                    context.pushFlow(false);
+                } else {
+                    body.accept(stmtVisitor);
+                }
+            }
         }
 
         private void visitStmt(Statement stmt) {
@@ -1309,10 +1362,10 @@ public class JavaMethodIRBuilder {
                     .max(Integer::compareTo);
             assert typeList.isPresent();
             int maxType = typeList.get();
-            if (maxType >= getIndexOfPrimitive(PrimitiveType.LONG)) {
+            if (maxType >= getIndexOfPrimitive(LONG)) {
                 return getPrimitiveByIndex(maxType);
             } else if (contextChoose == 0 || contextChoose == 2) {
-                return PrimitiveType.INT;
+                return INT;
             } else {
                 return getPrimitiveByIndex(maxType);
             }
@@ -1498,7 +1551,7 @@ public class JavaMethodIRBuilder {
         }
 
         private Var collectBoolEval(BiConsumer<String, String> condMaker) {
-            Var v = newTempVar(PrimitiveType.BOOLEAN);
+            Var v = newTempVar(BOOLEAN);
             String trueLabel = context.getNewLabel();
             String falseLabel = context.getNewLabel();
             String endLabel = context.getNewLabel();
@@ -1546,7 +1599,7 @@ public class JavaMethodIRBuilder {
             if (exp instanceof ConditionExp e) {
                 cond = e;
             } else {
-                Var v = expToVar(exp, PrimitiveType.BOOLEAN);
+                Var v = expToVar(exp, BOOLEAN);
                 cond = new ConditionExp(ConditionExp.Op.EQ, v, getInt(1));
             }
             genIfHeader(cond, trueLabel, falseLabel, next);
@@ -1697,7 +1750,8 @@ public class JavaMethodIRBuilder {
                                             List<Type> paraType,
                                             Type retType) {
             ClassType t = (ClassType) v.getType();
-            MethodRef r = MethodRef.get(t.getJClass(), methodName, paraType, retType, false);
+            MethodRef r = MethodRef.get(t.getJClass(), methodName, paraType, retType, false,
+                    t.getJClass().isInterface());
             return new InvokeVirtual(r, v, args);
         }
 
@@ -1707,7 +1761,8 @@ public class JavaMethodIRBuilder {
                                                      List<Type> paraType,
                                                      Type retType) {
             ClassType t = (ClassType) v.getType();
-            MethodRef r = MethodRef.get(t.getJClass(), methodName, paraType, retType, false);
+            MethodRef r = MethodRef.get(t.getJClass(), methodName, paraType, retType, false,
+                    t.getJClass().isInterface());
             return new InvokeInterface(r, v, args);
         }
 
@@ -1721,7 +1776,7 @@ public class JavaMethodIRBuilder {
         protected InvokeExp genEquals(Var v1, Var v2) {
             Type objType = getType(ClassNames.OBJECT);
             return genSimpleInvoke(v1, "equals",
-                    List.of(v2), List.of(objType), PrimitiveType.BOOLEAN);
+                    List.of(v2), List.of(objType), BOOLEAN);
         }
 
         protected void genAnonBlock(List<Statement> stmts1) {
@@ -1748,9 +1803,7 @@ public class JavaMethodIRBuilder {
                     return getOuterClassField(binding, getThisVar());
                 }
             } else {
-                if (getTargetMethod() != null && isSameMethod(
-                        getTargetMethod().resolveBinding(),
-                        binding.getDeclaringMethod())) {
+                if (isLocalDefined(binding)) {
                     // 4. this is a variable defined in local scope
                     return newVar(binding.getName(), JDTTypeToTaieType(binding.getType()));
                 } else {
@@ -1783,6 +1836,21 @@ public class JavaMethodIRBuilder {
                     }
                     return new InstanceFieldAccess(ref, v);
                 }
+            }
+        }
+
+        private boolean isLocalDefined(IVariableBinding binding) {
+            if (getTargetMethod() != null) {
+                return isSameMethod(
+                        getTargetMethod().resolveBinding(),
+                        binding.getDeclaringMethod());
+            } else {
+                // any variable in lambda is already resolved to a local variable
+                // for example,
+                // int k = 0;
+                // Runnable r = () -> System.out.println(k);
+                // here, k will be resolved to the captured args of lambda
+                return lambdaDecl != null;
             }
         }
 
@@ -2250,7 +2318,7 @@ public class JavaMethodIRBuilder {
 
                     BiConsumer<String, String> genCond = (bodyLabel, breakLabel) -> {
                         Exp hasNext = genSimpleInterfaceInvoke(v, HAS_NEXT,
-                                List.of(), List.of(), PrimitiveType.BOOLEAN);
+                                List.of(), List.of(), BOOLEAN);
                         context.pushStack(hasNext);
                         popControlFlow(bodyLabel, breakLabel, true);
                     };
@@ -2268,7 +2336,7 @@ public class JavaMethodIRBuilder {
 
                 } else {
                     assert expVar.getType() instanceof pascal.taie.language.type.ArrayType;
-                    Var v = newTempVar(PrimitiveType.INT);
+                    Var v = newTempVar(INT);
                     Runnable genInit = () -> newAssignment(v, IntLiteral.get(0));
 
                     BiConsumer<String, String> genCond = (bodyLabel, breakLabel) -> {
@@ -2790,7 +2858,7 @@ public class JavaMethodIRBuilder {
                     case "<<", ">>", ">>>" -> {
                         Type leftType = resolveNumericPromotion(0,
                                 List.of(exp.getLeftOperand()));
-                        Type rightType = PrimitiveType.INT;
+                        Type rightType = INT;
                         numericBinaryCompute(exp, leftType, rightType, (l, r) ->
                                 new ShiftExp(TypeUtils.getShiftOp(op), l, r));
                         return false;
@@ -2805,7 +2873,7 @@ public class JavaMethodIRBuilder {
                         Type t = resolveNumericPromotion(0, getAllOperands(exp));
                         numericBinaryCompute(exp, t, t, (l, r) -> {
                             assert t instanceof PrimitiveType;
-                            if (t == PrimitiveType.FLOAT || t == PrimitiveType.DOUBLE) {
+                            if (t == FLOAT || t == DOUBLE) {
                                 ComparisonExp.Op cmpOp;
                                 ConditionExp.Op condOp;
                                 Var condOperand2 = getInt(0);
@@ -2836,7 +2904,7 @@ public class JavaMethodIRBuilder {
                     case "==", "!=" -> {
                         binaryCompute2(exp, (l, r) -> {
                             Type t = l.getType();
-                            if (t == PrimitiveType.FLOAT || t == PrimitiveType.DOUBLE) {
+                            if (t == FLOAT || t == DOUBLE) {
                                 ComparisonExp.Op cmpOp = ComparisonExp.Op.CMPL;
                                 ConditionExp.Op condOp = TypeUtils.getConditionOp(op);
                                 Var condOperand2 = getInt(0);
@@ -3042,12 +3110,12 @@ public class JavaMethodIRBuilder {
                     // if this is one dimension array, use [NewArray]
                     Expression exp = (Expression) ac.dimensions().get(0);
                     exp.accept(this);
-                    Var length = popVar(PrimitiveType.INT);
+                    Var length = popVar(INT);
                     context.pushStack(new NewArray(taieType, length));
                 } else if (arrInit == null) {
                     context.pushStack(
                             listCompute(ac.dimensions(),
-                                    Collections.nCopies(ac.dimensions().size(), PrimitiveType.INT),
+                                    Collections.nCopies(ac.dimensions().size(), INT),
                                     l -> new NewMultiArray(taieType, l)));
                 } else {
                     handleArrInit(ac.getInitializer());
@@ -3065,10 +3133,37 @@ public class JavaMethodIRBuilder {
             public boolean visit(org.eclipse.jdt.core.dom.ArrayAccess access) {
                 access.getIndex().accept(this);
                 access.getArray().accept(this);
-                context.pushStack(new ArrayAccess(popVar(), popVar(PrimitiveType.INT)));
+                context.pushStack(new ArrayAccess(popVar(), popVar(INT)));
                 return false;
             }
 
+            @Override
+            public boolean visit(CreationReference cr) {
+                IMethodBinding binding = cr.resolveMethodBinding();
+                ITypeBinding typeBinding = cr.resolveTypeBinding();
+                Type funcInterType = TypeUtils.JDTTypeToTaieType(typeBinding);
+                MethodType targetType = MethodType.get(new ArrayList<>(), funcInterType);
+                MethodType samMethodType = TypeUtils.extractFuncInterface(typeBinding);
+                String name = TypeUtils.extractFuncInterfaceName(typeBinding);
+                MethodType preInstantiatedMethodType = TypeUtils.getBoxedMethodType(binding);
+                MethodRef ref = getInitRef(binding);
+                MethodType instantiatedMethodType = MethodType.get(preInstantiatedMethodType.getParamTypes(),
+                        ref.getDeclaringClass().getType());
+                MethodHandle mh = MethodHandle.get(MethodHandle.Kind.REF_newInvokeSpecial, ref);
+                List<Var> dynArgs = new ArrayList<>();
+                List<Literal> staticArgs = new ArrayList<>();
+                staticArgs.add(samMethodType);
+                staticArgs.add(mh);
+                staticArgs.add(instantiatedMethodType);
+                MethodHandle boot = MethodHandle.get(
+                        MethodHandle.Kind.REF_invokeStatic, TypeUtils.getMetaFactory());
+                InvokeDynamic inDy = new InvokeDynamic(boot, TypeUtils.getMetaFactory(),
+                        name, targetType, staticArgs, dynArgs);
+                context.pushStack(inDy);
+                return false;
+            }
+
+            // TODO: check the correctness of this function
             @Override
             public boolean visit(ExpressionMethodReference mr) {
                 IMethodBinding binding = mr.resolveMethodBinding();
@@ -3076,7 +3171,7 @@ public class JavaMethodIRBuilder {
                 Type funcInterType = TypeUtils.JDTTypeToTaieType(typeBinding);
                 MethodType targetType = MethodType.get(new ArrayList<>(), funcInterType);
                 MethodType samMethodType = TypeUtils.extractFuncInterface(typeBinding);
-                MethodType instantiatedMethodType = TypeUtils.getMethodType(binding);
+                MethodType instantiatedMethodType = TypeUtils.getBoxedMethodType(binding);
                 MethodRef ref = getMethodRef(binding);
                 MethodHandle mh;
                 boolean needObj = true;
@@ -3106,7 +3201,9 @@ public class JavaMethodIRBuilder {
                 staticArgs.add(samMethodType);
                 staticArgs.add(mh);
                 staticArgs.add(instantiatedMethodType);
-                InvokeDynamic inDy = new InvokeDynamic(TypeUtils.getMetaFactory(),
+                MethodHandle boot = MethodHandle.get(
+                        MethodHandle.Kind.REF_invokeStatic, TypeUtils.getMetaFactory());
+                InvokeDynamic inDy = new InvokeDynamic(boot, TypeUtils.getMetaFactory(),
                         binding.getName(), targetType, staticArgs, dynArgs);
                 context.pushStack(inDy);
                 return false;
@@ -3246,6 +3343,45 @@ public class JavaMethodIRBuilder {
                 ITypeBinding typeBinding = tl.getType().resolveBinding();
                 Type taieType = JDTTypeToTaieType(typeBinding);
                 context.pushStack(ClassLiteral.get(taieType));
+                return false;
+            }
+
+            @Override
+            public boolean visit(LambdaExpression node) {
+                List<Var> captured = new ArrayList<>();
+                LambdaManager.LambdaDescriptor descriptor = LambdaManager.get().getDescriptor(
+                        node.resolveMethodBinding());
+                boolean isStatic = descriptor.isStatic();
+                List<Type> capturedTypes = new ArrayList<>();
+                if (!isStatic) {
+                    captured.add(getThisVar());
+                    capturedTypes.add(getThisVar().getType());
+                }
+                for (IVariableBinding i : descriptor.allCaptured()) {
+                    context.pushStack(getSimpleNameBinding(i));
+                    // no boxing needed here
+                    captured.add(popVar());
+                    capturedTypes.add(JDTTypeToTaieType(i.getType()));
+                }
+                JMethod lambdaMtd = LambdaManager.get().getLambdaMethod(descriptor);
+                // here we need to erase type parameters
+                MethodType funcInterface = TypeUtils.getMethodType(
+                        descriptor.functionalInterface().getMethodDeclaration());
+                MethodHandle.Kind kind = isStatic ? MethodHandle.Kind.REF_invokeStatic :
+                                MethodHandle.Kind.REF_invokeVirtual;
+                MethodHandle mh = MethodHandle.get(kind, lambdaMtd.getRef());
+                List<Literal> staticArgs = new ArrayList<>();
+                staticArgs.add(funcInterface);
+                staticArgs.add(mh);
+                staticArgs.add(TypeUtils.getMethodType(descriptor.lambda()));
+                String funcInterfaceName = descriptor.functionalInterface().getName();
+                MethodHandle bootstrap = MethodHandle.get(MethodHandle.Kind.REF_invokeStatic, TypeUtils.getMetaFactory());
+                Type functionInterfaceClass = JDTTypeToTaieType(
+                        descriptor.functionalInterface().getDeclaringClass());
+                MethodType targetType = MethodType.get(capturedTypes, functionInterfaceClass);
+                InvokeDynamic inDy = new InvokeDynamic(bootstrap, TypeUtils.getMetaFactory(),
+                        funcInterfaceName, targetType, staticArgs, captured);
+                context.pushStack(inDy);
                 return false;
             }
         }

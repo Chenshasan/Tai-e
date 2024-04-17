@@ -10,14 +10,13 @@ import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Catch;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.language.type.Type;
-import pascal.taie.util.collection.Maps;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
+import java.util.function.BiConsumer;
 
 public final class BytecodeBlock implements IBasicBlock {
     private final LabelNode label;
@@ -34,16 +33,16 @@ public final class BytecodeBlock implements IBasicBlock {
 
     private FrameNode frame;
 
-    private boolean complete;
-
     @Nullable
-    private final Type exceptionHandlerType;
+    private Type exceptionHandlerType;
 
     private List<Object> frameLocalType;
 
     private int[] stmt2Asm;
 
     private boolean isInTry = false;
+
+    private boolean isLoopHeader = false;
 
     public BytecodeBlock(LabelNode label, @Nullable BytecodeBlock fallThrough) {
         this(label, fallThrough, null);
@@ -52,7 +51,6 @@ public final class BytecodeBlock implements IBasicBlock {
     public BytecodeBlock(LabelNode label, @Nullable BytecodeBlock fallThrough, @Nullable Type exceptionHandlerType) {
         this.label = label;
         this.stmts = new ArrayList<>();
-        this.complete = false;
         this.exceptionHandlerType = exceptionHandlerType;
     }
 
@@ -80,10 +78,6 @@ public final class BytecodeBlock implements IBasicBlock {
         return isInTry;
     }
 
-    public void setComplete() {
-        complete = true;
-    }
-
     public Stack<StackItem> getInStack() {
         return inStack;
     }
@@ -94,38 +88,12 @@ public final class BytecodeBlock implements IBasicBlock {
 
     public void setInStack(Stack<StackItem> inStack) {
         assert this.inStack == null : "InStack should not be assigned multiple times.";
-//        assert frame == null ||
-//                inStack.stream().filter(i -> i instanceof Var).count() == frame.stack.size();
         this.inStack = inStack;
-//        AbstractInsnNode node = instr.get(0);
-//        int popHeight = 0;
-//        while (node != null &&
-//                (node.getOpcode() == Opcodes.POP || node.getOpcode() == Opcodes.POP2)) {
-//            if (node.getOpcode() == Opcodes.POP) {
-//                popHeight++;
-//            } else {
-//                popHeight += 2;
-//            }
-//            node = node.getNext();
-//        }
-//        if (popHeight == inStack.size()) {
-//            return;
-//        }
-//        for (var pred : inEdges) {
-//            if (pred.outStack == null) {
-//                pred.setOutStack(inStack);
-//            }
-//        }
     }
 
     public void setOutStack(Stack<StackItem> outStack) {
         assert this.outStack == null : "OutStack should not be assigned multiple times.";
         this.outStack = outStack;
-//        for (var succ : outEdges) {
-//            if (succ.inStack == null) {
-//                succ.setInStack(outStack);
-//            }
-//        }
     }
 
     public AbstractInsnNode getLastBytecode() {
@@ -177,71 +145,58 @@ public final class BytecodeBlock implements IBasicBlock {
         return frame;
     }
 
-    public Map<Var, Type> getInitTyping() {
+    public void visitInitTyping(BiConsumer<Var, Type> consumer) {
         assert frame != null;
-
-        Map<Var, Type> typing = Maps.newMap();
 
         if (inStack != null) {
             int n = 0;
             for (int i = 0; i < frame.stack.size(); ++i) {
                 Exp e = inStack.get(n).e();
+                Exp original = inStack.get(n).originalExp();
                 Var v;
                 if (e instanceof Top) {
                     n++;
                     e = inStack.get(n).e();
                 }
 
-                if (e instanceof Phi phi) {
-                    v = phi.getVar();
+                if (original instanceof StackPhi phi) {
+                    v = phi.getWriteOutVar();
                 } else if (e instanceof Var v1) {
                     v = v1;
                 } else {
                     v = null;
                 }
                 if (v != null) {
-                    typing.put(v, Utils.fromAsmFrameType(frame.stack.get(i)));
+                    Type t = Utils.fromAsmFrameType(frame.stack.get(i));
+                    consumer.accept(v, t);
                 }
                 n++;
             }
         }
-        return typing;
     }
 
     private void buildFrameLocalType() {
-        frameLocalType = new ArrayList<>(frame.local.size() + 1);
-        int n = 0;
-        for (Object o : frame.local) {
-            frameLocalType.add(o);
+        frameLocalType = frame.local;
+        boolean copied = false;
+        for (int i = 0; i < frame.local.size(); i++) {
+            Object o = frame.local.get(i);
             // is long or double
-            if (o instanceof Integer i && (i == 3 || i == 4)) {
-                frameLocalType.add(0); // place top
-                n += 2;
-            } else {
-                n += 1;
-            }
-        }
-        tryCorrectFrame(n);
-        if (inStack != null) {
-            n = 0;
-            for (StackItem item : inStack) {
-                Exp e = item.e();
-                if (e == Top.Top) {
-                    continue;
-                }
-                if (e instanceof Var v) {
-                    int slot = VarManager.getSlotFast(v);
-                    if (slot != -1) {
-                        for (int k = frameLocalType.size(); k <= slot; ++k) {
-                            frameLocalType.add(0);
-                        }
-                        frameLocalType.set(slot, frame.stack.get(n));
+            if (o instanceof Integer && ((Integer) o == 3 || (Integer) o == 4)) {
+                if (!copied) {
+                    frameLocalType = new ArrayList<>(frame.local.size() + 1);
+                    for (int j = 0; j < i; j++) {
+                        frameLocalType.add(frame.local.get(j));
                     }
+                    copied = true;
                 }
-                n++;
+                frameLocalType.add(o);
+                frameLocalType.add(0); // place top
+            } else if (copied) {
+                frameLocalType.add(o);
             }
         }
     }
+
 
     private void ensureLocalType() {
         if (frameLocalType == null) {
@@ -289,6 +244,9 @@ public final class BytecodeBlock implements IBasicBlock {
         return exceptionHandlerType;
     }
 
+    public void setExceptionHandlerType(@Nullable Type exceptionHandlerType) {
+        this.exceptionHandlerType = exceptionHandlerType;
+    }
 
     private void tryCorrectFrame(int size) {
         if (instr.isEmpty()) {
@@ -333,5 +291,13 @@ public final class BytecodeBlock implements IBasicBlock {
                 frameLocalType.set(i, 0);
             }
         }
+    }
+
+    public boolean isLoopHeader() {
+        return isLoopHeader;
+    }
+
+    public void setLoopHeader(boolean loopHeader) {
+        isLoopHeader = loopHeader;
     }
 }

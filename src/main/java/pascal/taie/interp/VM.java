@@ -2,6 +2,8 @@ package pascal.taie.interp;
 
 import pascal.taie.World;
 import pascal.taie.frontend.newfrontend.java.NewFrontendException;
+import pascal.taie.frontend.newfrontend.ssa.PhiExp;
+import pascal.taie.frontend.newfrontend.ssa.PhiStmt;
 import pascal.taie.ir.IR;
 import pascal.taie.ir.exp.ArrayAccess;
 import pascal.taie.ir.exp.ArrayLengthExp;
@@ -62,6 +64,8 @@ import java.lang.invoke.CallSite;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -89,12 +93,15 @@ public class VM {
     public JValue execIR(IR ir, Frame f) {
         frames.push(f);
         while (f.getPc() >= 0) {
-            Stmt stmt = ir.getStmt(f.getPc());
+            int pc = f.getPc();
+            Stmt stmt = ir.getStmt(pc);
+            boolean exceptionTriggered = false;
             try {
                 execStmt(stmt, ir, f);
             } catch (InterpreterException | NewFrontendException e) {
                 throw e;
             } catch (Exception e) {
+                exceptionTriggered = true;
                 Exception exception;
                 if (e instanceof ClientException e1) {
                     exception = e1.internal;
@@ -128,6 +135,9 @@ public class VM {
                     frames.pop();
                     throw new ClientException(exception);
                 }
+            }
+            if (!(exceptionTriggered || stmt instanceof PhiStmt || stmt instanceof Catch)) {
+                f.setLastPc(pc);
             }
         }
         frames.pop();
@@ -451,6 +461,20 @@ public class VM {
             JValue v = evalExp(arrayLengthExp.getOperand(), ir, f);
             JArray array = JValue.getJArray(v);
             return JPrimitive.get(array.length());
+        } else if (e instanceof PhiExp phi) {
+            int lastPc = f.getLastPc();
+            // The lastPc is not always the end of a block because of the exception mechanism.
+            // For that, we find the closest def.
+            var sourceAndVar = phi.getSourceAndVar();
+            Comparator<Pair<Integer, Var>> c = Comparator.comparing(Pair::first);
+            int pos = Collections.binarySearch(sourceAndVar, new Pair<>(lastPc, null), c);
+            if (pos < 0) {
+                // exception happens and not at a block exit.
+                pos = -(pos + 1);
+            }
+            Var v = sourceAndVar.get(pos).second();
+            assert v != null;
+            return evalExp(v, ir, f);
         } else {
             throw new InterpreterException(e + " is not implemented");
         }
@@ -481,37 +505,39 @@ public class VM {
         assert v instanceof JPrimitive;
         JPrimitive p = (JPrimitive) v;
         Object o = p.value;
+        int index = pascal.taie.frontend.newfrontend.Utils.getPrimitiveTypeIndex(type);
         if (o instanceof Integer i) {
-            return switch (type) {
-                case BOOLEAN, BYTE, CHAR, SHORT -> Utils.getIntValue(Utils.downCastInt(i, type));
-                case INT -> i;
-                case LONG -> i.longValue();
-                case FLOAT -> i.floatValue();
-                case DOUBLE -> i.doubleValue();
+            return switch (index) {
+                case 0, 1, 2, 3 -> Utils.getIntValue(Utils.downCastInt(i, type));
+                case 4 -> i;
+                case 5 -> i.longValue();
+                case 6 -> i.floatValue();
+                case 7 -> i.doubleValue();
+                default -> throw new InterpreterException();
             };
         } else if (o instanceof Long l) {
-            return switch (type) {
-                case BOOLEAN, BYTE, CHAR, SHORT -> throw new InterpreterException();
-                case INT -> l.intValue();
-                case LONG -> l;
-                case FLOAT -> l.floatValue();
-                case DOUBLE -> l.doubleValue();
+            return switch (index) {
+                case 4 -> l.intValue();
+                case 5 -> l;
+                case 6 -> l.floatValue();
+                case 7 -> l.doubleValue();
+                default -> throw new InterpreterException();
             };
         } else if (o instanceof Float f) {
-            return switch (type) {
-                case BOOLEAN, BYTE, CHAR, SHORT -> throw new InterpreterException();
-                case INT -> f.intValue();
-                case LONG -> f.longValue();
-                case FLOAT -> f;
-                case DOUBLE -> f.doubleValue();
+            return switch (index) {
+                case 4 -> f.intValue();
+                case 5 -> f.longValue();
+                case 6 -> f;
+                case 7 -> f.doubleValue();
+                default -> throw new InterpreterException();
             };
         } else if (o instanceof Double d) {
-            return switch (type) {
-                case BOOLEAN, BYTE, CHAR, SHORT -> throw new InterpreterException();
-                case INT -> d.intValue();
-                case LONG -> d.longValue();
-                case FLOAT -> d.floatValue();
-                case DOUBLE -> d;
+            return switch (index) {
+                case 4 -> d.intValue();
+                case 5 -> d.longValue();
+                case 6 -> d.floatValue();
+                case 7 -> d;
+                default -> throw new InterpreterException();
             };
         }
         throw new InterpreterException();

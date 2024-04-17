@@ -136,6 +136,7 @@ public class BytecodeGraph implements IndexedGraph<BytecodeBlock> {
     }
 
     public int getOutEdge(int b, int index) {
+        assert b >= 0;
         if (index < DEFAULT_EDGE_SIZE) {
             return outEdges[b * DEFAULT_EDGE_SIZE + index];
         } else {
@@ -169,6 +170,16 @@ public class BytecodeGraph implements IndexedGraph<BytecodeBlock> {
         int b = node.getIndex();
         for (int i = 0; i < getMergedOutEdgesCount(b); ++i) {
             r.add(getNode(getMergedOutEdge(b, i)));
+        }
+        return r;
+    }
+
+    @Override
+    public List<BytecodeBlock> normalOutEdges(BytecodeBlock node) {
+        List<BytecodeBlock> r = new ArrayList<>();
+        int b = node.getIndex();
+        for (int i = 0; i < outEdgesCount[b]; i++) {
+            r.add(getNode(getOutEdge(b, i)));
         }
         return r;
     }
