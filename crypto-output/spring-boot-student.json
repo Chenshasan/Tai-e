@@ -1,97 +1,97 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst2 = \"SHA\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>[6@L32] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst2)",
-  "var" : "%stringconst2",
-  "constantValue" : "SHA",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String sha(java.lang.String)"
+  "sourceStmt" : "$-c19 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[14@L46] cipher = invokestatic javax.crypto.Cipher.getInstance($-c19)",
+  "var" : "$-c19",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst2 = \"MD5\"",
+  "sourceStmt" : "$-c17 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[14@L75] cipher = invokestatic javax.crypto.Cipher.getInstance($-c17)",
+  "var" : "$-c17",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c18 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[14@L100] cipher = invokestatic javax.crypto.Cipher.getInstance($-c18)",
+  "var" : "$-c18",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c18 = \"AES\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[14@L18] cipher = invokestatic javax.crypto.Cipher.getInstance($-c18)",
+  "var" : "$-c18",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-c33 = \"@#&^%-$#@Coupon#$%^&@*\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[6@L42] invokespecial $-v12.<init>($-v13)",
+  "var" : "$-v13",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "password = \"12345678\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[6@L71] invokespecial $-v10.<init>($-v11)",
+  "var" : "$-v11",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-c37 = \"@#&^%-$#@Coupon#$%^&@*\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[6@L96] invokespecial $-v11.<init>($-v12)",
+  "var" : "$-v12",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "password = \"12345678\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
+  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[6@L14] invokespecial $-v11.<init>($-v12)",
+  "var" : "$-v12",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c6 = \"MD5\"",
   "sourceMethod" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String md5(java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String md5(java.lang.String)>[6@L58] $r1 = invokestatic java.security.MessageDigest.getInstance(%stringconst2)",
-  "var" : "%stringconst2",
+  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String md5(java.lang.String)>[6@L58] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String md5(java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[11@L18] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[11@L46] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[11@L75] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "%stringconst0 = \"AES\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[11@L100] $r7 = invokestatic javax.crypto.Cipher.getInstance(%stringconst0)",
-  "var" : "%stringconst0",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst2 = \"12345678\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] encrypt(java.lang.String,java.lang.String)>[4@L14] invokespecial $r1.<init>($r3)",
-  "var" : "$r3",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst6 = \"@#&^%-$#@Coupon#$%^&@*\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String encryptString(java.lang.String,java.lang.String)>[4@L42] invokespecial $r1.<init>($r3)",
-  "var" : "$r3",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "java.lang.String encryptString(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst2 = \"12345678\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: byte[] decrypt(byte[],java.lang.String)>[4@L71] invokespecial $r1.<init>($r3)",
-  "var" : "$r3",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "%stringconst6 = \"@#&^%-$#@Coupon#$%^&@*\"",
-  "sourceMethod" : "<com.xiaolyuh.utils.AESUtil: void main(java.lang.String[])>",
-  "callSite" : "<com.xiaolyuh.utils.AESUtil: java.lang.String decrypt(java.lang.String,java.lang.String)>[4@L96] invokespecial $r1.<init>($r3)",
-  "var" : "$r3",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "java.lang.String decrypt(java.lang.String,java.lang.String)"
+  "sourceStmt" : "$-c6 = \"SHA\"",
+  "sourceMethod" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>",
+  "callSite" : "<com.xiaolyuh.utils.EncodeUtil: java.lang.String sha(java.lang.String)>[6@L32] sha = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
+  "constantValue" : "SHA",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String sha(java.lang.String)"
 } ]

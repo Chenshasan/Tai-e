@@ -16,6 +16,20 @@ import java.util.*;
 
 
 public class MUBenchTest {
+
+    @Test
+    public void tomee() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.TOMEE, true);
+    }
+    @Test
+    public void spark() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.SPARK, true);
+    }
+
+    @Test
+    public void activemq() {
+        Tests.testPTAInLibraryProgramOfCrypto(Benchmark.ACTIVEMQ, true);
+    }
     /* Microservice application based on SpringBoot + Dubbo */
     @Test
     public void aliyun() {

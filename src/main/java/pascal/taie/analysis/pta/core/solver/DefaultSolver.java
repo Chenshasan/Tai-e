@@ -419,7 +419,7 @@ public class DefaultSolver implements Solver {
                         // we need type guard for array stores as Java arrays
                         // are covariant
                         addPFGEdge(new PointerFlowEdge(
-                                FlowKind.ARRAY_STORE, from, arrayIndex),
+                                        FlowKind.ARRAY_STORE, from, arrayIndex),
                                 arrayIndex.getType());
                     }
                 });
@@ -681,7 +681,7 @@ public class DefaultSolver implements Solver {
                     CSVar from = csManager.getCSVar(context, cast.getValue());
                     CSVar to = csManager.getCSVar(context, stmt.getLValue());
                     addPFGEdge(new PointerFlowEdge(
-                            FlowKind.CAST, from, to),
+                                    FlowKind.CAST, from, to),
                             cast.getType());
                 }
                 return null;

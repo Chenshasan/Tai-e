@@ -12,6 +12,7 @@ import pascal.taie.ir.stmt.Invoke;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class PredictableSourceRuleJudge implements RuleJudge {
 
@@ -24,7 +25,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
     Logger logger = LogManager.getLogger(PredictableSourceRuleJudge.class);
 
     public PredictableSourceRuleJudge(PredictableSourceRule predictableSourceRule,
-                               CryptoObjManager manager) {
+                                      CryptoObjManager manager) {
         this.predictableSourceRule = predictableSourceRule;
         this.manager = manager;
     }
@@ -39,8 +40,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                     stream().
                     filter(manager::isCryptoObj).
                     forEach(cryptoObj -> {
-                        if (cryptoObj.getAllocation() instanceof
-                                CryptoObjInformation coi) {
+                        if (cryptoObj.getAllocation() instanceof CryptoObjInformation coi) {
                             //String desc = (String) coi.constantValue();
                             if (match.get()) {
                                 issue.set(report(coi, var, callSite));
@@ -57,18 +57,35 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                             match.set(false);
                         }
                     });
+            if (result.getPointsToSet(var).
+                    stream().
+                    filter(manager::isPredictableCryptoObj).toList().size() > 0) {
+                issue.set(report(null, var, callSite));
+            }
         }
         return issue.get();
     }
 
     public Issue report(CryptoObjInformation coi, Var var, Invoke callSite) {
-        PredictableSourceIssue issue = new PredictableSourceIssue("Predictable Source",
-                "The value of the API is not well randomized",
-                coi.allocation().toString(),
-                coi.sourceMethod().toString(),
-                callSite.toString(), var.getName(),
-                predictableSourceRule.method().toString(),
-                callSite.getContainer().getSubsignature().toString());
+        PredictableSourceIssue issue;
+        if (coi == null) {
+            issue = new PredictableSourceIssue("Predictable Source",
+                    "The value of the API is not well randomized",
+                    "",
+                    "",
+                    callSite.toString(), var.getName(),
+                    predictableSourceRule.method().toString(),
+                    callSite.getContainer().getSubsignature().toString());
+        }
+        else{
+            issue = new PredictableSourceIssue("Predictable Source",
+                    "The value of the API is not well randomized",
+                    coi.allocation().toString(),
+                    coi.sourceMethod().toString(),
+                    callSite.toString(), var.getName(),
+                    predictableSourceRule.method().toString(),
+                    callSite.getContainer().getSubsignature().toString());
+        }
         return issue;
     }
 }

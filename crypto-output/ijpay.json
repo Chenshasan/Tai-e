@@ -1,33 +1,8 @@
 [ {
   "judgeType" : "Influencing Factory",
   "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyTrustManager: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
   "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyHostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>",
   "subSignature" : "boolean verify(java.lang.String,javax.net.ssl.SSLSession)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"SHA1withRSA\"",
-  "sourceMethod" : "<com.jpay.unionpay.SecureUtil: byte[] signBySoft(java.security.PrivateKey,byte[])>",
-  "callSite" : "<com.jpay.unionpay.SecureUtil: byte[] signBySoft(java.security.PrivateKey,byte[])>[3@L276] st = invokestatic java.security.Signature.getInstance($-c4, $-c5)",
-  "var" : "$-c4",
-  "constantValue" : "SHA1withRSA",
-  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
-  "subSignature" : "byte[] signBySoft(java.security.PrivateKey,byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"SHA1withRSA\"",
-  "sourceMethod" : "<com.jpay.unionpay.SecureUtil: boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])>",
-  "callSite" : "<com.jpay.unionpay.SecureUtil: boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])>[2@L301] st = invokestatic java.security.Signature.getInstance($-c4, $-c5)",
-  "var" : "$-c4",
-  "constantValue" : "SHA1withRSA",
-  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
-  "subSignature" : "boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])"
 }, {
   "judgeType" : "Influencing Factory",
   "message" : "Concerned var in this method has no influencing stmts",
@@ -38,7 +13,7 @@
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c1 = \"MD5\"",
   "sourceMethod" : "<com.jpay.ext.kit.HashKit: java.lang.String md5(java.lang.String)>",
-  "callSite" : "<com.jpay.ext.kit.HashKit: java.lang.String hash(java.lang.String,java.lang.String)>[0@L38] md = invokestatic java.security.MessageDigest.getInstance(algorithm)",
+  "callSite" : "<com.jpay.ext.kit.HashKit: java.lang.String hash(java.lang.String,java.lang.String)>[0@L33] md = invokestatic java.security.MessageDigest.getInstance(algorithm)",
   "var" : "algorithm",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
@@ -48,7 +23,7 @@
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c1 = \"SHA-1\"",
   "sourceMethod" : "<com.jpay.ext.kit.HashKit: java.lang.String sha1(java.lang.String)>",
-  "callSite" : "<com.jpay.ext.kit.HashKit: java.lang.String hash(java.lang.String,java.lang.String)>[0@L38] md = invokestatic java.security.MessageDigest.getInstance(algorithm)",
+  "callSite" : "<com.jpay.ext.kit.HashKit: java.lang.String hash(java.lang.String,java.lang.String)>[0@L33] md = invokestatic java.security.MessageDigest.getInstance(algorithm)",
   "var" : "algorithm",
   "constantValue" : "SHA-1",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
@@ -56,25 +31,36 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c5 = \"SHA-1\"",
+  "sourceStmt" : "$-c3 = \"SHA-1\"",
   "sourceMethod" : "<com.jpay.unionpay.SecureUtil: byte[] sha1(byte[])>",
-  "callSite" : "<com.jpay.unionpay.SecureUtil: byte[] sha1(byte[])>[2@L167] md = invokestatic java.security.MessageDigest.getInstance($-c5)",
-  "var" : "$-c5",
+  "callSite" : "<com.jpay.unionpay.SecureUtil: byte[] sha1(byte[])>[1@L167] md = invokestatic java.security.MessageDigest.getInstance($-c3)",
+  "var" : "$-c3",
   "constantValue" : "SHA-1",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "byte[] sha1(byte[])"
 }, {
-  "judgeType" : "CompositeRule",
-  "issues" : [ {
-    "judgeType" : "Number Size",
-    "message" : "The number size is not allowed for the API",
-    "sourceStmt" : "$-c8 = 1024",
-    "sourceMethod" : "<com.jpay.secure.RSAUtils: java.util.Map getKeys()>",
-    "callSite" : "<com.jpay.secure.RSAUtils: java.util.Map getKeys()>[3@L53] invokevirtual keyPairGen.initialize($-c8)",
-    "var" : "$-c8",
-    "constantValue" : "1024",
-    "calleeMethod" : "<java.security.KeyPairGenerator: void initialize(int)>",
-    "numberSize" : "2048-10000",
-    "subSignature" : "java.util.Map getKeys()"
-  } ]
+  "judgeType" : "Influencing Factory",
+  "message" : "Concerned var in this method has no influencing stmts",
+  "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyTrustManager: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
+  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c5 = \"SHA1withRSA\"",
+  "sourceMethod" : "<com.jpay.unionpay.SecureUtil: boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])>",
+  "callSite" : "<com.jpay.unionpay.SecureUtil: boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])>[2@L301] st = invokestatic java.security.Signature.getInstance($-c5, $-c4)",
+  "var" : "$-c5",
+  "constantValue" : "SHA1withRSA",
+  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
+  "subSignature" : "boolean validateSignBySoft(java.security.PublicKey,byte[],byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c5 = \"SHA1withRSA\"",
+  "sourceMethod" : "<com.jpay.unionpay.SecureUtil: byte[] signBySoft(java.security.PrivateKey,byte[])>",
+  "callSite" : "<com.jpay.unionpay.SecureUtil: byte[] signBySoft(java.security.PrivateKey,byte[])>[2@L276] st = invokestatic java.security.Signature.getInstance($-c5, $-c4)",
+  "var" : "$-c5",
+  "constantValue" : "SHA1withRSA",
+  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
+  "subSignature" : "byte[] signBySoft(java.security.PrivateKey,byte[])"
 } ]

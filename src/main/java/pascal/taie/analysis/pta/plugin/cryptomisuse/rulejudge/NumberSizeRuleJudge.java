@@ -34,11 +34,11 @@ public class NumberSizeRuleJudge implements RuleJudge {
                 contains(callSite.getContainer().getDeclaringClass())) {
             result.getPointsToSet(var).stream().
                     filter(manager::isCryptoObj).
-                    forEach(cryptoObj -> { 
+                    forEach(cryptoObj -> {
                         if (cryptoObj.getAllocation() instanceof
                                 CryptoObjInformation coi) {
                             logger.debug("var is " + var + "in callsite " + callSite);
-                            if(isNumeric(coi.constantValue().toString())){
+                            if (isNumeric(coi.constantValue().toString())) {
                                 int value = coi.constantValue() instanceof String ?
                                         Integer.parseInt((String) coi.constantValue())
                                         : (int) coi.constantValue();
@@ -51,19 +51,32 @@ public class NumberSizeRuleJudge implements RuleJudge {
                         }
                     });
             logger.debug("the result of number size in" + callSite + " is " + match.get());
+
         }
         return issue.get();
     }
 
     public Issue report(CryptoObjInformation coi, Var var, Invoke callSite) {
-        NumberSizeIssue issue = new NumberSizeIssue("Number Size",
-                "The number size is not allowed for the API",
-                coi.allocation().toString(),
-                coi.sourceMethod().toString(),
-                callSite.toString(), var.getName(),
-                coi.constantValue().toString(), numberSizeRule.method().toString(),
-                numberSizeRule.min() + "-" + numberSizeRule.max(),
-                callSite.getContainer().getSubsignature().toString());
+        NumberSizeIssue issue;
+        if (coi == null) {
+            issue = new NumberSizeIssue("Number Size",
+                    "The number size is not allowed for the API",
+                    "",
+                    "",
+                    callSite.toString(), var.getName(),
+                    coi.constantValue().toString(), numberSizeRule.method().toString(),
+                    numberSizeRule.min() + "-" + numberSizeRule.max(),
+                    callSite.getContainer().getSubsignature().toString());
+        } else {
+            issue = new NumberSizeIssue("Number Size",
+                    "The number size is not allowed for the API",
+                    coi.allocation().toString(),
+                    coi.sourceMethod().toString(),
+                    callSite.toString(), var.getName(),
+                    coi.constantValue().toString(), numberSizeRule.method().toString(),
+                    numberSizeRule.min() + "-" + numberSizeRule.max(),
+                    callSite.getContainer().getSubsignature().toString());
+        }
         return issue;
     }
 

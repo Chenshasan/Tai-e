@@ -34,7 +34,6 @@ predictableSourceRules:
   - { method: "<java.security.KeyStore: void load(java.io.InputStream,char[])>", index: 1 }
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 0 }
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int,java.security.spec.AlgorithmParameterSpec)>", index: 0 }
-  - { method: "<javax.crypto.Cipher: void init(int,java.security.Key)>", index: 1 }
   - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
   - { method: "<java.security.SecureRandom: void setSeed(byte[])>", index: 0 }
   - { method: "<java.security.SecureRandom: void <init>(byte[])>", index: 0 }

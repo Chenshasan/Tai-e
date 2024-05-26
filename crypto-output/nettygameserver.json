@@ -3,8 +3,8 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "$-c1 = \"hsylgwk-20120101\"",
   "sourceMethod" : "<com.snowcattle.game.common.util.AES: java.lang.String encrypt(java.lang.String)>",
-  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] encrypt(byte[],java.lang.String)>[5@L31] invokespecial $-v5.<init>($-v6, $-c7)",
-  "var" : "$-v6",
+  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] encrypt(byte[],java.lang.String)>[6@L31] invokespecial securekey.<init>($-v8, $-c7)",
+  "var" : "$-v8",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
   "subSignature" : "byte[] encrypt(byte[],java.lang.String)"
 }, {
@@ -12,26 +12,45 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "$-c1 = \"hsylgwk-20120101\"",
   "sourceMethod" : "<com.snowcattle.game.common.util.AES: java.lang.String decrypt(java.lang.String)>",
-  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] decrypt(byte[],java.lang.String)>[5@L45] invokespecial $-v5.<init>($-v6, $-c7)",
-  "var" : "$-v6",
+  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] decrypt(byte[],java.lang.String)>[6@L45] invokespecial securekey.<init>($-v8, $-c7)",
+  "var" : "$-v8",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
   "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c30 = \"PBEWithMD5AndDES\"",
+  "sourceMethod" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>",
+  "callSite" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>[38@L35] $-v31 = invokestatic javax.crypto.SecretKeyFactory.getInstance($-c30)",
+  "var" : "$-c30",
+  "constantValue" : "PBEWithMD5AndDES",
+  "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
+  "subSignature" : "void <init>(java.lang.String,byte[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c9 = \"MD5\"",
   "sourceMethod" : "<com.snowcattle.game.common.util.MD5Util: java.lang.String encodeByMD5(java.lang.String)>",
-  "callSite" : "<com.snowcattle.game.common.util.MD5Util: java.lang.String encodeByMD5(java.lang.String)>[2@L47] md#2 = invokestatic java.security.MessageDigest.getInstance($-c9)",
+  "callSite" : "<com.snowcattle.game.common.util.MD5Util: java.lang.String encodeByMD5(java.lang.String)>[4@L47] md = invokestatic java.security.MessageDigest.getInstance($-c9)",
   "var" : "$-c9",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String encodeByMD5(java.lang.String)"
 }, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-v7[$-ci7] = $-c23",
+  "sourceMethod" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>",
+  "callSite" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>[49@L40] invokespecial paramSpec.<init>($-v38, $-v39)",
+  "var" : "$-v38",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void <init>(java.lang.String,byte[])"
+}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c4 = \"AES\"",
   "sourceMethod" : "<com.snowcattle.game.common.util.AES: byte[] encrypt(byte[],java.lang.String)>",
-  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] encrypt(byte[],java.lang.String)>[1@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
+  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] encrypt(byte[],java.lang.String)>[2@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
   "var" : "$-c4",
   "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
@@ -41,28 +60,9 @@
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c4 = \"AES\"",
   "sourceMethod" : "<com.snowcattle.game.common.util.AES: byte[] decrypt(byte[],java.lang.String)>",
-  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] decrypt(byte[],java.lang.String)>[1@L44] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
+  "callSite" : "<com.snowcattle.game.common.util.AES: byte[] decrypt(byte[],java.lang.String)>[2@L44] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
   "var" : "$-c4",
   "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
   "subSignature" : "byte[] decrypt(byte[],java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v7[$-ci7] = $-ci19",
-  "sourceMethod" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>",
-  "callSite" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>[32@L40] invokespecial $-v36.<init>($-v37, $-v38)",
-  "var" : "$-v37",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void <init>(java.lang.String,byte[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c30 = \"PBEWithMD5AndDES\"",
-  "sourceMethod" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>",
-  "callSite" : "<com.snowcattle.game.common.util.DesEncrypter: void <init>(java.lang.String,byte[])>[21@L35] $-v31 = invokestatic javax.crypto.SecretKeyFactory.getInstance($-c30)",
-  "var" : "$-c30",
-  "constantValue" : "PBEWithMD5AndDES",
-  "calleeMethod" : "<javax.crypto.SecretKeyFactory: javax.crypto.SecretKeyFactory getInstance(java.lang.String)>",
-  "subSignature" : "void <init>(java.lang.String,byte[])"
 } ]

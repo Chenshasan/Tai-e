@@ -1,49 +1,49 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c20 = \"AES\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[16@L101] cipher = invokestatic javax.crypto.Cipher.getInstance($-c20)",
-  "var" : "$-c20",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c18 = \"AES\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[16@L47] cipher = invokestatic javax.crypto.Cipher.getInstance($-c18)",
-  "var" : "$-c18",
-  "constantValue" : "AES",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c15 = \"zheng\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[6@L92] invokevirtual random.setSeed($-v16)",
-  "var" : "$-v16",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c13 = \"zheng\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[6@L38] invokevirtual random.setSeed($-v14)",
-  "var" : "$-v14",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c45 = \"MD5\"",
   "sourceMethod" : "<com.zheng.common.util.MD5Util: java.lang.String md5(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.MD5Util: java.lang.String md5(java.lang.String)>[20@L20] mdInst = invokestatic java.security.MessageDigest.getInstance($-c45)",
+  "callSite" : "<com.zheng.common.util.MD5Util: java.lang.String md5(java.lang.String)>[52@L20] mdInst = invokestatic java.security.MessageDigest.getInstance($-c45)",
   "var" : "$-c45",
   "constantValue" : "MD5",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String md5(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c21 = \"AES\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[16@L101] cipher = invokestatic javax.crypto.Cipher.getInstance($-c21)",
+  "var" : "$-c21",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c21 = \"AES\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[16@L47] cipher = invokestatic javax.crypto.Cipher.getInstance($-c21)",
+  "var" : "$-c21",
+  "constantValue" : "AES",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-c14 = \"zheng\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[7@L92] invokevirtual random.setSeed($-v15)",
+  "var" : "$-v15",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-c14 = \"zheng\"",
+  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[7@L38] invokevirtual random.setSeed($-v15)",
+  "var" : "$-v15",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
 } ]

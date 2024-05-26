@@ -34,6 +34,7 @@ dependencies {
     implementation("org.ow2.asm:asm-tree:9.5")
     implementation("org.ow2.asm:asm-util:9.5")
     implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.28.0")
+    implementation("commons-io:commons-io:2.11.0")
 
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -73,7 +74,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
     // Increases the maximum heap memory of JUnit test process. The default is 512M.
     // (see org.gradle.process.internal.worker.DefaultWorkerProcessBuilder.build)
-    maxHeapSize = "2G"
+    maxHeapSize = "5G"
     // Sets the maximum number of test processes to start in parallel.
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
     // Sets the default classpath for test execution.

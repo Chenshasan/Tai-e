@@ -6,6 +6,9 @@ public enum Benchmark {
 
     /* Microservice application based on SpringBoot + Dubbo */
 
+    TOMEE("tomee",CRYPTO_BENCHMARKS_DIR + "/apache-api-bench/tomee"),
+    SPARK("spark", CRYPTO_BENCHMARKS_DIR + "/apache-api-bench/spark"),
+    ACTIVEMQ("activemq", CRYPTO_BENCHMARKS_DIR + "/activemq"),
     ALIYUN("aliyun-oss-java-sdk", CRYPTO_BENCHMARKS_DIR + "/aliyun-oss-java-sdk"),
 
     FASTBOOT("fast-boot-weixin", CRYPTO_BENCHMARKS_DIR + "/fast-boot-weixin"),

@@ -27,6 +27,7 @@ import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.ClassMember;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
+import pascal.taie.language.type.IntType;
 import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.language.type.Type;
 import pascal.taie.util.collection.Maps;
@@ -36,6 +37,7 @@ import pascal.taie.util.collection.Sets;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CryptoAPIMisuseAnalysis implements Plugin {
@@ -63,6 +65,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private final MultiMap<Var, Pair<Var, Type>> cryptoVarPropagates = Maps.newMultiMap();
 
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
+
 
     /**
      * Composite Rule Property
@@ -104,6 +107,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private Context emptyContext;
 
     private CryptoAPIMisuseConfig config;
+
+    private int stringCount = 0;
 
     public static void addAppClass(Set<String> appClass) {
         appClassesInString = appClass;
@@ -177,7 +182,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                             solver.addIgnoredMethod(jMethod);
                         });
                     } else {
-                        logger.info(jClass);
+                        //logger.info(jClass);
                     }
                 }
         );
@@ -192,21 +197,27 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 if (stmt instanceof AssignLiteral assignStmt) {
                     Var lhs = assignStmt.getLValue();
                     if (assignStmt.getRValue() instanceof StringLiteral stringLiteral) {
-                        CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, jMethod, stringLiteral.getString());
-                        Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
-                        logger.debug("Create String Object in Method" + jMethod);
-                        solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
-                                cryptoObj);
+                        if (isPatternMatch(stringLiteral.getString())) {
+                            CryptoObjInformation coi =
+                                    new CryptoObjInformation(stmt, jMethod, stringLiteral.getString());
+                            Obj cryptoObj = manager.makeCryptoObj(coi, stringLiteral.getType());
+                            solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                    cryptoObj);
+                        } else {
+                            Obj predictableObj = manager.makePredictableCryptoObj(lhs.getType());
+                            solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                    predictableObj);
+                        }
                     }
-
+//
                     if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
                         CryptoObjInformation coi =
                                 new CryptoObjInformation(stmt, jMethod, intLiteral.getValue());
-                        Obj cryptoObj = manager.makeCryptoObj(coi, PrimitiveType.INT);
-                        logger.debug("Create Integer Object in Method" + jMethod);
-                        solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
-                                cryptoObj);
+                        if (overNumberRange(intLiteral.getNumber())){
+                            Obj cryptoObj = manager.makeNumberCryptoObj();
+                            solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                    cryptoObj);
+                        }
                     }
                 }
 
@@ -278,27 +289,31 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         if (compositeFromSources.containsKey(callee)) {
             compositeFromSources.get(callee).forEach(compositeSource -> {
                 Var var = IndexUtils.getVar(callSite, compositeSource.index());
-                fromSourceToRule.get(compositeSource).forEach(compositeRule -> {
-                    if (!fromVarToRule.containsKey(var)) {
-                        CompositeRule cloneCompositeRule = compositeRule.clone();
-                        cloneCompositeRule.setFromVar(var);
-                        fromVarToRule.put(var, cloneCompositeRule);
-                        Type type = compositeSource.type();
-                        Obj compositeObj = manager.makeCompositeCryptoObj(cloneCompositeRule, type);
-                        solver.addVarPointsTo(edge.getCallSite().getContext(), var,
-                                edge.getCallSite().getContext(), compositeObj);
-                    }
-                });
+                if (var != null) {
+                    fromSourceToRule.get(compositeSource).forEach(compositeRule -> {
+                        if (!fromVarToRule.containsKey(var) && compositeRule != null) {
+                            CompositeRule cloneCompositeRule = compositeRule.clone();
+                            cloneCompositeRule.setFromVar(var);
+                            fromVarToRule.put(var, cloneCompositeRule);
+                            Type type = compositeSource.type();
+                            Obj compositeObj = manager.makeCompositeCryptoObj(cloneCompositeRule, type);
+                            solver.addVarPointsTo(edge.getCallSite().getContext(), var,
+                                    edge.getCallSite().getContext(), compositeObj);
+                        }
+                    });
+                }
             });
         }
 
         if (compositeToSources.containsKey(callee)) {
             compositeToSources.get(callee).forEach(toSource -> {
                 Var var = IndexUtils.getVar(callSite, toSource.index());
-                Context ctx = edge.getCallSite().getContext();
-                CSVar csVar = csManager.getCSVar(ctx, var);
-                compositeVarJudge.put(var, new Pair<>(callSite, toSource));
-                addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar), callSite, toSource);
+                if (var != null) {
+                    Context ctx = edge.getCallSite().getContext();
+                    CSVar csVar = csManager.getCSVar(ctx, var);
+                    compositeVarJudge.put(var, new Pair<>(callSite, toSource));
+                    addJudgeStmtFromPts(var, solver.getPointsToSetOf(csVar), callSite, toSource);
+                }
             });
         }
 
@@ -379,6 +394,12 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     .map(source -> manager.makeCryptoObj(source, type))
                     .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
                     .forEach(newCryptoObjs::addObject);
+            pts.objects()
+                    .map(CSObj::getObject)
+                    .filter(manager::isPredictableCryptoObj)
+                    .map(obj -> manager.makePredictableCryptoObj(type))
+                    .map(newObj -> csManager.getCSObj(emptyContext, newObj))
+                    .forEach(newCryptoObjs::addObject);
         }
         if (!newCryptoObjs.isEmpty()) {
             solver.addVarPointsTo(ctx, to, newCryptoObjs);
@@ -419,6 +440,18 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                         });
             }
         });
+    }
+
+    private boolean isPatternMatch(String str) {
+        return config.patternMatchRules().stream().anyMatch(
+                patternMatchRule -> Pattern.matches(patternMatchRule.pattern(), str));
+    }
+
+    private boolean overNumberRange(int i) {
+        return config.numberSizeRules().stream().allMatch(
+                numberSizeRule -> i < numberSizeRule.min()) ||
+                config.numberSizeRules().stream().allMatch(
+                        numberSizeRule -> i > numberSizeRule.max());
     }
 
     @Override

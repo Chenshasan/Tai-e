@@ -266,15 +266,12 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
 
         private Set<InfluencingFactorRule> deserializeInfluencingFactorRules(JsonNode node) {
             if (node instanceof ArrayNode arrayNode) {
-                Set<InfluencingFactorRule> influencingFactorRules = Sets.newSet(arrayNode.size());
+                Set<InfluencingFactorRule> influencingFactorRules = Sets.newSet();
                 for (JsonNode elem : arrayNode) {
                     String methodSig = elem.get("method").asText();
                     int index = IndexUtils.toInt(elem.get("index").asText());
                     hierarchy.allClasses().forEach(jClass -> {
                         if (jClass.isApplication()) {
-                            if (jClass.getName().contains("DummyCertValidationCase1")) {
-                                System.out.println("xxxx");
-                            }
                             jClass.getDeclaredMethods().forEach(jMethod -> {
                                 if (jMethod.getSignature().contains(methodSig)) {
                                     influencingFactorRules.add(new InfluencingFactorRule(jMethod, index));

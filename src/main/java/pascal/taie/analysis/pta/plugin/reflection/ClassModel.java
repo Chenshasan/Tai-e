@@ -57,10 +57,10 @@ class ClassModel extends AbstractModel {
             pts.forEach(nameObj -> {
                 String name = CSObjs.toString(nameObj);
                 if (name != null) {
-                    Type type = name.equals("void") ?
-                            VoidType.VOID : PrimitiveType.get(name);
-                    solver.addVarPointsTo(csVar.getContext(), result,
-                            heapModel.getConstantObj(ClassLiteral.get(type)));
+//                    Type type = name.equals("void") ?
+//                            VoidType.VOID : PrimitiveType.get(name);
+//                    solver.addVarPointsTo(csVar.getContext(), result,
+//                            heapModel.getConstantObj(ClassLiteral.get(type)));
                 }
             });
         }
