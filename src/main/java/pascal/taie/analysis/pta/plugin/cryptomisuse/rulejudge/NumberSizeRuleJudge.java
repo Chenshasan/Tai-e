@@ -50,8 +50,11 @@ public class NumberSizeRuleJudge implements RuleJudge {
                             }
                         }
                     });
+            if (result.getPointsToSet(var).stream().
+                    filter(manager::isNumericCryptoObj).toList().size() > 0) {
+                issue.set(report(null, var, callSite));
+            }
             logger.debug("the result of number size in" + callSite + " is " + match.get());
-
         }
         return issue.get();
     }
@@ -64,7 +67,7 @@ public class NumberSizeRuleJudge implements RuleJudge {
                     "",
                     "",
                     callSite.toString(), var.getName(),
-                    coi.constantValue().toString(), numberSizeRule.method().toString(),
+                    "", numberSizeRule.method().toString(),
                     numberSizeRule.min() + "-" + numberSizeRule.max(),
                     callSite.getContainer().getSubsignature().toString());
         } else {

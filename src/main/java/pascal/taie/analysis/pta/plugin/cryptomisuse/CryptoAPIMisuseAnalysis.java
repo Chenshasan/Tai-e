@@ -143,7 +143,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         config.forbiddenMethodRules().forEach(f ->
                 ruleToJudge.put(f, new ForbiddenMethodRuleJudge(f, manager)));
         config.influencingFactorRules().forEach(i ->
-                ruleToJudge.put(i, new InfluencingFactorRuleJudge(i, manager)));
+                ruleToJudge.put(i, new InfluencingFactorRuleJudge(i, manager, World.get().getClassHierarchy())));
         config.compositeRules().forEach(cr -> {
             compositeRules.add(cr);
             fromSourceToRule.put(cr.getFromSource(), cr);
@@ -213,7 +213,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
                         CryptoObjInformation coi =
                                 new CryptoObjInformation(stmt, jMethod, intLiteral.getValue());
-                        if (overNumberRange(intLiteral.getNumber())){
+                        if (overNumberRange(intLiteral.getNumber())) {
                             Obj cryptoObj = manager.makeNumberCryptoObj();
                             solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                                     cryptoObj);

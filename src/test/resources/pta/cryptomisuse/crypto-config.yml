@@ -22,9 +22,13 @@ patternMatchRules:
   - { method: "<retrofit2.Retrofit$Builder: retrofit2.Retrofit$Builder baseUrl(java.lang.String)>", index: 0, pattern: "^(?!http://$)http://(.*)$" }
 
 influencingFactorRules:
-  - { method: "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: 1 }
-  - { method: "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: 1 }
-  - { method: "boolean verify(java.lang.String,javax.net.ssl.SSLSession)", index: result }
+  - { method: "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, type: use }
+  - { method: "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, type: use }
+  - { method: "java.security.cert.X509Certificate[] getAcceptedIssuers()", index: result, type: def }
+  - { method: "boolean verify(java.lang.String,javax.net.ssl.SSLSession)", index: 1, type: use }
+  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", index: "['createSocket', '!<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>']", type: exist }
+  - { method: "<javax.net.ssl.SSLContext: javax.net.ssl.SSLSocketFactory getSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" , type: exist }
+  - { method: "<javax.net.ssl.HttpsURLConnection: javax.net.ssl.SSLSocketFactory getDefaultSSLSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" , type: exist }
 
 predictableSourceRules:
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
@@ -34,7 +38,7 @@ predictableSourceRules:
   - { method: "<java.security.KeyStore: void load(java.io.InputStream,char[])>", index: 1 }
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>", index: 0 }
   - { method: "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int,java.security.spec.AlgorithmParameterSpec)>", index: 0 }
-  - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
+#  - { method: "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>", index: base }
   - { method: "<java.security.SecureRandom: void setSeed(byte[])>", index: 0 }
   - { method: "<java.security.SecureRandom: void <init>(byte[])>", index: 0 }
   - { method: "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>", index: 0 }
@@ -42,7 +46,7 @@ predictableSourceRules:
 cryptoSources:
   - { method: "<java.util.Base64$Decoder: byte[] decode(java.lang.String)>", type: "byte[]", index: result }
   - { method: "<java.util.Random: void nextBytes(byte[])>", type: "byte[]", index: 0 }
-  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result }
+#  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", type: "javax.net.ssl.SSLSocketFactory", index: result }
   - { method: "<org.owasp.esapi.reference.DefaultEncoder: java.lang.String encodeForBase64(byte[],boolean)>", type: "java.lang.String", index: result }
 
 numberSizeRules:

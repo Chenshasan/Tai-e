@@ -67,6 +67,11 @@ public class CryptoObjManager {
                 ((MockObj) obj).getDescriptor().equals(PREDICT_DESC);
     }
 
+    public boolean isNumericCryptoObj(Obj obj){
+        return  obj instanceof MockObj &&
+                ((MockObj) obj).getDescriptor().equals(NUMBER_DESC);
+    }
+
     public boolean isCryptoInvolvedObj(Obj obj) {
         return isCryptoObj(obj) || isCompositeCryptoObj(obj);
     }

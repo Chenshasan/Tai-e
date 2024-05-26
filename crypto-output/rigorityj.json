@@ -1,779 +1,76 @@
 [ {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go()>[7@L22] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
-  "var" : "$-v9",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c8",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase1: void key2(byte[],int)>[1@L16] invokespecial $-v4.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void key2(byte[],int)"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase2: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto3: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
-  "var" : "$-v13",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c6",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase3: void method2(byte[],int)>[1@L18] invokespecial $-v3.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void method2(byte[],int)"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase4: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto5: byte[] encrypt(java.lang.String,java.lang.String)>[9@L31] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
-  "var" : "$-v13",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c7",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsBBCase1: void key2()>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsBBCase1: void key2()>[7@L15] invokespecial $-v9.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void key2()"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase8: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase8: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
-  "var" : "$-v9",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c10",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABPSCase1: void key2(int)>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABPSCase1: void key2(int)>[11@L19] invokespecial $-v12.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void key2(int)"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void method1(java.lang.String)>[3@L17] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c5",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.CryptoStaticSalt1: void method1(byte[])>[3@L27] invokespecial $-v6.<init>(passedSalt#1, count)",
+  "var" : "passedSalt#1",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void method1(byte[])"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABMC1: void go(java.lang.String)>[4@L15] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>[4@L12] invokevirtual random.nextBytes(salt)",
+  "sourceMethod" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>[7@L14] invokespecial $-v9.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void main(java.lang.String[])"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void go(java.lang.String,java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "salt[$-ci0] = $-c8",
+  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABMC1: void key2(byte[],int)>[1@L8] invokespecial $-v4.<init>(salt, count)",
+  "var" : "salt",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "subSignature" : "void key2(byte[],int)"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC1: void go(java.lang.String,java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
+  "judgeType" : "Influencing Factor",
+  "message" : "Should process the return value of this method instead of returning directly",
+  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase3: java.security.cert.X509Certificate[] getAcceptedIssuers()>",
+  "subSignature" : "java.security.cert.X509Certificate[] getAcceptedIssuers()"
 }, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase3: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase3: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase4: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase4: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase15: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase15: void method1(java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase3: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase10: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase10: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
-  "var" : "$-v9",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase4: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase4: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoBBCase1: void go()>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoBBCase1: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto2: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
-  "var" : "$-v13",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase7: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase7: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
-  "var" : "$-v9",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABPSCase1: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABPSCase1: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "cryptoAlgo = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.CryptoECB1: void method1(java.lang.String)>[8@L34] cipher = invokestatic javax.crypto.Cipher.getInstance(passedAlgo)",
-  "var" : "passedAlgo",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC4: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase3: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase3: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase3: void method1(java.lang.String)>[4@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase3: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto4: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
-  "var" : "$-v13",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase14: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase14: void method1(java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase5: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto6: byte[] encrypt(java.lang.String,java.lang.String)>[9@L31] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
-  "var" : "$-v13",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase5: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC5: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
-  "var" : "$-v9",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC3: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase2: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase2: void go()>[6@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v8)",
-  "var" : "$-v8",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase1: void go(java.lang.String)>[4@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "AES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase4: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC2",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase2: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase2: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase9: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase9: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase1: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase1: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>[5@L15] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC2: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void method1(java.lang.String,java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "DES/ECB/PKCS5Padding",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c8 = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase5: void go(int)>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase5: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
-  "var" : "$-c8",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"RC4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase13: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase13: void method1(java.lang.String)>[3@L19] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "RC4",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"IDEA\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase5: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase5: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "IDEA",
-  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>[2@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC2: void go(java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "cryptokey = \"DES\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC1: void go(java.lang.String,java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(cryptoKey)",
-  "var" : "cryptoKey",
-  "constantValue" : "DES",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase2: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto3: byte[] encrypt(java.lang.String,java.lang.String)>[6@L28] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v10)",
-  "var" : "$-v10",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void go(java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"DES\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>[2@L13] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "DES",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void method1(java.lang.String)>[1@L15] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"DES\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go()>[3@L20] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v5)",
-  "var" : "$-v5",
-  "constantValue" : "DES",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "key = \"DES\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void method1(java.lang.String,java.lang.String)>[1@L16] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(cryptoKey)",
-  "var" : "cryptoKey",
-  "constantValue" : "DES",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "keyAlgo = \"DES\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void go(java.lang.String,java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(keyAlgo)",
-  "var" : "keyAlgo",
-  "constantValue" : "DES",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"Blowfish\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go()>[3@L15] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v5)",
-  "var" : "$-v5",
-  "constantValue" : "Blowfish",
-  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase2: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
+  "judgeType" : "Influencing Factor",
+  "message" : "Should use the var: sslSession",
   "calleeMethod" : "<org.cryptoapi.bench.dummyhostnameverifier.DummyHostNameVerifierCase1: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>",
   "subSignature" : "boolean verify(java.lang.String,javax.net.ssl.SSLSession)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorBBCase1: void go()>[9@L18] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABICase1: void go(byte[])>[2@L12] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.CryptoStaticIV1: void method1(byte[])>[3@L32] invokespecial ivSpec.<init>(passedIV#1)",
-  "var" : "passedIV#1",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void method1(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABHCase1: void go()>[10@L21] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABPSCase1: void go(int)>[15@L24] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABHCase2: void go()>[25@L31] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABMC1: void go(byte[])>[2@L14] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void go(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABICase3: void method2(byte[])>[2@L12] invokespecial ivSpec.<init>(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "void method2(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<org.cryptoapi.bench.impropersslsocketfactory.ImproperSocketManualHostBBCase1: void main(java.lang.String[])>[0@L9] $-v3 = invokestatic javax.net.ssl.SSLSocketFactory.getDefault()",
-  "sourceMethod" : "<org.cryptoapi.bench.impropersslsocketfactory.ImproperSocketManualHostBBCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.impropersslsocketfactory.ImproperSocketManualHostBBCase1: void main(java.lang.String[])>[4@L10] $-v7 = invokevirtual ssf.createSocket($-c6, $-c5)",
-  "var" : "ssf",
-  "calleeMethod" : "<javax.net.ssl.DefaultSSLSocketFactory: java.net.Socket createSocket(java.lang.String,int)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "bytes[$-ci1] = $-c11",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase1: void main(java.lang.String[])>[12@L13] invokevirtual sr.setSeed(bytes)",
-  "var" : "bytes",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "seed[$-ci1] = $-c7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.CryptoPredictableSeed1: void method1(byte[])>[3@L34] invokevirtual sr.setSeed(passedSeed#1)",
-  "var" : "passedSeed#1",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void method1(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v1[$-ci1] = $-c5",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase3: void <clinit>()>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase3: void go()>[3@L25] invokevirtual sr.setSeed($-v3)",
-  "var" : "$-v3",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "seed[$-ci1] = $-c9",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABMC1: void go(byte[])>[2@L8] invokevirtual sr.setSeed(seed)",
-  "var" : "seed",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void go(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "seed[$-ci1] = $-c7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase5: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase5: void method2(byte[])>[2@L17] invokevirtual sr.setSeed(seed)",
-  "var" : "seed",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void method2(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "seed[$-ci1] = $-c7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase1: void go(byte[])>[2@L13] invokevirtual sr.setSeed(seed)",
-  "var" : "seed",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void go(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "keyBytes[$-ci1] = $-c10",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase1: void main(java.lang.String[])>[10@L10] invokevirtual sr.setSeed(keyBytes)",
-  "var" : "keyBytes",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase1: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordBBCase1: void go()>[10@L23] invokevirtual ks.load($-v10, $-v11)",
-  "var" : "$-v11",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABMC1: void go(java.lang.String)>[9@L17] invokevirtual ks.load($-v9, $-v10)",
-  "var" : "$-v10",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase2: void go()>[9@L33] invokevirtual ks.load($-v8, $-v9)",
-  "var" : "$-v9",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase1: void go(java.lang.String)>[9@L22] invokevirtual ks.load($-v9, $-v10)",
-  "var" : "$-v10",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABPSCase1: void go(int)>[16@L28] invokevirtual ks.load($-v14, $-v15)",
-  "var" : "$-v15",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go(int)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.CryptoPredictableKeyStorePassword1: void method1(java.lang.String)>[10@L34] invokevirtual ks.load($-v10, $-v11)",
-  "var" : "$-v11",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABHCase2: void go()>[26@L31] invokevirtual ks.load($-v22, $-v23)",
-  "var" : "$-v23",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase3: void method2(java.lang.String)>[9@L27] invokevirtual ks.load($-v9, $-v10)",
-  "var" : "$-v10",
-  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
-  "subSignature" : "void method2(java.lang.String)"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase3: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "url = \"http://gmail.com\"",
-  "sourceMethod" : "<org.cryptoapi.bench.http.HttpProtocolABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.http.CryptoHTTP1: void method1(java.lang.String)>[6@L27] invokespecial $-v5.<init>(passedURL)",
-  "var" : "passedURL",
-  "constantValue" : "http://gmail.com",
-  "calleeMethod" : "<java.net.URL: void <init>(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -797,13 +94,13 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "url = \"http://www.facebook.com\"",
-  "sourceMethod" : "<org.cryptoapi.bench.http.HttpProtocolABPSCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.http.HttpProtocolABPSCase1: void main(java.lang.String[])>[7@L10] invokespecial $-v6.<init>(url)",
-  "var" : "url",
-  "constantValue" : "http://www.facebook.com",
+  "sourceStmt" : "url = \"http://gmail.com\"",
+  "sourceMethod" : "<org.cryptoapi.bench.http.HttpProtocolABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.http.CryptoHTTP1: void method1(java.lang.String)>[6@L27] invokespecial $-v5.<init>(passedURL)",
+  "var" : "passedURL",
+  "constantValue" : "http://gmail.com",
   "calleeMethod" : "<java.net.URL: void <init>(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
+  "subSignature" : "void method1(java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -827,6 +124,16 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "url = \"http://www.facebook.com\"",
+  "sourceMethod" : "<org.cryptoapi.bench.http.HttpProtocolABPSCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.http.HttpProtocolABPSCase1: void main(java.lang.String[])>[7@L10] invokespecial $-v6.<init>(url)",
+  "var" : "url",
+  "constantValue" : "http://www.facebook.com",
+  "calleeMethod" : "<java.net.URL: void <init>(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
   "sourceStmt" : "url = \"http://insects.myspecies.info/\"",
   "sourceMethod" : "<org.cryptoapi.bench.http.HttpProtocolBBCase1: void main(java.lang.String[])>",
   "callSite" : "<org.cryptoapi.bench.http.HttpProtocolBBCase1: void main(java.lang.String[])>[3@L8] invokespecial $-v4.<init>(url)",
@@ -837,306 +144,12 @@
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "seed[$-ci1] = $-c12",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase2: void main(java.lang.String[])>[13@L14] invokespecial sr.<init>(seed)",
-  "var" : "seed",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v7[$-ci0] = seed",
-  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase2: void main(java.lang.String[])>[6@L8] invokespecial sr.<init>($-v7)",
-  "var" : "$-v7",
-  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase4: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c6 = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase1: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
-  "var" : "$-c6",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase6: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase6: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
-  "var" : "$-v3",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase9: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase9: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC4: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC3: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase12: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase12: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase3: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash3: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
-  "var" : "$-v7",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase7: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase7: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
-  "var" : "$-v3",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase1: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c6 = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase2: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
-  "var" : "$-c6",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase10: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase10: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase3: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase2: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC1: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase2: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash2: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
-  "var" : "$-v7",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase11: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase11: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void method1(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase4: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash4: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
-  "var" : "$-v7",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase4: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "crypto = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC2: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
-  "var" : "crypto",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c6 = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase4: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase4: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
-  "var" : "$-c6",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase5: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase5: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
-  "var" : "$-v3",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c6 = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase3: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
-  "var" : "$-c6",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase1: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"MD4\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase3: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "MD4",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c2 = \"SHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash1: void encrypt(java.lang.String,java.lang.String)>[5@L29] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
-  "var" : "$-v7",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c0 = \"MD2\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase8: void go2()>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase8: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
-  "var" : "$-v3",
-  "constantValue" : "MD2",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void go(java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c4 = \"MD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase2: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
-  "var" : "$-c4",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase3: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+  "sourceStmt" : "defaultKey[$-ci0] = $-c9",
+  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>",
+  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>[13@L22] invokespecial $-v15.<init>(defaultKey, salt, iterationCount, keyLength)",
+  "var" : "defaultKey",
+  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
+  "subSignature" : "void key()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
@@ -1146,24 +159,6 @@
   "var" : "$-v12",
   "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
   "subSignature" : "void key(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase2: void go()>[9@L33] invokespecial $-v6.<init>($-v9, salt, $-c8, $-c7)",
-  "var" : "$-v9",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "subSignature" : "void go()"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase1: void key()>[10@L22] invokespecial $-v12.<init>($-v13, salt, iterationCount, keyLength)",
-  "var" : "$-v13",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "subSignature" : "void key()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
@@ -1187,15 +182,6 @@
   "message" : "The value of the API is not well randomized",
   "sourceStmt" : "",
   "sourceMethod" : "",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.CryptoPredictablePBE: void method1(java.lang.String)>[13@L37] invokespecial $-v13.<init>($-v14, salt, iterationCount, keyLength)",
-  "var" : "$-v14",
-  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
-  "subSignature" : "void method1(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "",
-  "sourceMethod" : "",
   "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase1: void go(java.lang.String)>[9@L22] invokespecial $-v11.<init>($-v12, salt, iterationCount, keyLength)",
   "var" : "$-v12",
   "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
@@ -1203,12 +189,30 @@
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "defaultKey[$-ci0] = $-c9",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>",
-  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase2: void key()>[13@L22] invokespecial $-v15.<init>(defaultKey, salt, iterationCount, keyLength)",
-  "var" : "defaultKey",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordABICase2: void go()>[9@L33] invokespecial $-v6.<init>($-v9, salt, $-c8, $-c7)",
+  "var" : "$-v9",
+  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.PredictablePBEPasswordBBCase1: void key()>[10@L22] invokespecial $-v12.<init>($-v13, salt, iterationCount, keyLength)",
+  "var" : "$-v13",
   "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
   "subSignature" : "void key()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablepbepassword.CryptoPredictablePBE: void method1(java.lang.String)>[13@L37] invokespecial $-v13.<init>($-v14, salt, iterationCount, keyLength)",
+  "var" : "$-v14",
+  "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
+  "subSignature" : "void method1(java.lang.String)"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
@@ -1219,28 +223,57 @@
   "calleeMethod" : "<javax.crypto.spec.PBEKeySpec: void <init>(char[],byte[],int,int)>",
   "subSignature" : "void key(int)"
 }, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase2: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c12 = \"HmacSHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase2: void main(java.lang.String[])>[7@L16] mac = invokestatic javax.crypto.Mac.getInstance($-c12)",
+  "var" : "$-c12",
+  "constantValue" : "HmacSHA1",
+  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c12 = \"HmacMD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase1: void main(java.lang.String[])>[7@L16] mac = invokestatic javax.crypto.Mac.getInstance($-c12)",
+  "var" : "$-c12",
+  "constantValue" : "HmacMD5",
+  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Influencing Factor",
+  "message" : "Should use all the invocation of createSocket and !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>",
+  "calleeMethod" : "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>",
+  "subSignature" : "javax.net.SocketFactory getDefault()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-v1[$-ci7] = $-ci7",
-  "sourceMethod" : "<org.cryptoapi.bench.credentialinstring.CredentialInStringABICase2: void <clinit>()>",
-  "callSite" : "<org.cryptoapi.bench.credentialinstring.CredentialInStringABICase2: void go()>[5@L27] invokespecial $-v5.<init>(keyBytes#1, $-c6)",
+  "sourceStmt" : "defaultKey[$-ci7] = $-ci7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.Crypto: byte[] method1(java.lang.String,byte[])>[9@L55] invokespecial keySpec.<init>(keyBytes#1, $-v12)",
   "var" : "keyBytes#1",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "void go()"
+  "subSignature" : "byte[] method1(java.lang.String,byte[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "key[$-ci7] = $-ci7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABICase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABICase3: void method2(byte[])>[4@L18] invokespecial $-v5.<init>(keyBytes, $-c6)",
+  "sourceStmt" : "key[$-ci4] = $-c34",
+  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABHCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABHCase2: void main(java.lang.String[])>[48@L33] invokespecial $-v37.<init>(keyBytes, $-c38)",
   "var" : "keyBytes",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "void method2(byte[])"
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "keyBytes[$-ci7] = $-ci7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyBBCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyBBCase1: void main(java.lang.String[])>[26@L11] invokespecial $-v19.<init>(keyBytes#1, $-c20)",
+  "var" : "keyBytes#1",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
@@ -1271,30 +304,21 @@
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "keyBytes[$-ci7] = $-ci7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyBBCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyBBCase1: void main(java.lang.String[])>[26@L11] invokespecial $-v19.<init>(keyBytes#1, $-c20)",
-  "var" : "keyBytes#1",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "defaultKey[$-ci7] = $-ci7",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.Crypto: byte[] method1(java.lang.String,byte[])>[9@L55] invokespecial keySpec.<init>(keyBytes#1, $-v12)",
-  "var" : "keyBytes#1",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "byte[] method1(java.lang.String,byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "key[$-ci4] = $-c34",
-  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABHCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABHCase2: void main(java.lang.String[])>[48@L33] invokespecial $-v37.<init>(keyBytes, $-c38)",
+  "sourceStmt" : "key[$-ci7] = $-ci7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABICase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictablecryptographickey.PredictableCryptographicKeyABICase3: void method2(byte[])>[4@L18] invokespecial $-v5.<init>(keyBytes, $-c6)",
   "var" : "keyBytes",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
+  "subSignature" : "void method2(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-v1[$-ci7] = $-ci7",
+  "sourceMethod" : "<org.cryptoapi.bench.credentialinstring.CredentialInStringABICase2: void <clinit>()>",
+  "callSite" : "<org.cryptoapi.bench.credentialinstring.CredentialInStringABICase2: void go()>[5@L27] invokespecial $-v5.<init>(keyBytes#1, $-c6)",
+  "var" : "keyBytes#1",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "void go()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
@@ -1307,89 +331,1123 @@
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>[4@L12] invokevirtual random.nextBytes(salt)",
-  "sourceMethod" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.untrustedprng.UntrustedPRNGCase1: void main(java.lang.String[])>[7@L14] invokespecial $-v9.<init>(salt, count)",
-  "var" : "salt",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABICase1: void go(byte[])>[2@L12] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABHCase2: void go()>[25@L31] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABICase3: void method2(byte[])>[2@L12] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void method2(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorBBCase1: void go()>[9@L18] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABMC1: void go(byte[])>[2@L14] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABPSCase1: void go(int)>[15@L24] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.StaticInitializationVectorABHCase1: void go()>[10@L21] invokespecial ivSpec.<init>(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.staticinitializationvector.CryptoStaticIV1: void method1(byte[])>[3@L32] invokespecial ivSpec.<init>(passedIV#1)",
+  "var" : "passedIV#1",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "void method1(byte[])"
+}, {
+  "judgeType" : "Influencing Factor",
+  "message" : "Should process the return value of this method instead of returning directly",
+  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase1: java.security.cert.X509Certificate[] getAcceptedIssuers()>",
+  "subSignature" : "java.security.cert.X509Certificate[] getAcceptedIssuers()"
+}, {
+  "judgeType" : "Influencing Factor",
+  "message" : "Should process the return value of this method instead of returning directly",
+  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase2: java.security.cert.X509Certificate[] getAcceptedIssuers()>",
+  "subSignature" : "java.security.cert.X509Certificate[] getAcceptedIssuers()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase2: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase2: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>[5@L15] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go()>[7@L22] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
+  "var" : "$-v9",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase4: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase4: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase3: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto4: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
+  "var" : "$-v13",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase3: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase3: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase13: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase13: void method1(java.lang.String)>[3@L19] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase4: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase4: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC1: void go(java.lang.String,java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase4: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto5: byte[] encrypt(java.lang.String,java.lang.String)>[9@L31] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
+  "var" : "$-v13",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase15: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase15: void method1(java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABMC1: void go(java.lang.String)>[4@L15] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase2: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto3: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
+  "var" : "$-v13",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase2: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase2: void go()>[6@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v8)",
+  "var" : "$-v8",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "cryptoAlgo = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.CryptoECB1: void method1(java.lang.String)>[8@L34] cipher = invokestatic javax.crypto.Cipher.getInstance(passedAlgo)",
+  "var" : "passedAlgo",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase3: void method1(java.lang.String)>[4@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
+  "var" : "$-v9",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABICase1: void go(java.lang.String)>[4@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC2: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase3: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto2: byte[] encrypt(java.lang.String,java.lang.String)>[9@L30] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
+  "var" : "$-v13",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC4: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase4: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void method1(java.lang.String)>[3@L17] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void method1(java.lang.String,java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase7: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase7: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
+  "var" : "$-v9",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase1: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase1: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase5: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC5: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase5: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase5: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase5: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase5: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase14: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase14: void method1(java.lang.String)>[3@L18] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase9: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase9: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase5: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto6: byte[] encrypt(java.lang.String,java.lang.String)>[9@L31] cipher = invokestatic javax.crypto.Cipher.getInstance($-v13)",
+  "var" : "$-v13",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoBBCase1: void go()>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoBBCase1: void go()>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"IDEA\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase10: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase10: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
+  "var" : "$-v9",
+  "constantValue" : "IDEA",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"RC2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase8: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase8: void go()>[7@L17] cipher = invokestatic javax.crypto.Cipher.getInstance($-v9)",
+  "var" : "$-v9",
+  "constantValue" : "RC2",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"AES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABPSCase1: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.ecbcrypto.EcbInSymmCryptoABPSCase1: void go(int)>[5@L13] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "AES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"DES/ECB/PKCS5Padding\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void go(java.lang.String,java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "DES/ECB/PKCS5Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c8 = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase3: void go(int)>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABPSCase3: void go(int)>[5@L14] cipher = invokestatic javax.crypto.Cipher.getInstance($-c8)",
+  "var" : "$-c8",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"RC4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC3: void go(java.lang.String)>[3@L14] cipher = invokestatic javax.crypto.Cipher.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "RC4",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEABMC1: void go(int)>[6@L13] invokespecial $-v8.<init>(salt, count)",
+  "var" : "count",
+  "constantValue" : "",
   "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEBBCase1: void key2()>[7@L17] invokespecial $-v9.<init>(salt, count)",
+  "var" : "count",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void key2()"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.CryptoPBEIteration1: void method1(int)>[7@L37] invokespecial $-v9.<init>(salt, passedCount#1)",
+  "var" : "passedCount#1",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void method1(int)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEABICase1: void go(int)>[6@L19] invokespecial $-v8.<init>(salt, count)",
+  "var" : "count",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEABPSCase1: void main(java.lang.String[])>[12@L19] invokespecial $-v12.<init>(salt, count)",
+  "var" : "count",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEABHCase1: void key2()>[22@L27] invokespecial $-v21.<init>(salt, iteration)",
+  "var" : "iteration",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void key2()"
+}, {
+  "judgeType" : "Number Size",
+  "message" : "The number size is not allowed for the API",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.pbeiteration.LessThan1000IterationPBEABICase3: void method1(int,java.security.SecureRandom,javax.crypto.spec.PBEParameterSpec)>[4@L23] invokespecial $-v6.<init>(salt, count)",
+  "var" : "count",
+  "constantValue" : "",
+  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "numberSize" : "1000-50000",
+  "subSignature" : "void method1(int,java.security.SecureRandom,javax.crypto.spec.PBEParameterSpec)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase1: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase2: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase4: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase6: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase6: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
+  "var" : "$-v3",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c6 = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase1: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase11: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase11: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase10: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase10: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase12: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase12: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c6 = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase4: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC2: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase3: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash3: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
+  "var" : "$-v7",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase4: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash1: void encrypt(java.lang.String,java.lang.String)>[5@L29] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
+  "var" : "$-v7",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase2: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase4: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC4: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase8: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase8: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
+  "var" : "$-v3",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase9: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase9: void method1(java.lang.String,java.lang.String)>[0@L18] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase3: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase7: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase7: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
+  "var" : "$-v3",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c6 = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase2: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashBBCase1: void main(java.lang.String[])>[2@L9] md = invokestatic java.security.MessageDigest.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"MD2\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase4: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash4: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
+  "var" : "$-v7",
+  "constantValue" : "MD2",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase3: void go(java.lang.String,java.lang.String)>[0@L13] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC1: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c0 = \"SHA1\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase5: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABICase5: void go(java.lang.String)>[2@L25] md = invokestatic java.security.MessageDigest.getInstance($-v3)",
+  "var" : "$-v3",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c6 = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABPSCase3: void main(java.lang.String[])>[4@L9] md = invokestatic java.security.MessageDigest.getInstance($-c6)",
+  "var" : "$-c6",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void main(java.lang.String[])"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"MD5\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABSCase2: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.CryptoHash2: void encrypt(java.lang.String,java.lang.String)>[5@L31] md = invokestatic java.security.MessageDigest.getInstance($-v7)",
+  "var" : "$-v7",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"MD4\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMCCase3: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokenhash.BrokenHashABMC3: void go(java.lang.String,java.lang.String)>[0@L8] md = invokestatic java.security.MessageDigest.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "MD4",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "seed[$-ci1] = $-c9",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABMC1: void go(byte[])>[2@L8] invokevirtual sr.setSeed(seed)",
+  "var" : "seed",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "void go(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "bytes[$-ci1] = $-c11",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase1: void main(java.lang.String[])>[12@L13] invokevirtual sr.setSeed(bytes)",
+  "var" : "bytes",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
   "subSignature" : "void main(java.lang.String[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c5",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABSCase1: void <init>()>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.CryptoStaticSalt1: void method1(byte[])>[3@L27] invokespecial $-v6.<init>(passedSalt#1, count)",
-  "var" : "passedSalt#1",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
+  "sourceStmt" : "seed[$-ci1] = $-c7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABSCase1: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.CryptoPredictableSeed1: void method1(byte[])>[3@L34] invokevirtual sr.setSeed(passedSeed#1)",
+  "var" : "passedSeed#1",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
   "subSignature" : "void method1(byte[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c7",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsBBCase1: void key2()>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsBBCase1: void key2()>[7@L15] invokespecial $-v9.<init>(salt, count)",
-  "var" : "salt",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void key2()"
+  "sourceStmt" : "seed[$-ci1] = $-c7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase1: void go(byte[])>[2@L13] invokevirtual sr.setSeed(seed)",
+  "var" : "seed",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "void go(byte[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c10",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABPSCase1: void key2(int)>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABPSCase1: void key2(int)>[11@L19] invokespecial $-v12.<init>(salt, count)",
-  "var" : "salt",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void key2(int)"
+  "sourceStmt" : "keyBytes[$-ci1] = $-c10",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase1: void main(java.lang.String[])>[10@L10] invokevirtual sr.setSeed(keyBytes)",
+  "var" : "keyBytes",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "void main(java.lang.String[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c8",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABMCCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABMC1: void key2(byte[],int)>[1@L8] invokespecial $-v4.<init>(salt, count)",
-  "var" : "salt",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void key2(byte[],int)"
+  "sourceStmt" : "seed[$-ci1] = $-c7",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase5: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase5: void method2(byte[])>[2@L17] invokevirtual sr.setSeed(seed)",
+  "var" : "seed",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "void method2(byte[])"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c8",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase1: void key2(byte[],int)>[1@L16] invokespecial $-v4.<init>(salt, count)",
-  "var" : "salt",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void key2(byte[],int)"
+  "sourceStmt" : "$-v1[$-ci1] = $-c5",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase3: void <clinit>()>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABICase3: void go()>[3@L25] invokevirtual sr.setSeed($-v3)",
+  "var" : "$-v3",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "void go()"
 }, {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "salt[$-ci0] = $-c6",
-  "sourceMethod" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase3: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.staticsalts.StaticSaltsABICase3: void method2(byte[],int)>[1@L18] invokespecial $-v3.<init>(salt, count)",
-  "var" : "salt",
-  "calleeMethod" : "<javax.crypto.spec.PBEParameterSpec: void <init>(byte[],int)>",
-  "subSignature" : "void method2(byte[],int)"
+  "sourceStmt" : "seed[$-ci1] = $-c12",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsABPSCase2: void main(java.lang.String[])>[13@L14] invokespecial sr.<init>(seed)",
+  "var" : "seed",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
+  "subSignature" : "void main(java.lang.String[])"
 }, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<org.cryptoapi.bench.dummycertvalidation.DummyCertValidationCase1: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c12 = \"HmacMD5\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase1: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase1: void main(java.lang.String[])>[7@L16] mac = invokestatic javax.crypto.Mac.getInstance($-c12)",
-  "var" : "$-c12",
-  "constantValue" : "HmacMD5",
-  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "$-v7[$-ci0] = seed",
+  "sourceMethod" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.predictableseeds.PredictableSeedsBBCase2: void main(java.lang.String[])>[6@L8] invokespecial sr.<init>($-v7)",
+  "var" : "$-v7",
+  "calleeMethod" : "<java.security.SecureRandom: void <init>(byte[])>",
   "subSignature" : "void main(java.lang.String[])"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c12 = \"HmacSHA1\"",
-  "sourceMethod" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase2: void main(java.lang.String[])>",
-  "callSite" : "<org.cryptoapi.bench.brokenmac.BrokenMacBBCase2: void main(java.lang.String[])>[7@L16] mac = invokestatic javax.crypto.Mac.getInstance($-c12)",
-  "var" : "$-c12",
-  "constantValue" : "HmacSHA1",
-  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
-  "subSignature" : "void main(java.lang.String[])"
+  "sourceStmt" : "$-c0 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase6: void go()>[3@L15] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v5)",
+  "var" : "$-v5",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"DES\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase1: void go()>[2@L13] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "DES",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoBBCase2: void go()>[2@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "keyAlgo = \"DES\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase1: void go(java.lang.String,java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(keyAlgo)",
+  "var" : "keyAlgo",
+  "constantValue" : "DES",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "key = \"DES\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase11: void method1(java.lang.String,java.lang.String)>[1@L16] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(cryptoKey)",
+  "var" : "cryptoKey",
+  "constantValue" : "DES",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase2: void go(java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABSCase2: void <init>()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.Crypto3: byte[] encrypt(java.lang.String,java.lang.String)>[6@L28] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v10)",
+  "var" : "$-v10",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encrypt(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase12: void method1(java.lang.String)>[1@L15] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"DES\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go2()>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABICase5: void go()>[3@L20] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance($-v5)",
+  "var" : "$-v5",
+  "constantValue" : "DES",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "crypto = \"Blowfish\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase2: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC2: void go(java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(crypto)",
+  "var" : "crypto",
+  "constantValue" : "Blowfish",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "cryptokey = \"DES\"",
+  "sourceMethod" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMCCase1: void main(java.lang.String[])>",
+  "callSite" : "<org.cryptoapi.bench.brokencrypto.BrokenCryptoABMC1: void go(java.lang.String,java.lang.String)>[1@L12] keyGen = invokestatic javax.crypto.KeyGenerator.getInstance(cryptoKey)",
+  "var" : "cryptoKey",
+  "constantValue" : "DES",
+  "calleeMethod" : "<javax.crypto.KeyGenerator: javax.crypto.KeyGenerator getInstance(java.lang.String)>",
+  "subSignature" : "void go(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABPSCase1: void go(int)>[16@L28] invokevirtual ks.load($-v14, $-v15)",
+  "var" : "$-v15",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go(int)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase3: void method2(java.lang.String)>[9@L27] invokevirtual ks.load($-v9, $-v10)",
+  "var" : "$-v10",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void method2(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordBBCase1: void go()>[10@L23] invokevirtual ks.load($-v10, $-v11)",
+  "var" : "$-v11",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABMC1: void go(java.lang.String)>[9@L17] invokevirtual ks.load($-v9, $-v10)",
+  "var" : "$-v10",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase1: void go(java.lang.String)>[9@L22] invokevirtual ks.load($-v9, $-v10)",
+  "var" : "$-v10",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.CryptoPredictableKeyStorePassword1: void method1(java.lang.String)>[10@L34] invokevirtual ks.load($-v10, $-v11)",
+  "var" : "$-v11",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void method1(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABHCase2: void go()>[26@L31] invokevirtual ks.load($-v22, $-v23)",
+  "var" : "$-v23",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go()"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<org.cryptoapi.bench.predictablekeystorepassword.PredictableKeyStorePasswordABICase2: void go()>[9@L33] invokevirtual ks.load($-v8, $-v9)",
+  "var" : "$-v9",
+  "calleeMethod" : "<java.security.KeyStore: void load(java.io.InputStream,char[])>",
+  "subSignature" : "void go()"
 } ]

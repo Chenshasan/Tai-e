@@ -53,6 +53,17 @@ final public class IndexUtils {
      */
     private static final String RESULT_STR = "result";
 
+    /**
+     * Special number representing the variable that a method
+     * throw an exception
+     */
+    static final int EXCEPTION = -3;
+
+    /**
+     * String representation of exception variable.
+     */
+    private static final String EXCEPTION_STR = "exception";
+
     private IndexUtils() {
     }
 
@@ -63,6 +74,7 @@ final public class IndexUtils {
         return switch (s.toLowerCase()) {
             case BASE_STR -> BASE;
             case RESULT_STR -> RESULT;
+            case EXCEPTION_STR -> EXCEPTION;
             default -> Integer.parseInt(s);
         };
     }
@@ -74,6 +86,7 @@ final public class IndexUtils {
         return switch (index) {
             case BASE -> BASE_STR;
             case RESULT -> RESULT_STR;
+            case EXCEPTION -> EXCEPTION_STR;
             default -> Integer.toString(index);
         };
     }

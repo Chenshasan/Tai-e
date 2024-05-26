@@ -269,16 +269,29 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                 Set<InfluencingFactorRule> influencingFactorRules = Sets.newSet();
                 for (JsonNode elem : arrayNode) {
                     String methodSig = elem.get("method").asText();
-                    int index = IndexUtils.toInt(elem.get("index").asText());
-                    hierarchy.allClasses().forEach(jClass -> {
-                        if (jClass.isApplication()) {
-                            jClass.getDeclaredMethods().forEach(jMethod -> {
-                                if (jMethod.getSignature().contains(methodSig)) {
-                                    influencingFactorRules.add(new InfluencingFactorRule(jMethod, index));
+                    String index = elem.get("index").asText();
+                    String type = elem.get("type").asText();
+                    if (!type.equals("exist")) {
+                        if (type.equals("use") || type.equals("def")) {
+                            hierarchy.allClasses().forEach(jClass -> {
+                                if (jClass.isApplication()) {
+                                    jClass.getDeclaredMethods().forEach(jMethod -> {
+                                        if (jMethod.getSignature().contains(methodSig)) {
+                                            influencingFactorRules.add(
+                                                    new InfluencingFactorRule(jMethod, index, type));
+                                        }
+                                    });
                                 }
                             });
                         }
-                    });
+                    } else {
+                        JMethod method = hierarchy.getMethod(methodSig);
+                        if (method != null) {
+                            influencingFactorRules.add(new InfluencingFactorRule(method, index, type));
+                        } else {
+                            logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
+                        }
+                    }
                 }
                 return Collections.unmodifiableSet(influencingFactorRules);
             } else {
