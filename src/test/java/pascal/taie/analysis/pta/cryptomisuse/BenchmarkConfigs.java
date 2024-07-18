@@ -32,4 +32,6 @@ public class BenchmarkConfigs {
     /* real world benchmarks */
 
     public static final String CRYPTO_BENCHMARKS_DIR = "crypto-benchmarks";
+
+    public static final String APACHEAPI_BENCHMARKS_DIR = "crypto-benchmarks/apache-api-bench";
 }

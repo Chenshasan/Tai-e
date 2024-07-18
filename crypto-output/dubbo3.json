@@ -12,20 +12,20 @@
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c24 = \"SHA1\"",
-  "sourceMethod" : "<com.alibaba.com.caucho.hessian.security.X509Encryption$EncryptOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)>",
-  "callSite" : "<com.alibaba.com.caucho.hessian.security.X509Encryption$EncryptOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)>[22@L211] md = invokestatic java.security.MessageDigest.getInstance($-c24)",
-  "var" : "$-c24",
-  "constantValue" : "SHA1",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)"
-}, {
-  "judgeType" : "Pattern Match",
-  "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c24 = \"SHA1\"",
   "sourceMethod" : "<com.alibaba.com.caucho.hessian.security.X509Signature$SignatureOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Signature,com.alibaba.com.caucho.hessian.io.Hessian2Output)>",
   "callSite" : "<com.alibaba.com.caucho.hessian.security.X509Signature$SignatureOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Signature,com.alibaba.com.caucho.hessian.io.Hessian2Output)>[20@L199] md = invokestatic java.security.MessageDigest.getInstance($-c24)",
   "var" : "$-c24",
   "constantValue" : "SHA1",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "void <init>(com.alibaba.com.caucho.hessian.security.X509Signature,com.alibaba.com.caucho.hessian.io.Hessian2Output)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c24 = \"SHA1\"",
+  "sourceMethod" : "<com.alibaba.com.caucho.hessian.security.X509Encryption$EncryptOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)>",
+  "callSite" : "<com.alibaba.com.caucho.hessian.security.X509Encryption$EncryptOutputStream: void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)>[22@L211] md = invokestatic java.security.MessageDigest.getInstance($-c24)",
+  "var" : "$-c24",
+  "constantValue" : "SHA1",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "void <init>(com.alibaba.com.caucho.hessian.security.X509Encryption,com.alibaba.com.caucho.hessian.io.Hessian2Output)"
 } ]

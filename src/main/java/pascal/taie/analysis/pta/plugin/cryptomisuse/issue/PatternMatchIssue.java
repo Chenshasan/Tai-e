@@ -2,11 +2,14 @@ package pascal.taie.analysis.pta.plugin.cryptomisuse.issue;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import pascal.taie.ir.stmt.Invoke;
+
+import java.lang.invoke.CallSite;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatternMatchIssue implements Issue {
     public PatternMatchIssue(String judgeType, String message, String sourceStmt,
-                             String sourceMethod, String callSite, String var,
+                             String sourceMethod, Invoke callSite, String var,
                              String constantValue, String calleeMethod,
                              String subSignature) {
         this.judgeType = judgeType;
@@ -32,8 +35,12 @@ public class PatternMatchIssue implements Issue {
     @JsonProperty("sourceMethod")
     private String sourceMethod;
 
+    public Invoke getCallSite() {
+        return callSite;
+    }
+
     @JsonProperty("callSite")
-    private String callSite;
+    private Invoke callSite;
 
     @JsonProperty("var")
     private String var;
@@ -44,4 +51,8 @@ public class PatternMatchIssue implements Issue {
     private String calleeMethod;
     @JsonProperty("subSignature")
     private String subSignature;
+
+    public String getCalleeMethod(){
+        return  calleeMethod;
+    }
 }

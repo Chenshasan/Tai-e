@@ -9,6 +9,24 @@
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String md5(java.lang.String)"
 }, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[7@L92] invokevirtual random.setSeed($-v15)",
+  "var" : "$-v15",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[7@L38] invokevirtual random.setSeed($-v15)",
+  "var" : "$-v15",
+  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
+  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
+}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c21 = \"AES\"",
@@ -27,23 +45,5 @@
   "var" : "$-c21",
   "constantValue" : "AES",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String aesEncode(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c14 = \"zheng\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesDecode(java.lang.String)>[7@L92] invokevirtual random.setSeed($-v15)",
-  "var" : "$-v15",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
-  "subSignature" : "java.lang.String aesDecode(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c14 = \"zheng\"",
-  "sourceMethod" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>",
-  "callSite" : "<com.zheng.common.util.AESUtil: java.lang.String aesEncode(java.lang.String)>[7@L38] invokevirtual random.setSeed($-v15)",
-  "var" : "$-v15",
-  "calleeMethod" : "<java.security.SecureRandom: void setSeed(byte[])>",
   "subSignature" : "java.lang.String aesEncode(java.lang.String)"
 } ]

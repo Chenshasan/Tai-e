@@ -22,6 +22,7 @@
 
 package pascal.taie.ir.stmt;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import pascal.taie.ir.exp.InvokeDynamic;
 import pascal.taie.ir.exp.InvokeExp;
 import pascal.taie.ir.exp.InvokeInstanceExp;
@@ -165,6 +166,7 @@ public class Invoke extends DefinitionStmt<Var, InvokeExp>
     }
 
     @Override
+    @JsonValue
     public String toString() {
         String ret = result == null ? "" : result + " = ";
         return String.format("%s[%d@L%d] %s%s",

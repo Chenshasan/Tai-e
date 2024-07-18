@@ -32,20 +32,20 @@ public class CryptoObjManager {
         numberObj = heapModel.getMockObj(NUMBER_DESC, "NumberObj", IntType.INT);
     }
 
-    Obj makePredictableCryptoObj(Type type) {
+    public Obj makePredictableCryptoObj(Type type) {
         return predictableObjs.computeIfAbsent(type,
                 t -> heapModel.getMockObj(PREDICT_DESC, "PredictableObj", t));
     }
 
-    Obj makeNumberCryptoObj() {
+    public Obj makeNumberCryptoObj() {
         return numberObj;
     }
 
-    Obj makeCryptoObj(CryptoObjInformation source, Type type) {
+    public Obj makeCryptoObj(CryptoObjInformation source, Type type) {
         return heapModel.getMockObj(CRYPTO_DESC, source, type);
     }
 
-    Obj makeCompositeCryptoObj(CompositeRule compositeRule, Type type) {
+    public Obj makeCompositeCryptoObj(CompositeRule compositeRule, Type type) {
         return heapModel.getMockObj(COMPOSITE_CRYPTO_DESC, compositeRule, type);
     }
 

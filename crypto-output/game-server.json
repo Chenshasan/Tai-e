@@ -1,4 +1,22 @@
 [ {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: byte[] decryptAES(byte[])>[9@L156] invokespecial ivspec.<init>($-v11)",
+  "var" : "$-v11",
+  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
+  "subSignature" : "byte[] decryptAES(byte[])"
+}, {
+  "judgeType" : "Predictable Source",
+  "message" : "The value of the API is not well randomized",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
+  "callSite" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: byte[] decryptAES(byte[])>[6@L155] invokespecial keyspec.<init>($-v9, $-c8)",
+  "var" : "$-v9",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
+  "subSignature" : "byte[] decryptAES(byte[])"
+}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c5 = \"AES/CBC/NoPadding\"",
@@ -7,15 +25,6 @@
   "var" : "$-c5",
   "constantValue" : "AES/CBC/NoPadding",
   "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
-  "subSignature" : "byte[] decryptAES(byte[])"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c2 = \"vWf7g1Gt701h0.#0\"",
-  "sourceMethod" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: void <clinit>()>",
-  "callSite" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: byte[] decryptAES(byte[])>[6@L155] invokespecial keyspec.<init>($-v9, $-c8)",
-  "var" : "$-v9",
-  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
   "subSignature" : "byte[] decryptAES(byte[])"
 }, {
   "judgeType" : "Pattern Match",
@@ -37,13 +46,4 @@
   "constantValue" : "SHA-1",
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "java.lang.String getWebSocketKeyChallengeResponse(java.lang.String)"
-}, {
-  "judgeType" : "Predictable Source",
-  "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c4 = \"rgnHV16#8HQFc&16\"",
-  "sourceMethod" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: void <clinit>()>",
-  "callSite" : "<com.jzy.game.engine.mina.code.ClientProtocolDecoder: byte[] decryptAES(byte[])>[9@L156] invokespecial ivspec.<init>($-v11)",
-  "var" : "$-v11",
-  "calleeMethod" : "<javax.crypto.spec.IvParameterSpec: void <init>(byte[])>",
-  "subSignature" : "byte[] decryptAES(byte[])"
 } ]

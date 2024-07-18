@@ -69,7 +69,7 @@ public class PatternMatchRuleJudge implements RuleJudge {
                 "The pattern is not matched for the API",
                 coi.allocation().toString(),
                 coi.sourceMethod().toString(),
-                callSite.toString(), var.getName(),
+                callSite, var.getName(),
                 coi.constantValue().toString(), patternMatchRule.method().toString(),
                 callSite.getContainer().getSubsignature().toString());
         return issue;

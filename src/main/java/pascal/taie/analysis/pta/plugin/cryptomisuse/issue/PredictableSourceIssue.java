@@ -2,11 +2,12 @@ package pascal.taie.analysis.pta.plugin.cryptomisuse.issue;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import pascal.taie.ir.stmt.Invoke;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PredictableSourceIssue implements Issue {
     public PredictableSourceIssue(String judgeType, String message, String sourceStmt,
-                                  String sourceMethod, String callSite, String var,
+                                  String sourceMethod, Invoke callSite, String var,
                                   String calleeMethod, String subSignature) {
         this.judgeType = judgeType;
         this.message = message;
@@ -30,8 +31,12 @@ public class PredictableSourceIssue implements Issue {
     @JsonProperty("sourceMethod")
     private String sourceMethod;
 
+    public Invoke getCallSite() {
+        return callSite;
+    }
+
     @JsonProperty("callSite")
-    private String callSite;
+    private Invoke callSite;
 
     @JsonProperty("var")
     private String var;
@@ -40,4 +45,8 @@ public class PredictableSourceIssue implements Issue {
     private String calleeMethod;
     @JsonProperty("subSignature")
     private String subSignature;
+
+    public String getCalleeMethod(){
+        return calleeMethod;
+    }
 }

@@ -73,7 +73,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                     "The value of the API is not well randomized",
                     "",
                     "",
-                    callSite.toString(), var.getName(),
+                    callSite, var.getName(),
                     predictableSourceRule.method().toString(),
                     callSite.getContainer().getSubsignature().toString());
         }
@@ -82,7 +82,7 @@ public class PredictableSourceRuleJudge implements RuleJudge {
                     "The value of the API is not well randomized",
                     coi.allocation().toString(),
                     coi.sourceMethod().toString(),
-                    callSite.toString(), var.getName(),
+                    callSite, var.getName(),
                     predictableSourceRule.method().toString(),
                     callSite.getContainer().getSubsignature().toString());
         }

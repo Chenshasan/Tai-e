@@ -6,19 +6,19 @@ import org.apache.logging.log4j.Logger;
 import pascal.taie.World;
 import pascal.taie.analysis.graph.callgraph.Edge;
 import pascal.taie.analysis.pta.PointerAnalysisResult;
+import pascal.taie.analysis.pta.core.cs.CSCallGraph;
 import pascal.taie.analysis.pta.core.cs.context.Context;
 import pascal.taie.analysis.pta.core.cs.element.*;
+import pascal.taie.analysis.pta.core.cs.selector.ContextSelector;
 import pascal.taie.analysis.pta.core.heap.Obj;
 import pascal.taie.analysis.pta.core.solver.Solver;
 import pascal.taie.analysis.pta.plugin.Plugin;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.CompositeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.FromSource;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.compositerule.ToSource;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.CompositeRuleIssue;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.IssueList;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.InfluencingFactorRule;
-import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.*;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.resource.ResourceRetrieverModel;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.*;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rulejudge.*;
 import pascal.taie.analysis.pta.pts.PointsToSet;
 import pascal.taie.ir.exp.*;
@@ -27,8 +27,6 @@ import pascal.taie.language.classes.ClassHierarchy;
 import pascal.taie.language.classes.ClassMember;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
-import pascal.taie.language.type.IntType;
-import pascal.taie.language.type.PrimitiveType;
 import pascal.taie.language.type.Type;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.MultiMap;
@@ -66,6 +64,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private final Map<Rule, RuleJudge> ruleToJudge = Maps.newMap();
 
+    private int focusMinMin = Integer.MAX_VALUE;
+
+    private int focusMinMax = Integer.MIN_VALUE;
 
     /**
      * Composite Rule Property
@@ -95,6 +96,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private final String PREDICTABLE_DESC = "PredictableSourceObj";
 
+    private ResourceRetrieverModel resourceRetrieverModel;
+
     /**
      * Environment Property
      */
@@ -104,6 +107,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private CSManager csManager;
 
+    private ContextSelector contextSelector;
+
     private Context emptyContext;
 
     private CryptoAPIMisuseConfig config;
@@ -111,7 +116,11 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     private int stringCount = 0;
 
     public static void addAppClass(Set<String> appClass) {
-        appClassesInString = appClass;
+        appClassesInString.addAll(appClass);
+    }
+
+    public static Set<String> getAppClassString() {
+        return appClassesInString;
     }
 
     public static Set<JClass> getAppClasses() {
@@ -129,7 +138,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             outputFile = new File(solver.getOptions().getString("crypto-output"));
         }
         csManager = solver.getCSManager();
-        emptyContext = solver.getContextSelector().getEmptyContext();
+        contextSelector = solver.getContextSelector();
+        emptyContext = contextSelector.getEmptyContext();
         this.solver = solver;
         config.sources().forEach(s -> sources.put(s.method(), s));
         config.propagates().forEach(p -> propagates.put(p.method(), p));
@@ -155,6 +165,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
             cr.getTransfers().forEach(propagates ->
                     compositePropagates.put(propagates.method(), propagates));
         });
+        calculateNumberRange();
+        resourceRetrieverModel = new ResourceRetrieverModel(solver, solver.getHeapModel(), manager);
     }
 
     @Override
@@ -166,8 +178,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         Collection<JClass> concernedClass = Sets.newSet();
         concernedClass.addAll(sources.keySet().stream().
                 map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
-        concernedClass.addAll(propagates.keySet().stream().
-                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
+//        concernedClass.addAll(propagates.keySet().stream().
+//                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
         concernedClass.addAll(ruleToJudge.keySet().stream().
                 map(rule -> rule.getMethod().getDeclaringClass()).collect(Collectors.toSet()));
         concernedClass.addAll(appClasses);
@@ -186,6 +198,15 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     }
                 }
         );
+    }
+
+    @Override
+    public void onNewStmt(Stmt stmt, JMethod container) {
+        if (stmt instanceof Invoke invoke) {
+            if (!invoke.isDynamic()) {
+                resourceRetrieverModel.onNewStmt(stmt, container);
+            }
+        }
     }
 
     @Override
@@ -211,10 +232,15 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     }
 //
                     if (assignStmt.getRValue() instanceof IntLiteral intLiteral) {
-                        CryptoObjInformation coi =
-                                new CryptoObjInformation(stmt, jMethod, intLiteral.getValue());
-                        if (overNumberRange(intLiteral.getNumber())) {
+                        if (intLiteral.getNumber() < focusMinMin) {
                             Obj cryptoObj = manager.makeNumberCryptoObj();
+                            solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
+                                    cryptoObj);
+                        } else if (intLiteral.getNumber() < focusMinMax &&
+                                intLiteral.getNumber() >= focusMinMin) {
+                            CryptoObjInformation coi =
+                                    new CryptoObjInformation(stmt, jMethod, intLiteral.getValue());
+                            Obj cryptoObj = manager.makeCryptoObj(coi, intLiteral.getType());
                             solver.addVarPointsTo(csMethod.getContext(), lhs, emptyContext,
                                     cryptoObj);
                         }
@@ -239,6 +265,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     @Override
     public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
+        resourceRetrieverModel.onNewPointsToSet(csVar,pts);
         Var var = csVar.getVar();
         cryptoVarPropagates.get(var).forEach(p -> {
             Var to = p.first();
@@ -443,21 +470,65 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     }
 
     private boolean isPatternMatch(String str) {
-        return config.patternMatchRules().stream().anyMatch(
+        boolean res = config.patternMatchRules().stream().anyMatch(
                 patternMatchRule -> Pattern.matches(patternMatchRule.pattern(), str));
+        res = res || config.compositeRules().stream().anyMatch(compositeRule ->
+                compositeRule.getToSources().stream().anyMatch(toSource -> {
+                    if (toSource.rule() instanceof PatternMatchRule patternMatchRule) {
+                        return Pattern.matches(patternMatchRule.pattern(), str);
+                    }
+                    return false;
+                }));
+        return res;
     }
 
-    private boolean overNumberRange(int i) {
-        return config.numberSizeRules().stream().allMatch(
-                numberSizeRule -> i < numberSizeRule.min()) ||
-                config.numberSizeRules().stream().allMatch(
-                        numberSizeRule -> i > numberSizeRule.max());
+    private void calculateNumberRange() {
+        config.numberSizeRules().forEach(n -> {
+            if (focusMinMin > n.min()) {
+                focusMinMin = n.min();
+            }
+            if (focusMinMax < n.min()) {
+                focusMinMax = n.min();
+            }
+        });
+        config.compositeRules().forEach(compositeRule -> {
+            compositeRule.getToSources().forEach(toSource -> {
+                if (toSource.rule() instanceof NumberSizeRule numberSize) {
+                    if (focusMinMin > numberSize.min()) {
+                        focusMinMin = numberSize.min();
+                    }
+                    if (focusMinMax < numberSize.min()) {
+                        focusMinMax = numberSize.min();
+                    }
+                }
+            });
+        });
     }
 
     @Override
     public void onFinish() {
         ClassHierarchy classHierarchy = World.get().getClassHierarchy();
         PointerAnalysisResult result = solver.getResult();
+//        config.predictableSourceRules().forEach(pr -> {
+//            entryMethodFinder.findAllPaths(pr.method());
+//        });
+//        config.patternMatchRules().forEach(pr -> {
+//            entryMethodFinder.findAllPaths(pr.method());
+//        });
+
+//        CSEntryMethodFinder csEntryMethodFinder = new CSEntryMethodFinder((CSCallGraph) result.getCSCallGraph());
+//        Set<JMethod> seeds = config.predictableSourceRules().stream().map(PredictableSourceRule::method).collect(Collectors.toSet());
+//        result.getCSCallGraph().forEach(csMethod -> {
+//            if (seeds.contains(csMethod.getMethod())) {
+//                csEntryMethodFinder.findAllPaths(csMethod);
+//            }
+//        });
+//        csEntryMethodFinder.getEntryMethods().forEach(entryMethod -> {
+//            logger.info("EntryMethod: " + entryMethod);
+//        });
+//        System.out.println("EntryMethodSize: " + csEntryMethodFinder.getEntryMethods().size());
+
+
         List<Issue> issueList = new ArrayList<>();
         addSimpleIssue(issueList, result);
         addCompositeIssue(issueList, result);

@@ -1,8 +1,8 @@
 [ {
   "judgeType" : "Predictable Source",
   "message" : "The value of the API is not well randomized",
-  "sourceStmt" : "$-c5 = \"f372b2a5f14d1bebedaaa4ac6f8d506db30ffdd6185b8e0cdfa7dab42f5a9cc6\"",
-  "sourceMethod" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String generateSignature(java.lang.String)>",
+  "sourceStmt" : "",
+  "sourceMethod" : "",
   "callSite" : "<org.brunocvcunha.instagram4j.util.InstagramHashUtil: java.lang.String generateHash(java.lang.String,java.lang.String)>[3@L128] invokespecial object.<init>($-v7, $-c6)",
   "var" : "$-v7",
   "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",

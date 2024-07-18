@@ -25,6 +25,7 @@ package pascal.taie.analysis.graph.callgraph;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pascal.taie.World;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
 import pascal.taie.ir.proginfo.MemberRef;
 import pascal.taie.ir.proginfo.MethodRef;
 import pascal.taie.ir.stmt.Invoke;
@@ -35,10 +36,7 @@ import pascal.taie.util.AnalysisException;
 import pascal.taie.util.collection.Maps;
 import pascal.taie.util.collection.TwoKeyMap;
 
-import java.util.ArrayDeque;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -65,9 +63,25 @@ class CHABuilder implements CGBuilder<Invoke, JMethod> {
         hierarchy = World.get().getClassHierarchy();
         resolveTable = Maps.newTwoKeyMap();
         DefaultCallGraph callGraph = new DefaultCallGraph();
-        callGraph.addEntryMethod(entry);
+        List<JMethod> entryList = new ArrayList<>();
+        World.get().getClassHierarchy().allClasses().forEach(jClass -> {
+            if (CryptoAPIMisuseAnalysis.getAppClassString().contains(jClass.toString())) {
+                jClass.getDeclaredMethods().forEach(method -> {
+                            if ((!method.isPrivate() || method.isStatic()) && !method.isAbstract()
+                                    && !method.isNative() && !method.isPrivate()) {
+                                entryList.add(method);
+                            }
+                        }
+                );
+            }
+        });
+//        callGraph.addEntryMethod(entry);
         Queue<JMethod> workList = new ArrayDeque<>();
-        workList.add(entry);
+//        workList.add(entry);
+        entryList.forEach(entryM -> {
+            callGraph.addEntryMethod(entryM);
+            workList.add(entryM);
+        });
         while (!workList.isEmpty()) {
             JMethod method = workList.poll();
             if (callGraph.addReachableMethod(method)) {

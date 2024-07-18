@@ -1,13 +1,53 @@
 [ {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
+  "judgeType" : "Influencing Factor",
+  "message" : "Should process the return value of this method instead of returning directly",
+  "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyTrustManager: java.security.cert.X509Certificate[] getAcceptedIssuers()>",
+  "subSignature" : "java.security.cert.X509Certificate[] getAcceptedIssuers()"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.jpay.secure.RSAUtils: java.lang.String decryptByPrivateKey(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.jpay.secure.RSAUtils: java.lang.String decryptByPrivateKey(java.lang.String,java.lang.String,java.lang.String)>[12@L201] cipher = invokestatic javax.crypto.Cipher.getInstance(fillMode)",
+  "var" : "fillMode",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decryptByPrivateKey(java.lang.String,java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING\"",
+  "sourceMethod" : "<com.jpay.secure.RSAUtils: java.lang.String decryptByPrivateKeyByWx(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.jpay.secure.RSAUtils: java.lang.String decryptByPrivateKey(java.lang.String,java.lang.String,java.lang.String)>[12@L201] cipher = invokestatic javax.crypto.Cipher.getInstance(fillMode)",
+  "var" : "fillMode",
+  "constantValue" : "RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String decryptByPrivateKey(java.lang.String,java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.jpay.secure.RSAUtils: java.lang.String encryptByPublicKey(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.jpay.secure.RSAUtils: java.lang.String encryptByPublicKey(java.lang.String,java.lang.String,java.lang.String)>[10@L149] cipher = invokestatic javax.crypto.Cipher.getInstance(fillMode)",
+  "var" : "fillMode",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encryptByPublicKey(java.lang.String,java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c2 = \"RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING\"",
+  "sourceMethod" : "<com.jpay.secure.RSAUtils: java.lang.String encryptByPublicKeyByWx(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.jpay.secure.RSAUtils: java.lang.String encryptByPublicKey(java.lang.String,java.lang.String,java.lang.String)>[10@L149] cipher = invokestatic javax.crypto.Cipher.getInstance(fillMode)",
+  "var" : "fillMode",
+  "constantValue" : "RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encryptByPublicKey(java.lang.String,java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Influencing Factor",
+  "message" : "Should use the var: session",
   "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyHostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>",
   "subSignature" : "boolean verify(java.lang.String,javax.net.ssl.SSLSession)"
-}, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyTrustManager: void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -39,11 +79,6 @@
   "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
   "subSignature" : "byte[] sha1(byte[])"
 }, {
-  "judgeType" : "Influencing Factory",
-  "message" : "Concerned var in this method has no influencing stmts",
-  "calleeMethod" : "<com.jpay.ext.kit.HttpKit$TrustAnyTrustManager: void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)>",
-  "subSignature" : "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)"
-}, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
   "sourceStmt" : "$-c5 = \"SHA1withRSA\"",
@@ -63,4 +98,18 @@
   "constantValue" : "SHA1withRSA",
   "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String,java.lang.String)>",
   "subSignature" : "byte[] signBySoft(java.security.PrivateKey,byte[])"
+}, {
+  "judgeType" : "CompositeRule",
+  "issues" : [ {
+    "judgeType" : "Number Size",
+    "message" : "The number size is not allowed for the API",
+    "sourceStmt" : "$-c9 = 1024",
+    "sourceMethod" : "<com.jpay.secure.RSAUtils: java.util.Map getKeys()>",
+    "callSite" : "<com.jpay.secure.RSAUtils: java.util.Map getKeys()>[3@L53] invokevirtual keyPairGen.initialize($-c9)",
+    "var" : "$-c9",
+    "constantValue" : "1024",
+    "calleeMethod" : "<java.security.KeyPairGenerator: void initialize(int)>",
+    "numberSize" : "2048-10000",
+    "subSignature" : "java.util.Map getKeys()"
+  } ]
 } ]

@@ -1,14 +1,28 @@
 package pascal.taie.analysis.pta.cryptomisuse;
 
+import static pascal.taie.analysis.pta.cryptomisuse.BenchmarkConfigs.APACHEAPI_BENCHMARKS_DIR;
 import static pascal.taie.analysis.pta.cryptomisuse.BenchmarkConfigs.CRYPTO_BENCHMARKS_DIR;
 
 public enum Benchmark {
+    ACTIVEMQ("activemq", APACHEAPI_BENCHMARKS_DIR + "/activemq"),
 
-    /* Microservice application based on SpringBoot + Dubbo */
+    DELTA("deltaspike",APACHEAPI_BENCHMARKS_DIR + "/deltaspike"),
 
-    TOMEE("tomee",CRYPTO_BENCHMARKS_DIR + "/apache-api-bench/tomee"),
-    SPARK("spark", CRYPTO_BENCHMARKS_DIR + "/apache-api-bench/spark"),
-    ACTIVEMQ("activemq", CRYPTO_BENCHMARKS_DIR + "/activemq"),
+    DIRECTORY("directory-server",APACHEAPI_BENCHMARKS_DIR + "/directory-server"),
+
+    INCU("incubator-taverna-workbench",APACHEAPI_BENCHMARKS_DIR + "/incubator-taverna-workbench"),
+
+    MANIFOLD("manifoldcf",APACHEAPI_BENCHMARKS_DIR + "/manifoldcf"),
+
+    MEECRO("meecrowave",APACHEAPI_BENCHMARKS_DIR + "/meecrowave"),
+
+    SPARK("spark", APACHEAPI_BENCHMARKS_DIR + "/spark"),
+
+    TIKA("tika",APACHEAPI_BENCHMARKS_DIR + "/tika"),
+
+    TOMEE("tomee",APACHEAPI_BENCHMARKS_DIR + "/tomee"),
+
+    WICKET("wicket", APACHEAPI_BENCHMARKS_DIR + "/wicket"),
     ALIYUN("aliyun-oss-java-sdk", CRYPTO_BENCHMARKS_DIR + "/aliyun-oss-java-sdk"),
 
     FASTBOOT("fast-boot-weixin", CRYPTO_BENCHMARKS_DIR + "/fast-boot-weixin"),

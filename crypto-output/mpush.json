@@ -1,13 +1,23 @@
 [ {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c9 = \"HmacSHA1\"",
+  "sourceStmt" : "$-c7 = \"HmacSHA1\"",
   "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>",
-  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>[6@L93] mac = invokestatic javax.crypto.Mac.getInstance($-c9)",
-  "var" : "$-c9",
+  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>[4@L91] invokespecial signingKey.<init>($-v8, $-c7)",
+  "var" : "$-c7",
   "constantValue" : "HmacSHA1",
-  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "calleeMethod" : "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>",
   "subSignature" : "java.lang.String hmacSha1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c7 = \"MD5\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(java.io.File)>",
+  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(java.io.File)>[4@L42] digest = invokestatic java.security.MessageDigest.getInstance($-c7)",
+  "var" : "$-c7",
+  "constantValue" : "MD5",
+  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String encrypt(java.io.File)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -41,13 +51,73 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c7 = \"MD5\"",
-  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(java.io.File)>",
-  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String encrypt(java.io.File)>[4@L42] digest = invokestatic java.security.MessageDigest.getInstance($-c7)",
-  "var" : "$-c7",
-  "constantValue" : "MD5",
-  "calleeMethod" : "<java.security.MessageDigest: java.security.MessageDigest getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String encrypt(java.io.File)"
+  "sourceStmt" : "$-c5 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPublicKey(byte[],java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPublicKey(byte[],java.lang.String)>[3@L333] cipher = invokestatic javax.crypto.Cipher.getInstance($-c5)",
+  "var" : "$-c5",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encryptByPublicKey(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c5 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPrivateKey(byte[],java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPrivateKey(byte[],java.lang.String)>[3@L348] cipher = invokestatic javax.crypto.Cipher.getInstance($-c5)",
+  "var" : "$-c5",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encryptByPrivateKey(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPublicKey(byte[],java.security.interfaces.RSAPublicKey)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] encryptByPublicKey(byte[],java.security.interfaces.RSAPublicKey)>[2@L228] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] encryptByPublicKey(byte[],java.security.interfaces.RSAPublicKey)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c4 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPrivateKey(byte[],java.security.interfaces.RSAPrivateKey)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPrivateKey(byte[],java.security.interfaces.RSAPrivateKey)>[2@L250] cipher = invokestatic javax.crypto.Cipher.getInstance($-c4)",
+  "var" : "$-c4",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decryptByPrivateKey(byte[],java.security.interfaces.RSAPrivateKey)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c5 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPublicKey(byte[],java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPublicKey(byte[],java.lang.String)>[3@L317] cipher = invokestatic javax.crypto.Cipher.getInstance($-c5)",
+  "var" : "$-c5",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decryptByPublicKey(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c5 = \"RSA/ECB/PKCS1Padding\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPrivateKey(byte[],java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: byte[] decryptByPrivateKey(byte[],java.lang.String)>[3@L302] cipher = invokestatic javax.crypto.Cipher.getInstance($-c5)",
+  "var" : "$-c5",
+  "constantValue" : "RSA/ECB/PKCS1Padding",
+  "calleeMethod" : "<javax.crypto.Cipher: javax.crypto.Cipher getInstance(java.lang.String)>",
+  "subSignature" : "byte[] decryptByPrivateKey(byte[],java.lang.String)"
+}, {
+  "judgeType" : "Pattern Match",
+  "message" : "The pattern is not matched for the API",
+  "sourceStmt" : "$-c3 = \"MD5withRSA\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: java.lang.String sign(byte[],java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.RSAUtils: java.lang.String sign(byte[],java.lang.String)>[1@L150] signature = invokestatic java.security.Signature.getInstance($-c3)",
+  "var" : "$-c3",
+  "constantValue" : "MD5withRSA",
+  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String sign(byte[],java.lang.String)"
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
@@ -61,11 +131,25 @@
 }, {
   "judgeType" : "Pattern Match",
   "message" : "The pattern is not matched for the API",
-  "sourceStmt" : "$-c3 = \"MD5withRSA\"",
-  "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: java.lang.String sign(byte[],java.lang.String)>",
-  "callSite" : "<com.mpush.tools.crypto.RSAUtils: java.lang.String sign(byte[],java.lang.String)>[1@L150] signature = invokestatic java.security.Signature.getInstance($-c3)",
-  "var" : "$-c3",
-  "constantValue" : "MD5withRSA",
-  "calleeMethod" : "<java.security.Signature: java.security.Signature getInstance(java.lang.String)>",
-  "subSignature" : "java.lang.String sign(byte[],java.lang.String)"
+  "sourceStmt" : "$-c9 = \"HmacSHA1\"",
+  "sourceMethod" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>",
+  "callSite" : "<com.mpush.tools.crypto.MD5Utils: java.lang.String hmacSha1(java.lang.String,java.lang.String)>[6@L93] mac = invokestatic javax.crypto.Mac.getInstance($-c9)",
+  "var" : "$-c9",
+  "constantValue" : "HmacSHA1",
+  "calleeMethod" : "<javax.crypto.Mac: javax.crypto.Mac getInstance(java.lang.String)>",
+  "subSignature" : "java.lang.String hmacSha1(java.lang.String,java.lang.String)"
+}, {
+  "judgeType" : "CompositeRule",
+  "issues" : [ {
+    "judgeType" : "Number Size",
+    "message" : "The number size is not allowed for the API",
+    "sourceStmt" : "keySize = 1024",
+    "sourceMethod" : "<com.mpush.tools.crypto.RSAUtils: void main(java.lang.String[])>",
+    "callSite" : "<com.mpush.tools.crypto.RSAUtils: com.mpush.tools.common.Pair genKeyPair(int)>[2@L90] invokevirtual keyPairGen.initialize(rsaKeySize)",
+    "var" : "rsaKeySize",
+    "constantValue" : "1024",
+    "calleeMethod" : "<java.security.KeyPairGenerator: void initialize(int)>",
+    "numberSize" : "2048-10000",
+    "subSignature" : "com.mpush.tools.common.Pair genKeyPair(int)"
+  } ]
 } ]

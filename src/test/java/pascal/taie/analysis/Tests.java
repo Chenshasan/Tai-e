@@ -32,6 +32,7 @@ import pascal.taie.analysis.misc.IRDumper;
 import pascal.taie.analysis.misc.ResultProcessor;
 import pascal.taie.analysis.pta.PointerAnalysis;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.CryptoAPIMisuseAnalysis;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.resource.ResourceRetrieverModel;
 import pascal.taie.analysis.pta.plugin.spring.MicroserviceHolder;
 import pascal.taie.analysis.pta.cryptomisuse.Benchmark;
 import pascal.taie.util.AppClassInferringUtils;
@@ -493,7 +494,8 @@ public final class Tests {
 
         String appClassPath = Stream.concat(tuples.stream().map(Tuple::first), appPathsInDependency.stream())
                 .collect(Collectors.joining(File.pathSeparator));
-
+//        List<String> classes = DirectoryTraverser.listClasses(appClassPath);
+//        CryptoAPIMisuseAnalysis.addAppClass(Sets.newSet(classes));
         boolean onlyApp = false;
         String cs = "1-call";
 
@@ -524,7 +526,7 @@ public final class Tests {
                         crypto-config:src/test/resources/pta/cryptomisuse/crypto-config.yml;
                         plugins:[pascal.taie.analysis.pta.plugin.cryptomisuse.reachableplugin.CryptoReachablePlugin,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
+                        """.formatted(onlyApp, cs, "crypto-output/apachebench/" + benchmark.name + ".json"),
                 "-a", """
                         cg=
                         algorithm:pta;
@@ -532,7 +534,6 @@ public final class Tests {
                         dump-call-edges:true;
                         """
         );
-
         Main.main(args.toArray(new String[0]));
     }
 
@@ -581,17 +582,6 @@ public final class Tests {
                 .values()
                 .stream()
                 .map(File::getAbsolutePath)
-                // fix Soot issue:
-                // Trying to create interface invoke expression for non-interface type: org.bouncycastle.asn1.ASN1Encodable
-                .filter(o -> !o.contains("bcprov-jdk"))
-                // fix Soot issue:
-                // This operation requires resolving level HIERARCHY but net.sf.cglib.proxy.MethodInterceptor is at resolving level DANGLING
-                // If you are extending Soot, try to add the following call before calling soot.Main.main(..):
-                // Scene.v().addBasicClass(net.sf.cglib.proxy.MethodInterceptor,HIERARCHY);
-                .filter(o -> !o.contains("seata-all"))
-                //// fix Soot issue:
-                //// Failed to apply jb to <org.elasticsearch.search.aggregations.metrics.AbstractHyperLogLog: void <clinit>()>
-                //.filter(o -> !o.contains("elasticsearch-7.10.1.jar"))
                 .forEach(dependencyPaths::add);
 
         Collection<String> appPathsInDependency = AppClassInferringUtils.inferAppJarPaths(
@@ -631,7 +621,7 @@ public final class Tests {
                         reflection-log:src/test/resources/pta/cryptomisuse/reflection-OWASP.log;
                         plugins:[pascal.taie.analysis.pta.plugin.owasp.OWASPBenchmarkAnalysis,
                                  pascal.taie.analysis.pta.plugin.Profiler];
-                        """.formatted(onlyApp, cs, "crypto-output/" + benchmark.name + ".json"),
+                        """.formatted(onlyApp, cs, "crypto-output/apachebench/" + benchmark.name + ".json"),
                 "-a", """
                         cg=
                         algorithm:pta;
@@ -689,16 +679,15 @@ public final class Tests {
         Tuple<String, List<String>, List<String>> result;
 
         List<Path> tempDirectories = new ArrayList<>(archivePaths.size());
-        ;
         String classPath = "";
         List<String> classes = new ArrayList<>();
         List<String> dependencyJarPaths = new ArrayList<>();
         for (String archivePath : archivePaths) {
-            System.out.println(archivePath);
+            System.out.println("archivePath:" + archivePath);
             try {
                 // uncompress archive file at temp directory
                 // get classpath, classes
-                if (archivePath.contains("original-classes.jar")) {
+                if (archivePath.contains("original-classes.jar") || archivePath.contains("test.jar")) {
                     Path tempDirectory = Files.createTempDirectory(
                             Path.of(archivePath).toFile().getName()
                                     .replace(".jar", "-")
@@ -710,6 +699,7 @@ public final class Tests {
                     System.out.println(classPath);
                     classes = DirectoryTraverser.listClasses(classPath);
                     CryptoAPIMisuseAnalysis.addAppClass(Sets.newSet(classes));
+                    ResourceRetrieverModel.setClasspath(tempDirectory);
                 } else {
                     dependencyJarPaths.add(archivePath);
                 }
