@@ -31,61 +31,44 @@ public class PredictableSourceRuleJudge implements RuleJudge {
     }
 
     public Issue judge(PointerAnalysisResult result, Invoke callSite) {
-        AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, predictableSourceRule.index());
         AtomicReference<Issue> issue = new AtomicReference<>();
-        if (CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())) {
-            result.getPointsToSet(var).
-                    stream().
-                    filter(manager::isCryptoObj).
-                    forEach(cryptoObj -> {
+
+        if (CryptoAPIMisuseAnalysis.getAppClasses().contains(callSite.getContainer().getDeclaringClass())) {
+            boolean found = result.getPointsToSet(var).stream()
+                    .filter(manager::isCryptoObj)
+                    .anyMatch(cryptoObj -> {
                         if (cryptoObj.getAllocation() instanceof CryptoObjInformation coi) {
-                            //String desc = (String) coi.constantValue();
-                            if (match.get()) {
-                                issue.set(report(coi, var, callSite));
-                                logger.debug("the result of " + callSite
-                                        + " of var: " + var
-                                        + " is false"
-                                        + " with crypto obj in"
-                                        + ((CryptoObjInformation) cryptoObj.getAllocation()).allocation());
+                            issue.set(report(coi, var, callSite));
+                            logger.debug("the result of " + callSite + " of var: " + var + " is false with crypto obj in" + coi.allocation());
+                            if (coi.constantValue() instanceof String str && str.equals(PREDICTABLE_DESC)) {
+                                return true;
                             }
-                            if (coi.constantValue() instanceof String str
-                                    && str.equals(PREDICTABLE_DESC)) {
-                                issue.set(report(coi, var, callSite));
-                            }
-                            match.set(false);
                         }
+                        return false;
                     });
-            if (result.getPointsToSet(var).
-                    stream().
-                    filter(manager::isPredictableCryptoObj).toList().size() > 0) {
+
+            if (!found && result.getPointsToSet(var).stream().anyMatch(manager::isPredictableCryptoObj)) {
                 issue.set(report(null, var, callSite));
             }
         }
+
         return issue.get();
     }
 
     public Issue report(CryptoObjInformation coi, Var var, Invoke callSite) {
-        PredictableSourceIssue issue;
-        if (coi == null) {
-            issue = new PredictableSourceIssue("Predictable Source",
-                    "The value of the API is not well randomized",
-                    "",
-                    "",
-                    callSite, var.getName(),
-                    predictableSourceRule.method().toString(),
-                    callSite.getContainer().getSubsignature().toString());
-        }
-        else{
-            issue = new PredictableSourceIssue("Predictable Source",
-                    "The value of the API is not well randomized",
-                    coi.allocation().toString(),
-                    coi.sourceMethod().toString(),
-                    callSite, var.getName(),
-                    predictableSourceRule.method().toString(),
-                    callSite.getContainer().getSubsignature().toString());
-        }
-        return issue;
+        String allocation = coi != null ? coi.allocation().toString() : "";
+        String sourceMethod = coi != null ? coi.sourceMethod().toString() : "";
+
+        return new PredictableSourceIssue(
+                "Predictable Source",
+                "The value of the API is not well randomized",
+                allocation,
+                sourceMethod,
+                callSite,
+                var.getName(),
+                predictableSourceRule.method().toString(),
+                callSite.getContainer().getSubsignature().toString()
+        );
     }
 }

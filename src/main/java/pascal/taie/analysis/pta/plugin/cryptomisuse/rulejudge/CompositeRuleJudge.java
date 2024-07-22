@@ -11,6 +11,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.NumberSizeRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PatternMatchRule;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.PredictableSourceRule;
+import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.Rule;
 import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.util.collection.Maps;
@@ -32,40 +33,38 @@ public class CompositeRuleJudge implements RuleJudge {
     public CompositeRuleJudge(CompositeRule compositeRule, CryptoObjManager manager) {
         compositeRule.getToVarToStmtAndToSource().forEach((toVar, pair) -> {
             Stmt stmt = pair.first();
-            ToSource toSource = pair.second();
+            Rule rule = pair.second().rule();
             RuleJudge ruleJudge = null;
-            if (toSource.rule() instanceof PatternMatchRule pm) {
+
+            if (rule instanceof PatternMatchRule pm) {
                 ruleJudge = new PatternMatchRuleJudge(pm, manager);
-            } else if (toSource.rule() instanceof NumberSizeRule ns) {
+            } else if (rule instanceof NumberSizeRule ns) {
                 ruleJudge = new NumberSizeRuleJudge(ns, manager);
-            } else if (toSource.rule() instanceof PredictableSourceRule ps) {
+            } else if (rule instanceof PredictableSourceRule ps) {
                 ruleJudge = new PredictableSourceRuleJudge(ps, manager);
-            } else {
             }
-            assert ruleJudge != null;
-            RuleJudgeList.put(stmt, ruleJudge);
+
+            if (ruleJudge != null) {
+                RuleJudgeList.put(stmt, ruleJudge);
+            }
         });
     }
 
+
     @Override
     public Issue judge(PointerAnalysisResult result, Invoke callSite) {
-        AtomicBoolean judgeResult = new AtomicBoolean(true);
         CompositeRuleIssue compositeRuleIssue = new CompositeRuleIssue();
         RuleJudgeList.get(callSite).forEach(ruleJudge -> {
             Issue issue = ruleJudge.judge(result, callSite);
-            if (ruleJudge instanceof PatternMatchRuleJudge) {
-                // If the PatternMatchRuleJudge determines that this string does not match,
-                // further processing will be halted.
-                if (issue != null) {
+            if (issue != null) {
+                if (ruleJudge instanceof PatternMatchRuleJudge) {
                     compositeRuleIssue.setPredicate(1);
-                }
-            } else {
-                if (issue != null) {
+                } else {
                     compositeRuleIssue.addIssue(issue);
                 }
             }
         });
-        report(judgeResult.get());
+        report(!compositeRuleIssue.getIssues().isEmpty());
         return compositeRuleIssue;
     }
 

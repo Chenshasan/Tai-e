@@ -27,60 +27,47 @@ public class NumberSizeRuleJudge implements RuleJudge {
     }
 
     public Issue judge(PointerAnalysisResult result, Invoke callSite) {
-        AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, numberSizeRule.index());
         AtomicReference<Issue> issue = new AtomicReference<>();
-        if (CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())) {
-            result.getPointsToSet(var).stream().
-                    filter(manager::isCryptoObj).
-                    forEach(cryptoObj -> {
-                        if (cryptoObj.getAllocation() instanceof
-                                CryptoObjInformation coi) {
-                            logger.debug("var is " + var + "in callsite " + callSite);
+
+        if (CryptoAPIMisuseAnalysis.getAppClasses().contains(
+                callSite.getContainer().getDeclaringClass())) {
+            result.getPointsToSet(var).stream()
+                    .filter(manager::isCryptoObj)
+                    .forEach(cryptoObj -> {
+                        if (cryptoObj.getAllocation() instanceof CryptoObjInformation coi) {
                             if (isNumeric(coi.constantValue().toString())) {
-                                int value = coi.constantValue() instanceof String ?
-                                        Integer.parseInt((String) coi.constantValue())
+                                int value = coi.constantValue() instanceof String
+                                        ? Integer.parseInt((String) coi.constantValue())
                                         : (int) coi.constantValue();
-                                if (value >= numberSizeRule.max() ||
-                                        value < numberSizeRule.min()) {
-                                    match.set(false);
+                                if (value >= numberSizeRule.max() || value < numberSizeRule.min()) {
                                     issue.set(report(coi, var, callSite));
                                 }
                             }
                         }
                     });
-            if (result.getPointsToSet(var).stream().
-                    filter(manager::isNumericCryptoObj).toList().size() > 0) {
+
+            if (result.getPointsToSet(var).stream().anyMatch(manager::isNumericCryptoObj)) {
                 issue.set(report(null, var, callSite));
             }
-            logger.debug("the result of number size in" + callSite + " is " + match.get());
         }
+
         return issue.get();
     }
 
     public Issue report(CryptoObjInformation coi, Var var, Invoke callSite) {
-        NumberSizeIssue issue;
-        if (coi == null) {
-            issue = new NumberSizeIssue("Number Size",
-                    "The number size is not allowed for the API",
-                    "",
-                    "",
-                    callSite.toString(), var.getName(),
-                    "", numberSizeRule.method().toString(),
-                    numberSizeRule.min() + "-" + numberSizeRule.max(),
-                    callSite.getContainer().getSubsignature().toString());
-        } else {
-            issue = new NumberSizeIssue("Number Size",
-                    "The number size is not allowed for the API",
-                    coi.allocation().toString(),
-                    coi.sourceMethod().toString(),
-                    callSite.toString(), var.getName(),
-                    coi.constantValue().toString(), numberSizeRule.method().toString(),
-                    numberSizeRule.min() + "-" + numberSizeRule.max(),
-                    callSite.getContainer().getSubsignature().toString());
-        }
-        return issue;
+        return new NumberSizeIssue(
+                "Number Size",
+                "The number size is not allowed for the API",
+                coi != null ? coi.allocation().toString() : "",
+                coi != null ? coi.sourceMethod().toString() : "",
+                callSite.toString(),
+                var.getName(),
+                coi != null ? coi.constantValue().toString() : "",
+                numberSizeRule.method().toString(),
+                numberSizeRule.min() + "-" + numberSizeRule.max(),
+                callSite.getContainer().getSubsignature().toString()
+        );
     }
 
     public static boolean isNumeric(String str) {

@@ -55,44 +55,42 @@ public class IntraprocedualDefUse {
     }
 
     public Set<Stmt> getInfluencingStmtsBackward(JMethod jMethod, Stmt stmt) {
-        IR ir = jMethod.getIR();
-        DefUse defUse = (DefUse) ir.getResult(DefUseAnalysis.ID);
-        Set<Stmt> visited = Sets.newHybridSet();
-        Queue<Stmt> workList = new SetQueue<>();
-        workList.add(stmt);
-        while (!workList.isEmpty()) {
-            Stmt visitStmt = workList.poll();
-            if (!visited.contains(visitStmt)) {
-                visitStmt.getUses().forEach(rValue -> {
-                    if (rValue instanceof Var useVar) {
-                        Set<Stmt> stmts = defUse.getDefs(visitStmt, useVar);
-                        if (stmts != null) {
-                            workList.addAll(stmts);
-                        }
-                    }
-                });
-                visited.add(visitStmt);
-            }
-        }
-        return visited;
+        return getInfluencingStmts(jMethod, stmt, true);
     }
 
     public Set<Stmt> getInfluencingStmtsForward(JMethod jMethod, Stmt stmt) {
+        return getInfluencingStmts(jMethod, stmt, false);
+    }
+
+    private Set<Stmt> getInfluencingStmts(JMethod jMethod, Stmt stmt, boolean backward) {
         IR ir = jMethod.getIR();
         DefUse defUse = (DefUse) ir.getResult(DefUseAnalysis.ID);
         Set<Stmt> visited = Sets.newHybridSet();
         Queue<Stmt> workList = new SetQueue<>();
         workList.add(stmt);
+
         while (!workList.isEmpty()) {
             Stmt visitStmt = workList.poll();
-            if (!visited.contains(visitStmt) && visitStmt.getDef().isPresent()) {
-                Set<Stmt> stmts = defUse.getUses(visitStmt);
-                if (stmts != null) {
-                    workList.addAll(stmts);
+            if (!visited.contains(visitStmt)) {
+                if (backward) {
+                    visitStmt.getUses().forEach(rValue -> {
+                        if (rValue instanceof Var useVar) {
+                            Set<Stmt> stmts = defUse.getDefs(visitStmt, useVar);
+                            if (stmts != null) {
+                                workList.addAll(stmts);
+                            }
+                        }
+                    });
+                } else if (visitStmt.getDef().isPresent()) {
+                    Set<Stmt> stmts = defUse.getUses(visitStmt);
+                    if (stmts != null) {
+                        workList.addAll(stmts);
+                    }
                 }
                 visited.add(visitStmt);
             }
         }
+
         return visited;
     }
 }

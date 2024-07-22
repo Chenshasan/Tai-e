@@ -30,37 +30,30 @@ public class PatternMatchRuleJudge implements RuleJudge {
     }
 
     public Issue judge(PointerAnalysisResult result, Invoke callSite) {
-        AtomicBoolean match = new AtomicBoolean(true);
         Var var = IndexUtils.getVar(callSite, patternMatchRule.index());
         IssueList issueList = new IssueList();
         AtomicReference<Issue> issue = new AtomicReference<>();
-        if (CryptoAPIMisuseAnalysis.getAppClasses().
-                contains(callSite.getContainer().getDeclaringClass())) {
-            result.getPointsToSet(var).stream().
-                    filter(manager::isCryptoObj).
-                    forEach(cryptoObj -> {
-                        if (cryptoObj.getAllocation() instanceof
-                                CryptoObjInformation coi) {
-                            if (coi.constantValue() instanceof String value) {
-                                logger.debug("coi constant value is " + value);
-                                match.set(match.get() && !(Pattern.matches(
-                                        patternMatchRule.pattern(), value)));
-                                // used to be ture and now it is false
-                                if (Pattern.matches(patternMatchRule.pattern(), value)) {
-                                    issue.set(report(coi, var, callSite));
-                                    issueList.addIssue(report(coi, var, callSite));
-                                }
+
+        if (CryptoAPIMisuseAnalysis.getAppClasses().contains(
+                callSite.getContainer().getDeclaringClass())) {
+            result.getPointsToSet(var).stream()
+                    .filter(manager::isCryptoObj)
+                    .forEach(cryptoObj -> {
+                        if (cryptoObj.getAllocation() instanceof CryptoObjInformation coi &&
+                                coi.constantValue() instanceof String value) {
+                            logger.debug("coi constant value is " + value);
+                            boolean matches = Pattern.matches(patternMatchRule.pattern(), value);
+                            if (matches) {
+                                issue.set(report(coi, var, callSite));
+                                issueList.addIssue(issue.get());
                             }
                         }
                     });
-            logger.debug("the result of " + callSite + " is " + match.get());
+
+            logger.debug("the result of " + callSite + " is " + !issueList.getIssues().isEmpty());
         }
-        if(issueList.getIssues().size()>0){
-            return issueList;
-        }
-        else{
-            return null;
-        }
+
+        return issueList.getIssues().isEmpty() ? null : issueList;
     }
 
     public Issue report(CryptoObjInformation coi, Var var, Invoke callSite) {
