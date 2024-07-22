@@ -50,10 +50,15 @@ public class DefUse implements StmtResult<MultiMap<Var, Stmt>> {
     @Nullable
     private final MultiMap<Stmt, Stmt> uses;
 
+    @Nullable
+    MultiMap<Var, Stmt> param2uses;
+
     DefUse(@Nullable TwoKeyMultiMap<Stmt, Var, Stmt> defs,
-           @Nullable MultiMap<Stmt, Stmt> uses) {
+           @Nullable MultiMap<Stmt, Stmt> uses,
+           @Nullable MultiMap<Var, Stmt> param2uses) {
         this.defs = defs;
         this.uses = uses;
+        this.param2uses = param2uses;
     }
 
     /**
@@ -74,6 +79,11 @@ public class DefUse implements StmtResult<MultiMap<Var, Stmt>> {
     public Set<Stmt> getUses(Stmt stmt) {
         Objects.requireNonNull(uses, NULL_USES);
         return uses.get(stmt);
+    }
+
+    public Set<Stmt> getUsesOfParam(Var var) {
+        Objects.requireNonNull(param2uses, NULL_USES);
+        return param2uses.get(var);
     }
 
     @Override

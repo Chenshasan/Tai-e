@@ -67,7 +67,7 @@ public class ConfigManager {
      * @throws ConfigException when the manager does not contain
      *                         the AnalysisConfig for the given id.
      */
-    AnalysisConfig getConfig(String id) {
+    public AnalysisConfig getConfig(String id) {
         AnalysisConfig config = configs.get(id);
         if (config == null) {
             throw new ConfigException("Analysis \"" + id + "\" is not found in " +
@@ -92,7 +92,7 @@ public class ConfigManager {
      * NOTE: we should obtain required configs by this method, instead of
      * {@link AnalysisConfig#getRequires()}.
      */
-    List<AnalysisConfig> getRequiredConfigs(AnalysisConfig config) {
+    public List<AnalysisConfig> getRequiredConfigs(AnalysisConfig config) {
         return requires.computeIfAbsent(config, c ->
                 c.getRequires()
                         .stream()
@@ -107,7 +107,7 @@ public class ConfigManager {
     /**
      * @return all configs (directly and indirectly) required by the given config
      */
-    Set<AnalysisConfig> getAllRequiredConfigs(AnalysisConfig config) {
+    public Set<AnalysisConfig> getAllRequiredConfigs(AnalysisConfig config) {
         Set<AnalysisConfig> visited = Sets.newHybridSet();
         Deque<AnalysisConfig> queue = new ArrayDeque<>(
                 getRequiredConfigs(config));

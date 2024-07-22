@@ -34,6 +34,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                                     Set<NumberSizeRule> numberSizeRules,
                                     Set<ForbiddenMethodRule> forbiddenMethodRules,
                                     Set<InfluencingFactorRule> influencingFactorRules,
+                                    Set<CoOccurrenceRule> coOccurrenceRules,
                                     Set<CompositeRule> compositeRules) {
     private static final Logger logger = LogManager.getLogger(CryptoAPIMisuseConfig.class);
 
@@ -124,6 +125,8 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     deserializeForbiddenMethodRules(node.get("forbiddenMethodRules"));
             Set<InfluencingFactorRule> influencingFactorRules =
                     deserializeInfluencingFactorRules(node.get("influencingFactorRules"));
+            Set<CoOccurrenceRule> coOccurrenceRules =
+                    deserializeCoOccurrenceRules(node.get("coOccurrenceRules"));
             Set<CompositeRule> compositeRules =
                     deserializeCompositeRules(node.get("compositeRules"));
             return new CryptoAPIMisuseConfig(
@@ -134,6 +137,7 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     numberSizeRules,
                     forbiddenMethodRules,
                     influencingFactorRules,
+                    coOccurrenceRules,
                     compositeRules);
         }
 
@@ -271,29 +275,50 @@ public record CryptoAPIMisuseConfig(Set<CryptoSource> sources,
                     String methodSig = elem.get("method").asText();
                     String index = elem.get("index").asText();
                     String type = elem.get("type").asText();
+                    String factor = elem.get("factor").asText();
+                    if (type.equals("use") || type.equals("def")) {
+                        hierarchy.allClasses().forEach(jClass -> {
+                            if (jClass.isApplication()) {
+                                jClass.getDeclaredMethods().forEach(jMethod -> {
+                                    if (jMethod.getSignature().contains(methodSig)) {
+                                        influencingFactorRules.add(
+                                                new InfluencingFactorRule(jMethod, index, type, factor));
+                                    }
+                                });
+                            }
+                        });
+                    }
                     if (!type.equals("exist")) {
-                        if (type.equals("use") || type.equals("def")) {
-                            hierarchy.allClasses().forEach(jClass -> {
-                                if (jClass.isApplication()) {
-                                    jClass.getDeclaredMethods().forEach(jMethod -> {
-                                        if (jMethod.getSignature().contains(methodSig)) {
-                                            influencingFactorRules.add(
-                                                    new InfluencingFactorRule(jMethod, index, type));
-                                        }
-                                    });
-                                }
-                            });
-                        }
                     } else {
                         JMethod method = hierarchy.getMethod(methodSig);
                         if (method != null) {
-                            influencingFactorRules.add(new InfluencingFactorRule(method, index, type));
+//                            influencingFactorRules.add(new InfluencingFactorRule(method, index, type));
                         } else {
                             logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
                         }
                     }
                 }
                 return Collections.unmodifiableSet(influencingFactorRules);
+            } else {
+                // if node is not an instance of ArrayNode, just return an empty set.
+                return Set.of();
+            }
+        }
+
+        private Set<CoOccurrenceRule> deserializeCoOccurrenceRules(JsonNode node) {
+            if (node instanceof ArrayNode arrayNode) {
+                Set<CoOccurrenceRule> coOccurrenceRules = Sets.newSet();
+                for (JsonNode elem : arrayNode) {
+                    String methodSig = elem.get("method").asText();
+                    String index = elem.get("index").asText();
+                    JMethod method = hierarchy.getMethod(methodSig);
+                    if (method != null) {
+                        coOccurrenceRules.add(new CoOccurrenceRule(method, index));
+                    } else {
+                        logger.warn("Cannot find cryptoAPI method '{}'", methodSig);
+                    }
+                }
+                return Collections.unmodifiableSet(coOccurrenceRules);
             } else {
                 // if node is not an instance of ArrayNode, just return an empty set.
                 return Set.of();

@@ -37,6 +37,8 @@ import pascal.taie.util.collection.MultiMap;
 import pascal.taie.util.collection.Sets;
 import pascal.taie.util.collection.TwoKeyMultiMap;
 
+import java.util.Map;
+
 /**
  * Computes intra-procedural def-use and use-def chains
  * based on reaching definition analysis.
@@ -72,10 +74,17 @@ public class DefUseAnalysis extends MethodAnalysis<DefUse> {
                 Maps.newMultiMap(new IndexMap<>(ir, ir.getStmts().size()),
                         Sets::newHybridSet)
                 : null;
+        MultiMap<Var, Stmt> paramUses = computeUses ?
+                Maps.newMultiMap()
+                : null;
         for (Stmt stmt : ir) {
             SetFact<Stmt> reachDefs = rdResult.getInFact(stmt);
             for (RValue use : stmt.getUses()) {
                 if (use instanceof Var useVar) {
+                    if (ir.getParams().contains(useVar)) {
+                        paramUses.put(useVar, stmt);
+                    }
+
                     for (Stmt reachDef : reachDefs) {
                         reachDef.getDef().ifPresent(lhs -> {
                             if (lhs.equals(use)) {
@@ -91,6 +100,6 @@ public class DefUseAnalysis extends MethodAnalysis<DefUse> {
                 }
             }
         }
-        return new DefUse(defs, uses);
+        return new DefUse(defs, uses, paramUses);
     }
 }

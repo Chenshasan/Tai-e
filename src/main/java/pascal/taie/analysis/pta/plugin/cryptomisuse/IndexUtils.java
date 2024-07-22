@@ -46,7 +46,7 @@ final public class IndexUtils {
      * Special number representing the variable that receivers
      * the result of the invocation.
      */
-    static final int RESULT = -2;
+    public static final int RESULT = -2;
 
     /**
      * String representation of result variable.

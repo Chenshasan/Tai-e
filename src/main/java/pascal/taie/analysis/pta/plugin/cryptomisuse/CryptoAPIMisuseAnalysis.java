@@ -154,6 +154,8 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 ruleToJudge.put(f, new ForbiddenMethodRuleJudge(f, manager)));
         config.influencingFactorRules().forEach(i ->
                 ruleToJudge.put(i, new InfluencingFactorRuleJudge(i, manager, World.get().getClassHierarchy())));
+        config.coOccurrenceRules().forEach(i ->
+                ruleToJudge.put(i, new CoOccurrenceRuleJudge(i)));
         config.compositeRules().forEach(cr -> {
             compositeRules.add(cr);
             fromSourceToRule.put(cr.getFromSource(), cr);
@@ -178,8 +180,6 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
         Collection<JClass> concernedClass = Sets.newSet();
         concernedClass.addAll(sources.keySet().stream().
                 map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
-//        concernedClass.addAll(propagates.keySet().stream().
-//                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
         concernedClass.addAll(ruleToJudge.keySet().stream().
                 map(rule -> rule.getMethod().getDeclaringClass()).collect(Collectors.toSet()));
         concernedClass.addAll(appClasses);
@@ -442,7 +442,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                     Stmt stmt = pair.first();
                     compositeRuleIssue.addIssue(judge.judge(result, (Invoke) stmt));
                 });
-                if (compositeRuleIssue.getIssues().size() > 0 && compositeRuleIssue.getPredicate() == 1) {
+                if (!compositeRuleIssue.getIssues().isEmpty() && compositeRuleIssue.getPredicate() == 1) {
                     issueList.add(compositeRuleIssue);
                 }
             }
@@ -460,6 +460,9 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
                 result.getCallGraph()
                         .getCallersOf(rule.getMethod())
                         .forEach(callSite -> {
+                            if(rule instanceof CoOccurrenceRule){
+                                System.out.println("");
+                            }
                             Issue issue = ruleJudge.judge(result, callSite);
                             if (issue != null) {
                                 issueList.add(issue);

@@ -23,13 +23,15 @@ patternMatchRules:
   - { method: "<retrofit2.Retrofit$Builder: retrofit2.Retrofit$Builder baseUrl(java.lang.String)>", index: 0, pattern: "^(?!http://$)http://(.*)$" }
 
 influencingFactorRules:
-  - { method: "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, type: use }
-  - { method: "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, type: use }
-  - { method: "java.security.cert.X509Certificate[] getAcceptedIssuers()", index: result, type: def }
-  - { method: "boolean verify(java.lang.String,javax.net.ssl.SSLSession)", index: 1, type: use }
-  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", index: "['createSocket', '!<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>']", type: exist }
-  - { method: "<javax.net.ssl.SSLContext: javax.net.ssl.SSLSocketFactory getSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" , type: exist }
-  - { method: "<javax.net.ssl.HttpsURLConnection: javax.net.ssl.SSLSocketFactory getDefaultSSLSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" , type: exist }
+  - { method: "void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, factor: null, type: use }
+  - { method: "void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String)", index: exception, factor: null, type: use }
+  - { method: "java.security.cert.X509Certificate[] getAcceptedIssuers()", index: return, factor: "getAcceptedIssuers()", type: def }
+  - { method: "boolean verify(java.lang.String,javax.net.ssl.SSLSession)", index: return, factor: 1, type: def }
+
+coOccurrenceRules:
+  - { method: "<javax.net.ssl.SSLSocketFactory: javax.net.SocketFactory getDefault()>", index: "['createSocket', '!<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>']" }
+  - { method: "<javax.net.ssl.SSLContext: javax.net.ssl.SSLSocketFactory getSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" }
+  - { method: "<javax.net.ssl.HttpsURLConnection: javax.net.ssl.SSLSocketFactory getDefaultSSLSocketFactory()>", index: "[createSocket, !<javax.net.ssl.HostnameVerifier: boolean verify(java.lang.String,javax.net.ssl.SSLSession)>]" }
 
 predictableSourceRules:
   - { method: "<javax.crypto.spec.SecretKeySpec: void <init>(byte[],java.lang.String)>", index: 0 }
@@ -63,7 +65,7 @@ forbiddenMethodRules:
 cryptoObjPropagate:
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: base, to: result, type: "java.lang.String" }
   - { method: "<java.lang.String: java.lang.String concat(java.lang.String)>", from: 0, to: result, type: "java.lang.String" }
-#  - { method: "<java.util.Properties: java.lang.String getProperty(java.lang.String,java.lang.String)>", from: 1, to: result, type: "java.lang.String" }
+  #  - { method: "<java.util.Properties: java.lang.String getProperty(java.lang.String,java.lang.String)>", from: 1, to: result, type: "java.lang.String" }
   - { method: "<java.lang.String: char[] toCharArray()>", from: base, to: result, type: "char[]" }
   - { method: "<java.lang.String: void <init>(char[])>", from: 0, to: base, type: "java.lang.String" }
   - { method: "<java.lang.String: java.lang.String valueOf(char[])>", from: 0, to: result, type: "java.lang.String" }
