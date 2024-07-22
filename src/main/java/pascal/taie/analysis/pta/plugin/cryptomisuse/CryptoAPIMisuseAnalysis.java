@@ -37,6 +37,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CryptoAPIMisuseAnalysis implements Plugin {
 
@@ -174,30 +175,30 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     @Override
     public void onStart() {
         ClassHierarchy hierarchy = solver.getHierarchy();
-        appClasses.addAll(appClassesInString.stream().
-                map(hierarchy::getClass).collect(Collectors.toSet()));
+        appClasses.addAll(appClassesInString.stream()
+                .map(hierarchy::getClass)
+                .collect(Collectors.toSet()));
+
         JClass objectClass = hierarchy.getClass("java.lang.Object");
-        Collection<JClass> concernedClass = Sets.newSet();
-        concernedClass.addAll(sources.keySet().stream().
-                map(ClassMember::getDeclaringClass).collect(Collectors.toSet()));
-        concernedClass.addAll(ruleToJudge.keySet().stream().
-                map(rule -> rule.getMethod().getDeclaringClass()).collect(Collectors.toSet()));
-        concernedClass.addAll(appClasses);
-        //concernedClass.forEach(jClass -> System.out.println("-------------" + jClass));
-        hierarchy.getAllSubclassesOf(objectClass).forEach(
-                jClass -> {
-                    if (!((jClass.getName().contains("java.util"))
-                            || jClass.getName().contains("org.owasp.esapi.ESAPI")
-                            || jClass.getName().contains("org.owasp.esapi.util.ObjFactory")
-                            || concernedClass.contains(jClass))) {
-                        jClass.getDeclaredMethods().forEach(jMethod -> {
-                            solver.addIgnoredMethod(jMethod);
-                        });
-                    } else {
-                        //logger.info(jClass);
-                    }
-                }
-        );
+        Set<JClass> focusedClass = Sets.newSet();
+
+        focusedClass.addAll(sources.keySet().stream()
+                .map(ClassMember::getDeclaringClass)
+                .collect(Collectors.toSet()));
+        focusedClass.addAll(ruleToJudge.keySet().stream()
+                .map(rule -> rule.getMethod().getDeclaringClass())
+                .collect(Collectors.toSet()));
+        focusedClass.addAll(appClasses);
+
+        Set<String> focusedPackages = Set.of("java.util");
+
+        hierarchy.getAllSubclassesOf(objectClass).forEach(jClass -> {
+            String className = jClass.getName();
+            boolean isFocusedPackage = focusedPackages.stream().anyMatch(className::contains);
+            if (!isFocusedPackage && !focusedClass.contains(jClass)) {
+                jClass.getDeclaredMethods().forEach(solver::addIgnoredMethod);
+            }
+        });
     }
 
     @Override
@@ -265,7 +266,7 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     @Override
     public void onNewPointsToSet(CSVar csVar, PointsToSet pts) {
-        resourceRetrieverModel.onNewPointsToSet(csVar,pts);
+        resourceRetrieverModel.onNewPointsToSet(csVar, pts);
         Var var = csVar.getVar();
         cryptoVarPropagates.get(var).forEach(p -> {
             Var to = p.first();
@@ -402,32 +403,29 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
     /**
      * Transform the cryptoObj from pts into new type and add it to the pts of toVar.
      */
-    private void propagateCryptoObj(PointsToSet pts, Context ctx,
-                                    Var to, Type type, boolean isComposite) {
+    private void propagateCryptoObj(PointsToSet pts, Context ctx, Var to, Type type, boolean isComposite) {
         PointsToSet newCryptoObjs = solver.makePointsToSet();
-        if (isComposite) {
-            pts.objects()
-                    .map(CSObj::getObject)
-                    .filter(manager::isCompositeCryptoObj)
-                    .map(manager::getAllocationOfRule)
-                    .map(source -> manager.makeCompositeCryptoObj(source, type))
-                    .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
-                    .forEach(newCryptoObjs::addObject);
-        } else {
-            pts.objects()
-                    .map(CSObj::getObject)
-                    .filter(manager::isCryptoObj)
-                    .map(manager::getAllocationOfCOI)
-                    .map(source -> manager.makeCryptoObj(source, type))
-                    .map(cryptoObj -> csManager.getCSObj(emptyContext, cryptoObj))
-                    .forEach(newCryptoObjs::addObject);
-            pts.objects()
-                    .map(CSObj::getObject)
-                    .filter(manager::isPredictableCryptoObj)
-                    .map(obj -> manager.makePredictableCryptoObj(type))
-                    .map(newObj -> csManager.getCSObj(emptyContext, newObj))
-                    .forEach(newCryptoObjs::addObject);
-        }
+
+        pts.objects()
+                .map(CSObj::getObject)
+                .forEach(obj -> {
+                    if (isComposite && manager.isCompositeCryptoObj(obj)) {
+                        CompositeRule allocation = manager.getAllocationOfRule(obj);
+                        Obj cryptoObj = manager.makeCompositeCryptoObj(allocation, type);
+                        newCryptoObjs.addObject(csManager.getCSObj(emptyContext, cryptoObj));
+                    } else {
+                        if (manager.isCryptoObj(obj)) {
+                            CryptoObjInformation allocation = manager.getAllocationOfCOI(obj);
+                            Obj cryptoObj = manager.makeCryptoObj(allocation, type);
+                            newCryptoObjs.addObject(csManager.getCSObj(emptyContext, cryptoObj));
+                        }
+                        if (manager.isPredictableCryptoObj(obj)) {
+                            Obj newObj = manager.makePredictableCryptoObj(type);
+                            newCryptoObjs.addObject(csManager.getCSObj(emptyContext, newObj));
+                        }
+                    }
+                });
+
         if (!newCryptoObjs.isEmpty()) {
             solver.addVarPointsTo(ctx, to, newCryptoObjs);
         }
@@ -451,107 +449,72 @@ public class CryptoAPIMisuseAnalysis implements Plugin {
 
     private void addSimpleIssue(List<Issue> issueList, PointerAnalysisResult result) {
         ruleToJudge.forEach((rule, ruleJudge) -> {
+            Stream<Issue> issues;
+
             if (rule instanceof InfluencingFactorRule) {
-                Issue issue = ruleJudge.judge(result, null);
-                if (issue != null) {
-                    issueList.add(issue);
-                }
+                issues = Stream.ofNullable(ruleJudge.judge(result, null));
             } else {
-                result.getCallGraph()
+                issues = result.getCallGraph()
                         .getCallersOf(rule.getMethod())
-                        .forEach(callSite -> {
-                            if(rule instanceof CoOccurrenceRule){
-                                System.out.println("");
-                            }
-                            Issue issue = ruleJudge.judge(result, callSite);
-                            if (issue != null) {
-                                issueList.add(issue);
-                            }
-                        });
+                        .stream()
+                        .map(callSite -> ruleJudge.judge(result, callSite))
+                        .filter(Objects::nonNull);
             }
+
+            issues.forEach(issueList::add);
         });
     }
 
     private boolean isPatternMatch(String str) {
-        boolean res = config.patternMatchRules().stream().anyMatch(
-                patternMatchRule -> Pattern.matches(patternMatchRule.pattern(), str));
-        res = res || config.compositeRules().stream().anyMatch(compositeRule ->
-                compositeRule.getToSources().stream().anyMatch(toSource -> {
-                    if (toSource.rule() instanceof PatternMatchRule patternMatchRule) {
-                        return Pattern.matches(patternMatchRule.pattern(), str);
-                    }
-                    return false;
-                }));
-        return res;
+        return Stream.concat(
+                config.patternMatchRules().stream(),
+                config.compositeRules().stream()
+                        .flatMap(compositeRule -> compositeRule.getToSources().stream())
+                        .filter(toSource -> toSource.rule() instanceof PatternMatchRule)
+                        .map(toSource -> (PatternMatchRule) toSource.rule())
+        ).anyMatch(patternMatchRule -> Pattern.matches(patternMatchRule.pattern(), str));
     }
 
     private void calculateNumberRange() {
-        config.numberSizeRules().forEach(n -> {
-            if (focusMinMin > n.min()) {
-                focusMinMin = n.min();
-            }
-            if (focusMinMax < n.min()) {
-                focusMinMax = n.min();
-            }
-        });
-        config.compositeRules().forEach(compositeRule -> {
-            compositeRule.getToSources().forEach(toSource -> {
-                if (toSource.rule() instanceof NumberSizeRule numberSize) {
+        Stream.concat(
+                        config.numberSizeRules().stream(),
+                        config.compositeRules().stream()
+                                .flatMap(compositeRule -> compositeRule.getToSources().stream())
+                                .filter(toSource -> toSource.rule() instanceof NumberSizeRule)
+                                .map(toSource -> (NumberSizeRule) toSource.rule())
+                )
+                .forEach(numberSize -> {
                     if (focusMinMin > numberSize.min()) {
                         focusMinMin = numberSize.min();
                     }
                     if (focusMinMax < numberSize.min()) {
                         focusMinMax = numberSize.min();
                     }
-                }
-            });
-        });
+                });
     }
 
     @Override
     public void onFinish() {
         ClassHierarchy classHierarchy = World.get().getClassHierarchy();
         PointerAnalysisResult result = solver.getResult();
-//        config.predictableSourceRules().forEach(pr -> {
-//            entryMethodFinder.findAllPaths(pr.method());
-//        });
-//        config.patternMatchRules().forEach(pr -> {
-//            entryMethodFinder.findAllPaths(pr.method());
-//        });
-
-//        CSEntryMethodFinder csEntryMethodFinder = new CSEntryMethodFinder((CSCallGraph) result.getCSCallGraph());
-//        Set<JMethod> seeds = config.predictableSourceRules().stream().map(PredictableSourceRule::method).collect(Collectors.toSet());
-//        result.getCSCallGraph().forEach(csMethod -> {
-//            if (seeds.contains(csMethod.getMethod())) {
-//                csEntryMethodFinder.findAllPaths(csMethod);
-//            }
-//        });
-//        csEntryMethodFinder.getEntryMethods().forEach(entryMethod -> {
-//            logger.info("EntryMethod: " + entryMethod);
-//        });
-//        System.out.println("EntryMethodSize: " + csEntryMethodFinder.getEntryMethods().size());
-
 
         List<Issue> issueList = new ArrayList<>();
         addSimpleIssue(issueList, result);
         addCompositeIssue(issueList, result);
 
-        List<Issue> consistIssueList = new ArrayList<>();
-        issueList.forEach(issue -> {
-            if (issue instanceof IssueList listTypeIssue) {
-                consistIssueList.addAll(listTypeIssue.getIssues());
-            } else {
-                consistIssueList.add(issue);
-            }
-        });
+        List<Issue> consistIssueList = issueList.stream()
+                .flatMap(issue -> issue instanceof IssueList listTypeIssue ?
+                        listTypeIssue.getIssues().stream() : Stream.of(issue))
+                .collect(Collectors.toList());
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectMapper.writerWithDefaultPrettyPrinter().
-                    writeValue(CryptoAPIMisuseAnalysis.outputFile(), consistIssueList);
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(CryptoAPIMisuseAnalysis.outputFile(), consistIssueList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        solver.getResult().storeResult(getClass().getName(), consistIssueList);
+
+        result.storeResult(getClass().getName(), consistIssueList);
     }
 }
