@@ -9,6 +9,7 @@ import pascal.taie.analysis.pta.plugin.cryptomisuse.issue.Issue;
 import pascal.taie.analysis.pta.plugin.cryptomisuse.rule.CoOccurrenceRule;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Invoke;
+import pascal.taie.ir.stmt.Stmt;
 import pascal.taie.language.classes.JMethod;
 
 import java.util.ArrayList;
@@ -43,9 +44,11 @@ public class CoOccurrenceRuleJudge implements RuleJudge {
                 .collect(Collectors.toSet());
 
         JMethod method = callSite.getContainer();
+        intraprocedualDefUse.analyze(method.getIR());
+        Set<Stmt> influencedStmts = intraprocedualDefUse.getInfluencingStmtsForward(method, callSite);
 
-        boolean need = needExist.stream().allMatch(str -> judgeExist(method, str, result));
-        boolean shouldNot = shouldNotExist.stream().noneMatch(str -> judgeExist(method, str, result));
+        boolean need = needExist.stream().allMatch(str -> judgeExist(influencedStmts, str, result));
+        boolean shouldNot = shouldNotExist.stream().noneMatch(str -> judgeExist(influencedStmts, str, result));
 
         if (need && shouldNot) {
             return report(null, null, callSite);
@@ -93,8 +96,8 @@ public class CoOccurrenceRuleJudge implements RuleJudge {
         return result;
     }
 
-    private boolean judgeExist(JMethod jMethod, String criterion, PointerAnalysisResult result) {
-        boolean res = jMethod.getIR().getStmts().stream()
+    private boolean judgeExist(Set<Stmt> stmts, String criterion, PointerAnalysisResult result) {
+        boolean res = stmts.stream()
                 .filter(Invoke.class::isInstance)
                 .map(Invoke.class::cast)
                 .anyMatch(invoke -> criterion.startsWith("<")

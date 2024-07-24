@@ -34,13 +34,13 @@ public class PredictableSourceRuleJudge implements RuleJudge {
         Var var = IndexUtils.getVar(callSite, predictableSourceRule.index());
         AtomicReference<Issue> issue = new AtomicReference<>();
 
-        if (CryptoAPIMisuseAnalysis.getAppClasses().contains(callSite.getContainer().getDeclaringClass())) {
+        if (CryptoAPIMisuseAnalysis.getAppClasses().contains(
+                callSite.getContainer().getDeclaringClass())) {
             boolean found = result.getPointsToSet(var).stream()
                     .filter(manager::isCryptoObj)
                     .anyMatch(cryptoObj -> {
                         if (cryptoObj.getAllocation() instanceof CryptoObjInformation coi) {
                             issue.set(report(coi, var, callSite));
-                            logger.debug("the result of " + callSite + " of var: " + var + " is false with crypto obj in" + coi.allocation());
                             if (coi.constantValue() instanceof String str && str.equals(PREDICTABLE_DESC)) {
                                 return true;
                             }

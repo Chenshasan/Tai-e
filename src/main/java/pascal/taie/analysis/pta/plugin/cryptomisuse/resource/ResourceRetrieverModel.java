@@ -14,15 +14,12 @@ import pascal.taie.ir.exp.InvokeInstanceExp;
 import pascal.taie.ir.exp.StringLiteral;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Invoke;
-import pascal.taie.util.collection.Maps;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
 import java.util.Properties;
 
 import static pascal.taie.analysis.pta.plugin.util.InvokeUtils.BASE;
@@ -55,7 +52,8 @@ public class ResourceRetrieverModel extends AnalysisModelPlugin {
             if (stmt instanceof Invoke inputStreamGetter
                     && inputStreamGetter.getDef().isPresent()
                     && arg0.equals(inputStreamGetter.getDef().get())
-                    && inputStreamGetter.getInvokeExp().getMethodRef().toString().contains("getResourceAsStream")) {
+                    && inputStreamGetter.getInvokeExp().getMethodRef().
+                    toString().contains("getResourceAsStream")) {
 
                 // inputStreamGetter is the stmt of get properties
                 Var getterArg0 = inputStreamGetter.getInvokeExp().getArg(0);
@@ -102,7 +100,6 @@ public class ResourceRetrieverModel extends AnalysisModelPlugin {
                             solver.addVarPointsTo(context, invoke.getLValue(), cryptoObj);
                         }
                     }
-                    System.out.println("xxxxxxxxxxxx key is : "+ key + " method is : "+ invoke.getContainer());
                 }
             }
         });
